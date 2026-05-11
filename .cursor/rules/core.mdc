@@ -1,0 +1,35 @@
+---
+description: Contexto central del proyecto — arquitectura, stack y protocolo B.L.A.S.T. Siempre activo.
+globs: []
+alwaysApply: true
+---
+
+# [NOMBRE DEL PROYECTO] — Contexto del Proyecto
+
+> Editar este archivo después de completar el Blueprint.
+
+## North Star
+[Completar con respuesta a Pregunta 1 del Blueprint]
+
+## Stack Tecnológico
+[Ej: Python 3.12 + FastAPI + PostgreSQL + Claude API]
+
+## Arquitectura (Capas A.N.T.)
+
+- **Knowledge** (`knowledge/wiki/`): Fuente de verdad — datos, decisiones, wiki del proyecto
+- **System** (`llm-wiki/`): Reglas, prompts, protocolo B.L.A.S.T.
+- **Execution** (`app/`, `tools/`): Código que ejecuta el sistema
+
+## Protocolo B.L.A.S.T.
+
+Fases en orden estricto — nunca saltarse ni avanzar sin confirmación:
+1. **B — Blueprint**: Schema de datos aprobado antes de cualquier código
+2. **L — Link**: Verificar conexiones externas antes de la lógica
+3. **A — Architect**: Construir prompt/lógica con contexto completo
+4. **S — Stylize**: Validar que el output cumple el schema
+5. **T — Trigger**: Ejecutar y enrutar el resultado
+
+Nunca adivinar lógica de negocio. Protocolo completo: `llm-wiki/09_BLAST_PROTOCOL.md`
+
+## Restricciones
+[Completar con respuesta a Pregunta 5 del Blueprint]

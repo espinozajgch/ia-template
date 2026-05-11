@@ -1,0 +1,35 @@
+# [NOMBRE DEL PROYECTO] — Windsurf Rules
+
+> Editar este archivo después de completar el Blueprint.
+
+## Proyecto
+
+**North Star:** [Completar con respuesta a Pregunta 1 del Blueprint]
+**Stack:** [Completar]
+
+## Protocolo B.L.A.S.T.
+
+Fases en orden estricto — nunca saltarse ni avanzar sin confirmación:
+- Nunca escribir código antes de que el Blueprint esté aprobado
+- Nunca adivinar lógica de negocio — preguntar o detenerse
+- Protocolo completo: `llm-wiki/09_BLAST_PROTOCOL.md`
+
+## Reglas de comportamiento
+
+- Leer archivos relevantes antes de escribir código
+- Edición parcial — no reescribir archivos completos
+- Sin frases aduladoras — ir directo al trabajo
+- Declarar "listo" solo con evidencia de que funciona
+
+## Arquitectura
+
+```
+knowledge/wiki/   ← fuente de verdad
+llm-wiki/         ← reglas y protocolo
+app/              ← código de ejecución
+tools/            ← verificación de conexiones
+```
+
+## Restricciones
+
+[Completar con respuesta a Pregunta 5 del Blueprint]

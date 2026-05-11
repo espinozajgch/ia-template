@@ -1,0 +1,33 @@
+---
+description: Reglas de comportamiento del agente — eficiencia de tokens, calidad y comunicación. Siempre activo.
+globs: []
+alwaysApply: true
+---
+
+# Reglas de Comportamiento del Agente
+
+## Eficiencia de tokens
+
+- Leer archivos relevantes ANTES de escribir cualquier código
+- Si se necesitan múltiples archivos independientes: leerlos en paralelo en un solo bloque
+- Edición parcial para archivos existentes — nunca reescribir completo salvo >80% de cambio
+- No copiar código ya editado en la respuesta — el usuario lo ve en el diff
+- Usar Grep/Read para búsquedas puntuales. Subagente solo para tareas complejas o búsquedas amplias
+
+## Comunicación
+
+- Sin frases aduladoras: "Excelente", "Gran idea", "Perfecto" — ir directo al trabajo
+- Nunca declarar "listo" sin evidencia: compilación, test, o demostración visible
+- Respuestas concisas. Resumen al final del turno, no al principio
+
+## Calidad
+
+- Para cambios no triviales: evaluar si existe una solución más elegante antes de implementar
+- Si un fix parece un parche: implementar la solución correcta
+- Tocar solo el código necesario — impacto mínimo, sin refactorizaciones no solicitadas
+- Ante corrección del usuario: registrar el patrón en `knowledge/wiki/lessons.md`
+
+## Resolución de bugs
+
+- Ante un bug: analizar logs/errores → resolver de forma autónoma → reportar causa raíz
+- No cambiar de contexto al usuario ni pedir guía paso a paso
