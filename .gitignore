@@ -1,0 +1,60 @@
+# ── Entorno y credenciales ──────────────────────────────────────────
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+
+# ── Sistema operativo ────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Python ───────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+htmlcov/
+.coverage
+
+# ── Node / JS ─────────────────────────────────────────────────────────
+node_modules/
+.npm/
+*.lock
+dist/
+.next/
+.nuxt/
+
+# ── Datos y outputs ──────────────────────────────────────────────────
+data/raw/
+data/processed/
+*.csv
+*.parquet
+*.jsonl
+*.sqlite
+*.db
+
+# ── Logs y temporales ────────────────────────────────────────────────
+*.log
+*.tmp
+*.bak
+*.swp
+.cache/
+
+# ── IDEs ─────────────────────────────────────────────────────────────
+.idea/
+*.iml
+.vscode/settings.json
+.vscode/launch.json
+
+# ── Claude Code ──────────────────────────────────────────────────────
+.claude/worktrees/
