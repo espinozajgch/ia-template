@@ -31,6 +31,7 @@ Lee estos archivos simultáneamente:
 5. Archivos de configuración relevantes
 6. Carpetas: /routes, /api, /handlers, /workers
 7. Carpetas: /models, /schemas, /types
+8. Si hay frontend: carpetas /pages, /app, /views, /components, /styles, /assets, design tokens y configuraciones de framework UI
 
 Lista todos los archivos del proyecto para tener el mapa completo.
 
@@ -47,6 +48,8 @@ Con lo que encontraste, completa esta tabla de Blueprint inferido:
 | Source of Truth | [origen de los datos] | ALTA / MEDIA / BAJA | [archivo] |
 | Delivery Payload | [cómo entrega el resultado] | ALTA / MEDIA / BAJA | [archivo] |
 | Reglas de Comportamiento | [restricciones detectadas] | ALTA / MEDIA / BAJA | [archivo] |
+| Funcionalidad actual | [módulos, pantallas, flujos, endpoints] | ALTA / MEDIA / BAJA | [archivo] |
+| Product & Brand | [NO APLICA o identidad/diseño inferido] | ALTA / MEDIA / BAJA | [archivo] |
 
 Presenta los hallazgos al usuario con este formato:
 
@@ -65,6 +68,8 @@ He analizado el proyecto. Esto es lo que encontré:
 **Source of Truth:** [origen de los datos]
 **Delivery Payload:** [cómo entrega el resultado]
 **Reglas detectadas:** [restricciones encontradas]
+**Funcionalidad actual detectada:** [módulos, pantallas, flujos, endpoints principales]
+**Product & Brand:** [NO APLICA si es backend-only; si hay frontend, marca, tono, sistema visual y patrones UI inferidos]
 
 **Lo que NO pude determinar:**
 - [ ] [Item — razón por la que no pude inferirlo]
@@ -92,6 +97,8 @@ Con Blueprint aprobado, genera en orden:
 
 **Archivos de Blueprint:**
 - `knowledge/wiki/project.md` — nombre, North Star, stack, estado: AUDITADO
+- `knowledge/wiki/features.md` — funcionalidad actual detectada: módulos, pantallas, flujos, endpoints, acciones y estados
+- `knowledge/wiki/product-design.md` — si hay frontend: identidad de marca, UX, UI, tokens, componentes y accesibilidad; si no hay frontend: `NO APLICA`
 - `llm-wiki/00_PROJECT_MAP.md` — estructura real del proyecto
 - `llm-wiki/02_DATA_SCHEMAS.md` — schemas inferidos del código
 - `llm-wiki/06_INTEGRATIONS.md` — servicios detectados
@@ -144,3 +151,5 @@ Genera: `CLAUDE.md`, `.agents/rules/`, `.cursor/rules/`, `.github/copilot-instru
 - Distingue: CONFIRMADO / INFERIDO / DESCONOCIDO en cada hallazgo
 - No reescribas el código — solo documenta y audita
 - El Blueprint del usuario tiene prioridad sobre tu inferencia
+- Para proyectos con frontend, audita marca y diseño desde CSS, assets, componentes, pantallas y copy visible
+- La funcionalidad actual debe quedar centralizada en `knowledge/wiki/features.md`

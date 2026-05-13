@@ -35,6 +35,7 @@ Este proyecto usa B.L.A.S.T. — 5 fases en orden estricto:
 
 Nunca avanzar de fase sin confirmación del usuario.
 Nunca adivinar lógica de negocio.
+Si hay frontend, no diseñar componentes sin consultar `knowledge/wiki/product-design.md` y `knowledge/wiki/features.md`.
 
 Protocolo completo: `llm-wiki/09_BLAST_PROTOCOL.md`
 
@@ -67,6 +68,8 @@ Protocolo completo: `llm-wiki/09_BLAST_PROTOCOL.md`
 ## Referencias
 
 - Fuente de verdad: `knowledge/wiki/project.md`
+- Funcionalidad del producto: `knowledge/wiki/features.md`
+- Marca y diseño frontend: `knowledge/wiki/product-design.md`
 - Protocolo B.L.A.S.T.: `llm-wiki/09_BLAST_PROTOCOL.md`
 - Schemas de datos: `llm-wiki/02_DATA_SCHEMAS.md`
 - Integraciones: `llm-wiki/06_INTEGRATIONS.md`

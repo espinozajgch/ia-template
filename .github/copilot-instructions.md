@@ -16,6 +16,8 @@
 ## Convenciones de código
 
 - Schema de datos en `llm-wiki/02_DATA_SCHEMAS.md` — consultar antes de crear tipos nuevos
+- Funcionalidad en `knowledge/wiki/features.md` — consultar antes de cambiar módulos, pantallas, endpoints o flujos
+- Product design en `knowledge/wiki/product-design.md` — consultar antes de crear o modificar UI si hay frontend
 - Credenciales siempre desde `.env` — nunca literales en el código
 - Scripts de verificación de integraciones van en `tools/verify_[servicio].py`
 
@@ -30,4 +32,6 @@
 
 - Protocolo completo: `llm-wiki/09_BLAST_PROTOCOL.md`
 - Fuente de verdad: `knowledge/wiki/project.md`
+- Funcionalidad: `knowledge/wiki/features.md`
+- Product Design: `knowledge/wiki/product-design.md`
 - Schemas: `llm-wiki/02_DATA_SCHEMAS.md`

@@ -9,6 +9,8 @@ alwaysApply: true
 ## Eficiencia de tokens
 
 - Leer archivos relevantes ANTES de escribir cualquier código
+- Antes de cambiar funcionalidad, consultar `knowledge/wiki/features.md`
+- Antes de tocar frontend/UI, consultar `knowledge/wiki/product-design.md`
 - Si se necesitan múltiples archivos independientes: leerlos en paralelo en un solo bloque
 - Edición parcial para archivos existentes — nunca reescribir completo salvo >80% de cambio
 - No copiar código ya editado en la respuesta — el usuario lo ve en el diff

@@ -20,6 +20,13 @@ alwaysApply: true
 - **System** (`llm-wiki/`): Reglas, prompts, protocolo B.L.A.S.T.
 - **Execution** (`app/`, `tools/`): Código que ejecuta el sistema
 
+## Producto y Diseño
+
+- Funcionalidad actual o prevista: `knowledge/wiki/features.md`
+- Marca, UX y UI si hay frontend: `knowledge/wiki/product-design.md`
+- Si el proyecto es backend-only, `product-design.md` debe marcarse como `NO APLICA`
+- Antes de crear pantallas, componentes o flujos, consultar ambos archivos
+
 ## Protocolo B.L.A.S.T.
 
 Fases en orden estricto — nunca saltarse ni avanzar sin confirmación:

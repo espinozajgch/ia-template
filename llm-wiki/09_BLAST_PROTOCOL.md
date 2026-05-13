@@ -21,7 +21,7 @@ Antes de escribir cualquier código o construir herramientas:
 ## Fase 1: B — Blueprint (Visión y Lógica)
 
 ### 1. Descubrimiento
-Haz al usuario estas 5 preguntas antes de cualquier acción técnica:
+Haz al usuario estas 5 preguntas base antes de cualquier acción técnica:
 
 | # | Concepto | Pregunta |
 |---|---|---|
@@ -30,6 +30,22 @@ Haz al usuario estas 5 preguntas antes de cualquier acción técnica:
 | 3 | **Source of Truth** (Fuente de la Verdad) | ¿Dónde viven los datos primarios? |
 | 4 | **Delivery Payload** (Carga de Entrega) | ¿Cómo y dónde debe entregarse el resultado final? |
 | 5 | **Reglas de Comportamiento** | ¿Cómo debe "actuar" el sistema? (Tono, restricciones, reglas de "No hacer") |
+
+### 1.1 Product & Brand (si hay frontend)
+
+Después de las 5 preguntas base, determina si el proyecto tiene frontend, interfaz visual, dashboard, app móvil, sitio público o experiencia de usuario.
+
+Si el proyecto es backend-only, CLI, worker o librería sin UI, registra `NO APLICA` en `knowledge/wiki/product-design.md`.
+
+Si tiene frontend, documenta antes de diseñar o codificar:
+
+| Concepto | Pregunta | Archivo |
+|---|---|---|
+| Identidad de marca | ¿Qué personalidad, tono, audiencia y referencias visuales debe tener el producto? | `knowledge/wiki/product-design.md` |
+| Diseño UI/UX | ¿Qué colores, tipografía, layout, componentes, responsive y accesibilidad espera el proyecto? | `knowledge/wiki/product-design.md` |
+| Funcionalidad de producto | ¿Qué módulos, pantallas, acciones, estados y flujos debe tener? | `knowledge/wiki/features.md` |
+
+En proyectos existentes, no preguntes primero: infiere desde rutas, componentes, estilos, assets, copy visible, handlers, endpoints y documentación. Pregunta solo lo que no pueda determinarse.
 
 ### 2. Clasificación de Intent
 Antes de construir, clasifica el tipo de request:
@@ -58,6 +74,8 @@ Define el Esquema de Datos JSON (Input/Output) en `project.md` antes de codifica
 ```
 
 La codificación **solo comienza** una vez que la forma del Payload es confirmada por el usuario.
+
+Si hay frontend, la construcción de componentes visuales solo comienza cuando `knowledge/wiki/product-design.md` y `knowledge/wiki/features.md` estén completos o marcados explícitamente como pendientes aprobados.
 
 ### 4. Investigación
 Busca en repositorios de GitHub y otras bases de datos cualquier recurso útil antes de construir desde cero.

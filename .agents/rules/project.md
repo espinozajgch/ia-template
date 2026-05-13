@@ -19,6 +19,13 @@
 - **System** (`llm-wiki/`): Reglas del sistema y protocolo B.L.A.S.T.
 - **Execution** (`app/`, `tools/`): Código de ejecución
 
+## Producto y Diseño
+
+- Funcionalidad: `knowledge/wiki/features.md`
+- Marca y diseño frontend: `knowledge/wiki/product-design.md`
+- Si no hay frontend, `product-design.md` debe indicar `NO APLICA`
+- No crear ni modificar UI sin consultar estos archivos
+
 ---
 
 ## Protocolo activo
@@ -39,6 +46,8 @@ Reglas de agente: `llm-wiki/10_AGENT_RULES.md`
 ## Referencias rápidas
 
 - Fuente de verdad: `knowledge/wiki/project.md`
+- Funcionalidad: `knowledge/wiki/features.md`
+- Product Design: `knowledge/wiki/product-design.md`
 - Schemas: `llm-wiki/02_DATA_SCHEMAS.md`
 - Integraciones: `llm-wiki/06_INTEGRATIONS.md`
 - Lecciones: `knowledge/wiki/lessons.md`

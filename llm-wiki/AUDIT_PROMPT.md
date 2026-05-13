@@ -36,6 +36,7 @@ Antes de cualquier otra acción, ejecuta este análisis del proyecto:
 5. Archivos de configuración — reglas y comportamiento
 6. Carpetas: /routes, /api, /handlers, /workers — qué hace el sistema
 7. Carpetas: /models, /schemas, /types — estructura de datos
+8. Si hay frontend: /pages, /app, /views, /components, /styles, /assets, storybook, design tokens, framework UI y copy visible
 ```
 
 ### 3. Construir el Blueprint inferido
@@ -50,6 +51,8 @@ Con lo que encontraste, completa esta tabla con nivel de confianza:
 | Source of Truth        | [origen de los datos]           | ALTA / MEDIA / BAJA | [archivo donde lo viste] |
 | Delivery Payload       | [cómo entrega el resultado]     | ALTA / MEDIA / BAJA | [archivo donde lo viste] |
 | Reglas de Comportamiento| [restricciones en el código]   | ALTA / MEDIA / BAJA | [archivo donde lo viste] |
+| Funcionalidad actual   | [módulos, pantallas, flujos, endpoints] | ALTA / MEDIA / BAJA | [archivo donde lo viste] |
+| Product & Brand        | [NO APLICA o marca/diseño inferido] | ALTA / MEDIA / BAJA | [archivo donde lo viste] |
 ```
 
 ---
@@ -79,6 +82,14 @@ He analizado el proyecto. Esto es lo que encontré:
 **Reglas de Comportamiento detectadas:**
 - [Regla 1] — inferida de [archivo/lógica]
 - [Regla 2] — inferida de [archivo/lógica]
+
+**Funcionalidad actual detectada:**
+- [Módulo/pantalla/endpoint 1] — fuente: [archivo y línea]
+- [Módulo/pantalla/endpoint 2] — fuente: [archivo y línea]
+
+**Product & Brand:**
+- [NO APLICA si es backend-only]
+- [Si hay frontend: identidad, tono, estilo visual, componentes, tokens o patrones inferidos] — fuente: [archivo y línea]
 
 ---
 
@@ -119,6 +130,18 @@ Con el Blueprint aprobado, genera todos los archivos en orden:
 - Delivery Payload confirmado
 - Stack tecnológico detectado
 - Estado: AUDITADO — [FECHA]
+
+**`knowledge/wiki/features.md`**
+- Funcionalidad actual centralizada
+- Módulos, pantallas, endpoints, workers y flujos detectados
+- Acciones disponibles, estados principales y reglas funcionales
+- Fuentes de código citadas por módulo
+- Gaps funcionales o zonas imposibles de inferir
+
+**`knowledge/wiki/product-design.md`**
+- Si no hay frontend: marcar `NO APLICA` y explicar la evidencia
+- Si hay frontend: identidad de marca inferida, tono, audiencia probable, sistema visual, tokens, componentes, navegación, responsive y accesibilidad
+- Citar CSS, componentes, assets, copy o configuración UI usada como fuente
 
 **`llm-wiki/00_PROJECT_MAP.md`**
 - Estructura real del proyecto (no template — la estructura que encontraste)
@@ -210,3 +233,5 @@ Al final, entrega un reporte de lo que el proyecto tiene vs. lo que B.L.A.S.T. r
 - **Distingue inferencia de certeza** — usa CONFIRMADO / INFERIDO / DESCONOCIDO en cada hallazgo
 - **No reescribas el código** — solo documenta y audita; los cambios son decisión del usuario
 - **El Blueprint del usuario tiene prioridad** — si el usuario corrige algo, su versión gana sobre tu inferencia
+- **Funcionalidad centralizada** — toda funcionalidad actual detectada debe quedar en `knowledge/wiki/features.md`
+- **Frontend explícito** — si existe frontend, documenta marca y diseño en `knowledge/wiki/product-design.md`; si no existe, marca `NO APLICA`

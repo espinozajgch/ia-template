@@ -1,6 +1,6 @@
 ---
 name: blast-new
-description: Inicializa un proyecto nuevo aplicando el protocolo B.L.A.S.T. completo. Hace 5 preguntas de Blueprint, crea la estructura de carpetas, genera todos los archivos de documentación y llena la fuente de verdad del proyecto.
+description: Inicializa un proyecto nuevo aplicando el protocolo B.L.A.S.T. completo. Hace 5 preguntas base de Blueprint, activa Product & Brand si hay frontend, crea la estructura de carpetas, genera todos los archivos de documentación y llena la fuente de verdad del proyecto.
 ---
 
 # Skill: blast-new — Inicializar Proyecto Nuevo
@@ -27,7 +27,7 @@ Fase actual: Blueprint
 Fecha de inicio: [HOY]
 ```
 
-2. Confirma al usuario: _"Proyecto inicializado. Comenzando Blueprint — necesito hacerte 5 preguntas antes de escribir cualquier código."_
+2. Confirma al usuario: _"Proyecto inicializado. Comenzando Blueprint — necesito hacerte 5 preguntas base antes de escribir cualquier código. Si hay frontend, activaré después Product & Brand."_
 
 3. **STOP** — No escribas ningún script, tool ni código hasta que Blueprint esté completo y aprobado.
 
@@ -35,7 +35,7 @@ Fecha de inicio: [HOY]
 
 ### Fase 1 — B: Blueprint
 
-Haz estas 5 preguntas, **una por una**, esperando respuesta antes de continuar:
+Haz estas 5 preguntas base, **una por una**, esperando respuesta antes de continuar:
 
 **Pregunta 1 — North Star:**
 > ¿Cuál es el único resultado que este sistema debe lograr? Descríbelo en una oración.
@@ -52,8 +52,27 @@ Haz estas 5 preguntas, **una por una**, esperando respuesta antes de continuar:
 **Pregunta 5 — Reglas de Comportamiento:**
 > ¿Qué cosas NO debe hacer el sistema? ¿Tiene reglas de tono, restricciones de datos, límites de acción?
 
-**Después de las 5 respuestas**, genera estos archivos completando los placeholders con las respuestas reales:
+### Subfase B.1 — Product & Brand
+
+Después de la Pregunta 5, determina si el proyecto tiene frontend, interfaz visual, sitio público, dashboard, app móvil o experiencia de usuario.
+
+Si **NO** tiene frontend, registra `NO APLICA` en `knowledge/wiki/product-design.md` y continúa.
+
+Si **SÍ** tiene frontend, haz estas preguntas adicionales, una por una:
+
+**Pregunta 6 — Identidad de Marca:**
+> ¿Qué identidad debe tener la marca o producto? Incluye personalidad, tono, audiencia y referencias visuales si existen.
+
+**Pregunta 7 — Diseño UI/UX:**
+> ¿Qué estilo visual y experiencia esperas? Incluye colores, tipografía, tipo de layout, componentes clave, responsive y accesibilidad.
+
+**Pregunta 8 — Funcionalidad del Producto:**
+> ¿Qué módulos, pantallas y flujos principales debe tener el producto en su primera versión?
+
+**Después de las respuestas**, genera estos archivos completando los placeholders con las respuestas reales:
 - `knowledge/wiki/project.md` — fuente de verdad completa
+- `knowledge/wiki/features.md` — módulos, pantallas, flujos, acciones y estados del producto
+- `knowledge/wiki/product-design.md` — marca, UX, UI, tokens, componentes, responsive y accesibilidad (o `NO APLICA` si es backend-only)
 - `llm-wiki/00_PROJECT_MAP.md` — mapa de carpetas real
 - `llm-wiki/02_DATA_SCHEMAS.md` — schema JSON de Input/Output
 - `llm-wiki/06_INTEGRATIONS.md` — servicios mencionados en Pregunta 2
@@ -120,3 +139,4 @@ Esto genera: `CLAUDE.md`, `.agents/rules/`, `.cursor/rules/`, `.github/copilot-i
 - Nunca avanzar de fase sin confirmación explícita
 - Nunca escribir código antes de que Blueprint esté aprobado
 - Data-First: el schema se define antes de codificar
+- Si hay frontend, Product & Brand es parte del Blueprint y debe quedar documentado antes de diseñar componentes

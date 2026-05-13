@@ -7,7 +7,7 @@
 | Proyecto nuevo — empezando desde cero | Este archivo (`MASTER_PROMPT.md`) |
 | Proyecto existente — analizar código ya escrito | `AUDIT_PROMPT.md` |
 
-> Para proyecto nuevo: el LLM te hace 5 preguntas y llena los archivos con tus respuestas.
+> Para proyecto nuevo: el LLM te hace 5 preguntas base, activa Product & Brand si hay frontend y llena los archivos con tus respuestas.
 > Para proyecto existente: el LLM analiza el código primero, tú solo corriges lo que esté mal.
 
 ---
@@ -30,7 +30,7 @@ Estado: INICIALIZANDO
 Fase actual: Blueprint
 ```
 
-2. Confirma al usuario: _"Proyecto inicializado. Comenzando Blueprint — necesito hacerte 5 preguntas antes de escribir cualquier código."_
+2. Confirma al usuario: _"Proyecto inicializado. Comenzando Blueprint — necesito hacerte 5 preguntas base antes de escribir cualquier código. Si hay frontend, activaré después Product & Brand."_
 
 3. **STOP** — No escribas ningún script, tool ni código hasta que Blueprint esté completo y aprobado.
 
@@ -38,7 +38,7 @@ Fase actual: Blueprint
 
 ## FASE 1 — B: BLUEPRINT
 
-Haz estas 5 preguntas, una por una, esperando respuesta antes de continuar:
+Haz estas 5 preguntas base, una por una, esperando respuesta antes de continuar:
 
 **Pregunta 1 — North Star:**
 > ¿Cuál es el único resultado que este sistema debe lograr? Descríbelo en una oración.
@@ -55,9 +55,26 @@ Haz estas 5 preguntas, una por una, esperando respuesta antes de continuar:
 **Pregunta 5 — Reglas de Comportamiento:**
 > ¿Qué cosas NO debe hacer el sistema? ¿Tiene reglas de tono, restricciones de datos, límites de acción?
 
+### Subfase B.1 — Product & Brand
+
+Después de la Pregunta 5, determina si el proyecto tiene frontend, interfaz visual, dashboard, app móvil o sitio público.
+
+Si no tiene frontend, registra `NO APLICA` en `knowledge/wiki/product-design.md` y continúa.
+
+Si tiene frontend, haz estas preguntas adicionales:
+
+**Pregunta 6 — Identidad de Marca:**
+> ¿Qué identidad debe tener la marca o producto? Incluye personalidad, tono, audiencia, referencias visuales y restricciones.
+
+**Pregunta 7 — Diseño UI/UX:**
+> ¿Qué estilo visual y experiencia esperas? Incluye colores, tipografía, layout, componentes clave, responsive y accesibilidad.
+
+**Pregunta 8 — Funcionalidad del Producto:**
+> ¿Qué módulos, pantallas y flujos principales debe tener el producto en su primera versión?
+
 ---
 
-### Después de las 5 respuestas, genera estos archivos:
+### Después de las respuestas, genera estos archivos:
 
 **`knowledge/wiki/project.md`** — completa con:
 - Nombre del proyecto
@@ -66,6 +83,16 @@ Haz estas 5 preguntas, una por una, esperando respuesta antes de continuar:
 - Delivery Payload
 - Fecha de creación
 - Estado: EN PROGRESO
+
+**`knowledge/wiki/features.md`** — completa con:
+- Módulos previstos o actuales
+- Pantallas, endpoints o workers esperados
+- Flujos principales de usuario o sistema
+- Acciones, estados y reglas funcionales
+
+**`knowledge/wiki/product-design.md`** — completa con:
+- Si el proyecto es backend-only: `NO APLICA` y motivo
+- Si hay frontend: identidad de marca, tono, audiencia, referencias, tokens visuales, componentes, navegación, responsive y accesibilidad
 
 **`llm-wiki/00_PROJECT_MAP.md`** — mapa de carpetas real del proyecto basado en las integraciones y fuente de datos mencionadas
 
@@ -159,6 +186,8 @@ Completa **`llm-wiki/08_ARCHITECTURE.md`** con:
 | Archivo | Fase | Contenido |
 |---|---|---|
 | `knowledge/wiki/project.md` | Blueprint | Fuente de verdad del proyecto |
+| `knowledge/wiki/features.md` | Blueprint / Product & Brand | Funcionalidad, módulos, pantallas, flujos y estados |
+| `knowledge/wiki/product-design.md` | Blueprint / Product & Brand | Marca, UX, UI, componentes, responsive y accesibilidad |
 | `llm-wiki/00_PROJECT_MAP.md` | Blueprint | Mapa de carpetas y estructura |
 | `llm-wiki/01_LLM_STRATEGY.md` | Architect | Modelo, intent, estrategia de contexto |
 | `llm-wiki/02_DATA_SCHEMAS.md` | Blueprint | Schema JSON de Input/Output |

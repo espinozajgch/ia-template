@@ -10,6 +10,8 @@
 ### Leer antes de escribir
 - ANTES de escribir cualquier código: leer los archivos relevantes, revisar el contexto, entender la arquitectura.
 - Si no hay contexto suficiente, preguntar. Nunca asumir.
+- Antes de cambiar funcionalidad: leer `knowledge/wiki/features.md`.
+- Antes de crear o modificar UI/frontend: leer `knowledge/wiki/product-design.md` y `knowledge/wiki/features.md`.
 
 ### Edición parcial, no reescritura total
 - Usar edición parcial (reemplazo de bloque) para archivos existentes.
@@ -88,6 +90,8 @@
 | Situación | Acción |
 |---|---|
 | Necesito leer archivos | Leer todos en paralelo, en un solo mensaje |
+| Voy a cambiar funcionalidad | Revisar `knowledge/wiki/features.md` y actualizarlo si cambia el alcance |
+| Voy a tocar frontend/UI | Revisar `knowledge/wiki/product-design.md` y respetar marca, tokens, componentes y accesibilidad |
 | Voy a editar un archivo existente | Edición parcial — nunca reescribir completo salvo >80% |
 | Terminé un cambio | Validar antes de decir "listo" |
 | Hay un bug | Analizar y resolver solo — no pedir guía |

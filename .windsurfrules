@@ -17,6 +17,8 @@ Fases en orden estricto — nunca saltarse ni avanzar sin confirmación:
 ## Reglas de comportamiento
 
 - Leer archivos relevantes antes de escribir código
+- Consultar `knowledge/wiki/features.md` antes de cambiar funcionalidad
+- Si hay frontend, consultar `knowledge/wiki/product-design.md` antes de tocar UI
 - Edición parcial — no reescribir archivos completos
 - Sin frases aduladoras — ir directo al trabajo
 - Declarar "listo" solo con evidencia de que funciona

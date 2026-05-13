@@ -81,6 +81,8 @@ OUTPUT ENTREGADO + LOG REGISTRADO
 | Recurso | Tipo | Ubicación | Actualización |
 |---|---|---|---|
 | [PENDIENTE — Source of Truth del Blueprint] | | | |
+| Funcionalidad del producto | Wiki funcional | `knowledge/wiki/features.md` | Al agregar, cambiar o eliminar módulos, pantallas, endpoints o flujos |
+| Product Design | Marca / UX / UI | `knowledge/wiki/product-design.md` | Al cambiar identidad, diseño, componentes, responsive o accesibilidad |
 
 ### System
 

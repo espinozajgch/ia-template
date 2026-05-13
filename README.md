@@ -78,6 +78,8 @@ Kit B.L.A.S.T./
 ├── knowledge/
 │   └── wiki/                        ← Fuente de verdad del proyecto
 │       ├── project.md               ← Blueprint (se llena en Fase B)
+│       ├── features.md              ← Funcionalidad, módulos, pantallas y flujos
+│       ├── product-design.md        ← Marca, UX/UI y design system si hay frontend
 │       └── lessons.md               ← Lecciones aprendidas (se acumula)
 │
 │   ══════════════════════════════════════════════════════
@@ -101,7 +103,7 @@ En **Antigravity**: invocar el skill `@blast-new`
 
 En **cualquier otro LLM**: pegar el contenido de `llm-wiki/MASTER_PROMPT.md`
 
-La IA te hará 5 preguntas:
+La IA te hará 5 preguntas base:
 
 | # | Pregunta | Para qué sirve |
 |---|---|---|
@@ -110,6 +112,14 @@ La IA te hará 5 preguntas:
 | 3 | **Source of Truth** — ¿Dónde viven los datos? | Define de dónde lee la IA |
 | 4 | **Delivery Payload** — ¿Cómo se entrega el resultado? | Define qué formato produce |
 | 5 | **Reglas de Comportamiento** — ¿Qué NO debe hacer? | Restricciones que la IA nunca viola |
+
+Si el proyecto tiene frontend o experiencia visual, la IA activa además el bloque **Product & Brand**:
+
+| Área | Qué define | Dónde queda documentado |
+|---|---|---|
+| Identidad de marca | Nombre, personalidad, tono, referentes, restricciones visuales | `knowledge/wiki/product-design.md` |
+| Diseño de interfaz | Colores, tipografía, layout, componentes, responsive, accesibilidad | `knowledge/wiki/product-design.md` |
+| Funcionalidad de producto | Módulos, pantallas, flujos, acciones y estados | `knowledge/wiki/features.md` |
 
 ### Paso 3 — Completar los archivos de contexto
 
@@ -144,6 +154,8 @@ El kit no es estático — está diseñado para que la IA **acumule conocimiento
 knowledge/
 └── wiki/
     ├── project.md      ← Se llena en Blueprint, se actualiza si el proyecto evoluciona
+    ├── features.md     ← Funcionalidad actual: módulos, flujos, pantallas, acciones
+    ├── product-design.md ← Marca, diseño UI, tokens, componentes y accesibilidad
     ├── lessons.md      ← Cada vez que corriges a la IA, ella registra el patrón aquí
     ├── decisions.md    ← Decisiones de arquitectura y su razón (ADRs)
     └── glossary.md     ← Términos del dominio que la IA debe entender
@@ -180,6 +192,8 @@ Los archivos numerados (`00` a `10`) no son documentación pasiva — son **inst
 | Corriges a la IA | Ella añade la regla a `knowledge/wiki/lessons.md` |
 | Tomas una decisión de arquitectura | La IA la documenta en `knowledge/wiki/decisions.md` |
 | Defines un término del dominio | Se añade a `knowledge/wiki/glossary.md` |
+| Añades o cambias una funcionalidad | Se actualiza `knowledge/wiki/features.md` |
+| Cambias la marca o UI | Se actualiza `knowledge/wiki/product-design.md` |
 | Cambias de proveedor o API | Se actualiza `llm-wiki/06_INTEGRATIONS.md` |
 | Agregas un módulo nuevo | Se actualiza `llm-wiki/00_PROJECT_MAP.md` |
 
@@ -212,7 +226,32 @@ Los archivos numerados (`00` a `10`) no son documentación pasiva — son **inst
 
 ---
 
-## 🎨 Próximos pasos: Especialización por dominio
+## 🎨 Producto, marca y frontend
+
+Cuando el proyecto tiene frontend, B.L.A.S.T. añade una subfase **B.1 — Product & Brand** después de las 5 preguntas base. Esta subfase evita que la IA invente estilos, pantallas o experiencia de usuario.
+
+La IA debe definir o inferir:
+
+| Elemento | Proyecto nuevo | Proyecto existente |
+|---|---|---|
+| Identidad de marca | Preguntar al usuario | Inferir de UI, CSS, assets, copy y docs |
+| Sistema visual | Preguntar colores, tipografía, componentes, responsive | Auditar CSS, componentes, design tokens, framework UI |
+| Funcionalidad actual | Definir módulos previstos | Documentar módulos, rutas, pantallas, acciones y flujos existentes |
+| Flujos de usuario | Definir flujos esperados | Inferir desde rutas, navegación, handlers y componentes |
+
+Los archivos de referencia son:
+
+```
+knowledge/wiki/
+├── features.md          ← Funcionalidad actual o prevista del producto
+└── product-design.md    ← Marca, UX, UI, tokens, componentes y accesibilidad
+```
+
+Si el proyecto es backend-only, CLI, worker o librería sin interfaz visual, `product-design.md` puede marcarse como `NO APLICA`.
+
+---
+
+## Próximos pasos: Especialización por dominio
 
 El kit actual es **agnóstico de tecnología** — funciona con cualquier stack. Para maximizar el valor, el siguiente paso es añadir reglas específicas por dominio.
 
@@ -254,15 +293,14 @@ alwaysApply: false
 
 > **Ventaja**: las reglas por glob no consumen tokens cuando no son relevantes.
 
-### Archivos de design system (por crear)
+### Archivos de design system
 
-Para proyectos con frontend, se recomienda añadir:
+Para proyectos con frontend, estos archivos ya forman parte de la fuente de verdad:
 
 ```
 knowledge/wiki/
-├── design-system.md      ← Tokens de diseño: colores, tipografía, espaciado, breakpoints
-├── components.md         ← Catálogo de componentes y sus variantes
-└── ux-patterns.md        ← Patrones de interacción, estados de carga, manejo de errores
+├── product-design.md     ← Marca, tokens, UI, componentes, accesibilidad, responsive
+└── features.md           ← Módulos, pantallas, flujos y estados del producto
 ```
 
 La IA consultaría estos archivos antes de crear cualquier componente, asegurando consistencia visual sin necesidad de repetir instrucciones en cada prompt.
