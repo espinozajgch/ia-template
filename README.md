@@ -1,335 +1,233 @@
-# 🧬 Kit B.L.A.S.T. — Framework de Trabajo con IA para Desarrollo de Software
+# ia-template — Kit de agentes
 
-> Un kit metodológico reutilizable que estructura cómo los modelos de IA trabajan en tus proyectos.
-> Reduce el desperdicio de tokens, elimina la improvisación y construye conocimiento acumulativo.
-
----
-
-## ¿Qué problema resuelve?
-
-Cuando usas IA para desarrollar software sin estructura, ocurre lo siguiente:
-
-- **Desperdicio de tokens**: la IA reescribe archivos completos, repite contexto, hace preguntas que podría responder leyendo el código
-- **Inconsistencia**: cada sesión empieza desde cero, sin memoria de decisiones anteriores
-- **Improvisación**: la IA adivina lógica de negocio, elige stack sin preguntar, genera código sin schema definido
-- **Pérdida de conocimiento**: las lecciones aprendidas se pierden entre conversaciones
-
-Este kit resuelve todo esto con:
-1. **Un protocolo de trabajo** (B.L.A.S.T.) que la IA sigue paso a paso
-2. **Archivos de contexto** que cada LLM/IDE lee automáticamente
-3. **Reglas de comportamiento** que controlan cómo trabaja la IA
-4. **Un sistema de conocimiento** que crece con cada sesión
+> Un kit reutilizable que define **cómo trabajan los agentes de IA** en cualquier proyecto:
+> Claude Code, Gemini/Antigravity, Cursor, Copilot, Windsurf y Codex, con el mismo
+> conocimiento y sin duplicarlo cinco veces.
+>
+> Destilado de trece proyectos reales. Lo que está aquí funcionó en al menos uno de ellos.
 
 ---
 
-## 📁 Estructura del Kit
+## Los tres problemas que resuelve
+
+> Los tres salieron de comparar los proyectos que ya usaban este kit. Cada solución está
+> escrita como la regla que la hace cumplirse sola, no como una recomendación.
+
+**1 · El contexto duplicado se desincroniza.** El mismo texto vivía en `CLAUDE.md`,
+`GEMINI.md`, `.windsurfrules`, `.cursor/rules/core.mdc` y `copilot-instructions.md`. Cinco
+copias que había que editar a la vez, y nunca se editaban a la vez.
+
+> **Ahora:** un solo `AGENTS.md`. Los cinco ficheros por herramienta son punteros de diez
+> líneas que dicen «lee AGENTS.md» y solo añaden lo específico de su herramienta.
+> **86 líneas de punteros en total**, frente a ~250 duplicadas cinco veces.
+
+**2 · Copiar el kit entero llevaba 9.000 líneas irrelevantes.** Un proyecto de análisis
+hípico acabó con el prompt de tácticas de fútbol; una app clínica, con el kit de AWS. Nadie
+los leía, pero el agente sí — y cobraban su contexto.
+
+> **Ahora:** núcleo ligero, siempre. Y **13 packs** que se instalan solo si aplican.
+
+**3 · Las mejoras de cada proyecto no volvían al template.** El mismo archivo tenía 93, 106,
+351, 360, 416 y 552 líneas en seis proyectos: seis linajes divergentes de la misma idea.
+
+> **Ahora:** cada prompt tiene **una** versión canónica, elegida como la más evolucionada de
+> los trece proyectos (trazabilidad completa en [`docs/DE-DONDE-SALIO.md`](docs/DE-DONDE-SALIO.md)).
+> El instalador **nunca pisa** un fichero existente: la mejora vuelve al kit a mano y de
+> forma consciente, no por accidente.
+
+---
+
+## Instalación
+
+```bash
+./instalar.sh --packs                          # ver qué packs hay y cuándo aplican
+./instalar.sh ~/mi-proyecto frontend-web api-backend base-de-datos seguridad
+```
+
+Es idempotente y no sobrescribe nada sin `--force`. Lo que ya existía se reporta al final.
+
+Después, en una sesión de agente dentro del proyecto:
 
 ```
-Kit B.L.A.S.T./
-│
-│   ══════════════════════════════════════════════════════
-│   ARCHIVOS DE CONTEXTO PARA LLMs/IDEs
-│   Cada herramienta lee el suyo automáticamente
-│   ══════════════════════════════════════════════════════
-│
-├── GEMINI.md                        ← Google Antigravity / Gemini
-├── CLAUDE.md                        ← Claude Code (Anthropic)
-├── .windsurfrules                   ← Windsurf IDE
-├── .cursor/
-│   └── rules/
-│       ├── core.mdc                 ← Cursor IDE — contexto del proyecto
-│       └── agent-behavior.mdc      ← Cursor IDE — reglas del agente
-├── .github/
-│   └── copilot-instructions.md     ← GitHub Copilot
-├── .agents/
-│   ├── rules/
-│   │   └── project.md              ← Antigravity — regla de proyecto
-│   └── skills/
-│       ├── blast-new/SKILL.md      ← Skill: inicializar proyecto nuevo
-│       ├── blast-audit/SKILL.md    ← Skill: auditar proyecto existente
-│       └── staff-estimate/SKILL.md ← Skill: estimación presupuestaria profesional
-│
-│   ══════════════════════════════════════════════════════
-│   PROTOCOLO B.L.A.S.T. — El cerebro del sistema
-│   Define CÓMO trabaja la IA en cada fase
-│   ══════════════════════════════════════════════════════
-│
-├── llm-wiki/
-│   ├── 00_PROJECT_MAP.md            ← Mapa de carpetas del proyecto
-│   ├── 01_LLM_STRATEGY.md          ← Qué modelo usar y por qué
-│   ├── 02_DATA_SCHEMAS.md          ← Schemas JSON de Input/Output
-│   ├── 03_RETRIEVAL.md             ← Estrategia RAG (si aplica)
-│   ├── 04_TOOLS.md                 ← Catálogo de herramientas/funciones
-│   ├── 05_RELIABILITY.md           ← Validación y manejo de errores
-│   ├── 06_INTEGRATIONS.md          ← Servicios externos (APIs, DBs)
-│   ├── 07_PROMPT_TEMPLATES.md      ← Templates de prompts del sistema
-│   ├── 08_ARCHITECTURE.md          ← Arquitectura A.N.T. del proyecto
-│   ├── 09_BLAST_PROTOCOL.md        ← Protocolo completo (las 5 fases)
-│   ├── 10_AGENT_RULES.md           ← Reglas de comportamiento del agente
-│   ├── MASTER_PROMPT.md            ← Prompt maestro para proyectos nuevos
-│   ├── AUDIT_PROMPT.md             ← Prompt de auditoría
-│   └── STAFF_PROMPT.md             ← Prompt de estimación presupuestaria
-│
-│   ══════════════════════════════════════════════════════
-│   CONOCIMIENTO DEL PROYECTO
-│   La IA construye y consulta esta base con el tiempo
-│   ══════════════════════════════════════════════════════
-│
-├── knowledge/
-│   └── wiki/                        ← Fuente de verdad del proyecto
-│       ├── project.md               ← Blueprint (se llena en Fase B)
-│       ├── features.md              ← Funcionalidad, módulos, pantallas y flujos
-│       ├── product-design.md        ← Marca, UX/UI y design system si hay frontend
-│       └── lessons.md               ← Lecciones aprendidas (se acumula)
-│
-│   ══════════════════════════════════════════════════════
-│   DATOS Y CÓDIGO (se crean durante el desarrollo)
-│   ══════════════════════════════════════════════════════
-│
-├── data/
-│   └── raw/                         ← Datos crudos sin procesar
-└── app/                             ← Código de ejecución (se crea en Fase T)
+skill blueprint      → lee el código, rellena AGENTS.md y knowledge/wiki/,
+                       y solo pregunta lo que no puede deducir
 ```
 
 ---
 
-## 🚀 Cómo usar el kit
+## Qué instala
 
-### Paso 1 — Copiar al proyecto nuevo
+### Núcleo — siempre
 
-### Paso 2 — Iniciar el Blueprint
+```text
+AGENTS.md                     fuente ÚNICA de contexto. Menos de 250 líneas, o sobra material
+CLAUDE.md · GEMINI.md · .windsurfrules · .cursor/ · .github/ · .agents/
+                              punteros de 10 líneas. NO se editan
+.claude/skills/ · .agents/skills/
+                              las 7 skills, mismo contenido para las dos herramientas
+.claude/settings.json         hooks: el checklist de pre-commit y pre-push lo inyecta el
+                              harness — el agente no puede olvidarse de un hook
+.mcp.json                     grafo de código para descubrimiento
+knowledge/wiki/               la fuente de verdad: 10 plantillas
+agente/protocolo/             el ciclo, las reglas, la puerta de calidad, la memoria
+agente/ci/                    4 plantillas de workflow, sin activar
+agente/tools/                 8 verificadores ejecutables, probados contra repos reales:
+                              ratchet · puerta · ciclos · tamano · secretos
+                              esquema · cobertura · cosechar
+```
 
-En **Antigravity**: invocar el skill `@blast-new`
+### Las 7 skills
 
-En **cualquier otro LLM**: pegar el contenido de `llm-wiki/MASTER_PROMPT.md`
-
-La IA te hará 5 preguntas base:
-
-| # | Pregunta | Para qué sirve |
+| Skill | Cuándo | De dónde salió |
 |---|---|---|
-| 1 | **North Star** — ¿Qué resultado único debe lograr el sistema? | Define el objetivo — la IA no trabaja sin él |
-| 2 | **Integraciones** — ¿Qué servicios externos necesita? | Evita que la IA asuma APIs o servicios |
-| 3 | **Source of Truth** — ¿Dónde viven los datos? | Define de dónde lee la IA |
-| 4 | **Delivery Payload** — ¿Cómo se entrega el resultado? | Define qué formato produce |
-| 5 | **Reglas de Comportamiento** — ¿Qué NO debe hacer? | Restricciones que la IA nunca viola |
+| `blueprint` | una vez por proyecto, y al cambiar de rumbo | fusión de `blast-new` + `blast-audit` |
+| `tarea` | llega algo nuevo, o lo actual resulta más grande | hipismo |
+| `avanzar` | ejecutar el plan sin pedir permiso a cada paso | hipismo |
+| `verificar` | **antes de cada commit que toque código** | hipismo |
+| `auditar` | diagnosticar sin corregir | `blast-audit` + los prompts forenses |
+| `informe` | el entregable lo lee alguien de fuera | ppsport · futbot · cowork |
+| `estimar` | presupuestar, valorar, dimensionar | `staff-estimate` |
 
-Si el proyecto tiene frontend o experiencia visual, la IA activa además el bloque **Product & Brand**:
+`tarea`, `avanzar` y `verificar` vienen tal cual de hipismo: son las mejores del conjunto
+porque no traen listas de comandos, traen **cómo encontrarlos** — y así no caducan el día
+que alguien añade un paso a la CI.
 
-| Área | Qué define | Dónde queda documentado |
-|---|---|---|
-| Identidad de marca | Nombre, personalidad, tono, referentes, restricciones visuales | `knowledge/wiki/product-design.md` |
-| Diseño de interfaz | Colores, tipografía, layout, componentes, responsive, accesibilidad | `knowledge/wiki/product-design.md` |
-| Funcionalidad de producto | Módulos, pantallas, flujos, acciones y estados | `knowledge/wiki/features.md` |
+### Los 14 packs
 
-### Paso 3 — Completar los archivos de contexto
-
-Con el Blueprint aprobado, editar los 6 archivos marcados `[EDITAR]` reemplazando los `[marcadores]` con las respuestas reales:
-
-| Archivo | Herramienta |
+| Pack | Se activa si |
 |---|---|
-| `GEMINI.md` | Antigravity / Gemini |
-| `CLAUDE.md` | Claude Code |
-| `.agents/rules/project.md` | Antigravity (regla de proyecto) |
-| `.cursor/rules/core.mdc` | Cursor IDE |
-| `.github/copilot-instructions.md` | GitHub Copilot |
-| `.windsurfrules` | Windsurf |
+| `frontend-web` | hay interfaz en navegador |
+| `api-backend` | hay API, servicio o worker que atiende peticiones |
+| `base-de-datos` | hay esquema propio y migraciones |
+| `seguridad` | hay usuarios, datos de terceros o exposición a internet |
+| `i18n` | la interfaz se muestra en más de un idioma |
+| `cloud-aws` | la infraestructura vive en AWS |
+| `cloud-agnostico` | no debe atarse a un proveedor |
+| `datos-rag` | recuperación, embeddings, búsqueda semántica |
+| `app-ia` | **el producto es** una aplicación de IA |
+| `pwa-movil` | instalable, service worker, uso móvil real |
+| `saas-multitenant` | varios clientes en la misma instancia |
+| `monorepo` | el repositorio tiene más de un proyecto con su manifiesto |
+| `bot-automatizacion` | algo actúa sin que nadie mire |
+| `auditoria-informes` | se producen informes para alguien de fuera |
 
-### Paso 4 — Desarrollar con la IA
-
-La IA ahora trabaja con contexto completo. En cualquier herramienta que uses, ya tiene:
-- Qué hace el proyecto
-- Qué stack usa
-- Qué restricciones tiene
-- Cómo debe comportarse
+Cada pack trae: reglas con su porqué · ratchets sugeridos · una regla de Cursor **por glob**
+(que no gasta contexto cuando no toca) · un checklist de cierre · y los prompts que necesita.
 
 ---
 
-## 🧠 Cómo la IA construye su universo de conocimiento
+## Las tres piezas que más cambian el resultado
 
-El kit no es estático — está diseñado para que la IA **acumule conocimiento** con cada sesión.
+Son las que estaban dispersas en un solo proyecto cada una, y ahora están en el núcleo.
 
-### La carpeta `knowledge/wiki/` — Memoria del proyecto
+### 1 · Los ratchets — convivir con la deuda sin que crezca
 
-```
-knowledge/
-└── wiki/
-    ├── project.md      ← Se llena en Blueprint, se actualiza si el proyecto evoluciona
-    ├── features.md     ← Funcionalidad actual: módulos, flujos, pantallas, acciones
-    ├── product-design.md ← Marca, diseño UI, tokens, componentes y accesibilidad
-    ├── lessons.md      ← Cada vez que corriges a la IA, ella registra el patrón aquí
-    ├── decisions.md    ← Decisiones de arquitectura y su razón (ADRs)
-    └── glossary.md     ← Términos del dominio que la IA debe entender
+Un umbral que **solo puede mejorar**. Permite tener 340 colores crudos y garantizar que
+mañana no haya 341, sin bloquear el trabajo prohibiéndolos de golpe.
+
+```bash
+agente/tools/ratchet.sh baseline colores "grep -rn 'bg-white\|text-gray-' src/"
+agente/tools/ratchet.sh validate colores      # falla, y dice qué ocurrencia es nueva
 ```
 
-### Cómo funciona el ciclo
+El camino completo: **hallazgo → patrón con ID `AP-*` → detector → ratchet → regresión
+imposible.** Ahí es donde una lección deja de necesitar que alguien la recuerde.
+
+*(De ppsportmanagementarg, el proyecto más maduro del conjunto.)*
+
+### 2 · No parar por decisiones ajenas
+
+En una revisión real, de veinte paradas de un agente en una sesión **solo una era
+necesaria**. Y la consecuencia de parar de más no es la lentitud: es que **el usuario acaba
+siendo el planificador**.
+
+La regla: al encontrar una decisión que no es del agente, se anota en
+`decisiones-pendientes.md` y se sigue con todo lo que no dependa de ella. Parar solo si de
+verdad no queda nada ejecutable.
+
+*(De futbot-v2 y de las skills de hipismo.)*
+
+### 3 · IDs estables para lo que se repite
+
+`AP-*` anti-patrones · `AD-*` deuda aceptada · `ADR-*` decisiones · `L-*` lecciones ·
+`D-*` pendientes.
+
+Con la regla que hace útiles las auditorías: **un hallazgo que corresponde a un `AD-*`
+vigente no se re-reporta.** Se cita el AD y se revisa su *trigger*. Sin eso, cada auditoría
+redescubre lo mismo y el informe pierde credibilidad.
+
+*(De cowork-app.)*
+
+---
+
+## Cómo crece el kit
 
 ```
-1. Tú corriges a la IA       →  "No uses Redux, usamos Zustand"
-                                      │
-2. La IA registra la regla    →  knowledge/wiki/lessons.md
-                                      │
-3. En la próxima sesión       →  La IA lee lessons.md antes de trabajar
-                                      │
-4. No repite el error         →  Ahorro de tokens + menos frustración
+Corriges al agente
+     → lessons.md (L-*)
+     → si se repite y tiene detector: anti-patterns.md (AP-*)
+     → si el detector se automatiza: ratchet
+     → la regresión se vuelve imposible
 ```
 
-### Los archivos `llm-wiki/` — Conocimiento del sistema
+Y **de vuelta al kit**, que ya no es a mano:
 
-Los archivos numerados (`00` a `10`) no son documentación pasiva — son **instrucciones activas** que la IA consulta durante el trabajo:
+```bash
+node agente/tools/cosechar.mjs
+```
 
-| Archivo | Cuándo lo consulta la IA |
+Compara el proyecto con el kit en las dos direcciones y detecta los verificadores propios
+que el proyecto inventó. **Propone, no sube nada solo**: una pieza entra en el núcleo
+cuando ha sido útil en **dos** proyectos distintos; con uno, va a un pack.
+
+Ese era el paso que faltaba — no había camino de vuelta, y por eso el kit se quedó atrás
+mientras los proyectos avanzaban.
+
+---
+
+## Principios
+
+1. **Una sola copia de cada cosa.** Lo duplicado se desincroniza — es cuestión de tiempo.
+2. **Solo lo que aplica.** Un pack que no aplica es contexto que se lee y no sirve.
+3. **Data-First.** El esquema, antes que el código.
+4. **Nunca adivinar.** Sin contexto se pregunta; no se improvisa.
+5. **Conocimiento acumulativo.** Cada sesión deja el proyecto más inteligente.
+6. **Impacto mínimo.** Se toca lo necesario.
+7. **Fallar con claridad.** Un error ruidoso es mejor que un resultado silenciosamente falso.
+8. **Números, no adjetivos.**
+9. **Lo irreversible es del usuario.** Autonomía es no preguntar por el *cómo*.
+
+---
+
+## Informes
+
+Los entregables del kit son **ficheros HTML autocontenidos** en `knowledge/`, uno por
+corrida y con la fecha: se abren sin conexión, se versionan con el código y se comparan
+entre sí. Un archivo nuevo por corrida; el anterior no se sobrescribe.
+
+| Informe | Qué contiene |
 |---|---|
-| `02_DATA_SCHEMAS.md` | Antes de crear cualquier tipo o modelo de datos |
-| `06_INTEGRATIONS.md` | Antes de conectarse a un servicio externo |
-| `05_RELIABILITY.md` | Antes de entregar un resultado — valida contra el schema |
-| `07_PROMPT_TEMPLATES.md` | Cuando necesita construir un prompt para el sistema |
-| `04_TOOLS.md` | Cuando necesita usar una herramienta del proyecto |
+| [`informe-comparativo-repos-2026-08-22.html`](knowledge/informe-comparativo-repos-2026-08-22.html) | Auditoría de los 13 repositorios: quién resolvió mejor cada problema y las 15 piezas a cosechar |
+| [`informe-capacidades-reutilizables-2026-08-22.html`](knowledge/informe-capacidades-reutilizables-2026-08-22.html) | Análisis funcional: qué sabe hacer cada repo — backend, frontend y diseño — y qué se puede compartir |
+| [`informe-quien-gana-en-que-2026-08-23.html`](knowledge/informe-quien-gana-en-que-2026-08-23.html) | Comparativa por dimensión: front, back, informes PDF, seguridad y datos — quién gana cada una y por qué |
+| [`informe-mejoras-kit-2026-08-22.html`](knowledge/informe-mejoras-kit-2026-08-22.html) | CI, verificadores estructurales y detectores de ratchet — con los hallazgos reales que encontraron |
+| [`informe-mejoras-kit-2026-08-22-b.html`](knowledge/informe-mejoras-kit-2026-08-22-b.html) | Cobertura por capa, validadores de migración y pack monorepo |
+| [`informe-mejoras-kit-2026-08-22-c.html`](knowledge/informe-mejoras-kit-2026-08-22-c.html) | Despliegue OIDC+SSM, aislamiento con prueba de fuga y la suite e2e — con lo que apareció al ejecutarlos |
+| [`informe-mejoras-kit-2026-08-22-d.html`](knowledge/informe-mejoras-kit-2026-08-22-d.html) | Las seis últimas piezas y el camino de vuelta al kit — cosecha completa |
 
-### Cómo hacer crecer la base de conocimiento
+## Documentación
 
-| Acción | Resultado |
-|---|---|
-| Corriges a la IA | Ella añade la regla a `knowledge/wiki/lessons.md` |
-| Tomas una decisión de arquitectura | La IA la documenta en `knowledge/wiki/decisions.md` |
-| Defines un término del dominio | Se añade a `knowledge/wiki/glossary.md` |
-| Añades o cambias una funcionalidad | Se actualiza `knowledge/wiki/features.md` |
-| Cambias la marca o UI | Se actualiza `knowledge/wiki/product-design.md` |
-| Cambias de proveedor o API | Se actualiza `llm-wiki/06_INTEGRATIONS.md` |
-| Agregas un módulo nuevo | Se actualiza `llm-wiki/00_PROJECT_MAP.md` |
-
-> **Principio clave:** cada sesión con la IA deja el proyecto **más inteligente** que la anterior.
+- [`docs/DE-DONDE-SALIO.md`](docs/DE-DONDE-SALIO.md) — qué proyecto aportó cada pieza y por qué se eligió esa versión
+- [`docs/MIGRAR.md`](docs/MIGRAR.md) — cómo pasar los proyectos que ya tienen la versión anterior
+- [`docs/v1-superado/`](docs/v1-superado/) — lo que el núcleo nuevo reemplaza, conservado tal cual
 
 ---
 
-## ⚡ Cómo el kit ahorra tokens
+## Trabajar en el kit
 
-### Reglas activas (`llm-wiki/10_AGENT_RULES.md`)
+Este repositorio **es** el kit; no se instala sobre sí mismo. Lo que hay que saber para
+tocarlo está en [`AGENTS.md`](AGENTS.md).
 
-| Regla | Tokens que ahorra |
-|---|---|
-| **Edición parcial** — solo cambia las líneas necesarias, no reescribe archivos completos | ~40-60% en ediciones |
-| **Lectura en paralelo** — lee múltiples archivos en un solo mensaje, no uno por uno | ~30% en investigación |
-| **No duplicar en respuesta** — si editó un archivo, no lo copia en texto | ~20-40% por respuesta |
-| **Grep antes que subagente** — para búsquedas simples, no crea un subproceso completo | ~50% en búsquedas |
-| **Sin charla aduladora** — elimina "Excelente pregunta", "Gran idea", etc. | Marginal pero acumulativo |
-| **Validar antes de declarar listo** — evita ciclos de "listo → no funciona → arreglar" | ~1-2 turnos por tarea |
-
-### Ahorro por arquitectura
-
-| Mecanismo | Cómo ahorra |
-|---|---|
-| **Blueprint antes de código** | La IA no genera código que luego hay que rehacer |
-| **Schema definido (Data-First)** | La IA no inventa estructuras de datos |
-| **Reglas de comportamiento** | La IA no adivina lógica de negocio |
-| **Lessons.md** | La IA no repite errores ya corregidos |
-| **Archivos por herramienta** | Cada IDE carga solo lo que necesita, no todo |
-
----
-
-## 🎨 Producto, marca y frontend
-
-Cuando el proyecto tiene frontend, B.L.A.S.T. añade una subfase **B.1 — Product & Brand** después de las 5 preguntas base. Esta subfase evita que la IA invente estilos, pantallas o experiencia de usuario.
-
-La IA debe definir o inferir:
-
-| Elemento | Proyecto nuevo | Proyecto existente |
-|---|---|---|
-| Identidad de marca | Preguntar al usuario | Inferir de UI, CSS, assets, copy y docs |
-| Sistema visual | Preguntar colores, tipografía, componentes, responsive | Auditar CSS, componentes, design tokens, framework UI |
-| Funcionalidad actual | Definir módulos previstos | Documentar módulos, rutas, pantallas, acciones y flujos existentes |
-| Flujos de usuario | Definir flujos esperados | Inferir desde rutas, navegación, handlers y componentes |
-
-Los archivos de referencia son:
-
-```
-knowledge/wiki/
-├── features.md          ← Funcionalidad actual o prevista del producto
-└── product-design.md    ← Marca, UX, UI, tokens, componentes y accesibilidad
-```
-
-Si el proyecto es backend-only, CLI, worker o librería sin interfaz visual, `product-design.md` puede marcarse como `NO APLICA`.
-
----
-
-## Próximos pasos: Especialización por dominio
-
-El kit actual es **agnóstico de tecnología** — funciona con cualquier stack. Para maximizar el valor, el siguiente paso es añadir reglas específicas por dominio.
-
-### Skills de especialización (por crear)
-
-Estos serían nuevos skills en `.agents/skills/` que la IA invoca cuando el proyecto lo necesita:
-
-| Skill | Propósito | Ejemplo de contenido |
-|---|---|---|
-| `@design-frontend` | Convenciones de diseño UI/UX | Design system, tokens de color, tipografía, componentes, accesibilidad, responsive |
-| `@api-backend` | Patrones de API y backend | REST/GraphQL, manejo de errores HTTP, auth, validación, middlewares |
-| `@db-patterns` | Base de datos y modelos | Naming, migraciones, índices, relaciones, seeds |
-| `@testing-strategy` | Estrategia de testing | Qué testear, frameworks, mocks, cobertura mínima |
-| `@devops-deploy` | Despliegue y CI/CD | Dockerfile, pipelines, ambientes, monitoreo |
-
-### Reglas de Cursor por glob (por crear)
-
-Reglas que solo se activan cuando la IA trabaja en ciertos archivos:
-
-```yaml
-# .cursor/rules/frontend.mdc
----
-description: Convenciones de frontend
-globs: ["src/**/*.tsx", "src/**/*.css", "src/**/*.scss"]
-alwaysApply: false
----
-# Se inyecta solo cuando Cursor edita archivos frontend
-```
-
-```yaml
-# .cursor/rules/api.mdc
----
-description: Convenciones de API
-globs: ["src/api/**", "src/routes/**", "src/controllers/**"]
-alwaysApply: false
----
-# Se inyecta solo cuando Cursor edita archivos de API
-```
-
-> **Ventaja**: las reglas por glob no consumen tokens cuando no son relevantes.
-
-### Archivos de design system
-
-Para proyectos con frontend, estos archivos ya forman parte de la fuente de verdad:
-
-```
-knowledge/wiki/
-├── product-design.md     ← Marca, tokens, UI, componentes, accesibilidad, responsive
-└── features.md           ← Módulos, pantallas, flujos y estados del producto
-```
-
-La IA consultaría estos archivos antes de crear cualquier componente, asegurando consistencia visual sin necesidad de repetir instrucciones en cada prompt.
-
----
-
-## 📋 Compatibilidad de herramientas
-
-| Herramienta | Archivo que lee | Formato | Límite recomendado |
-|---|---|---|---|
-| Antigravity (Gemini) | `GEMINI.md` + `.agents/rules/` + `.agents/skills/` | Markdown | ~200 líneas por archivo |
-| Claude Code | `CLAUDE.md` | Markdown | ~200 líneas |
-| Cursor IDE | `.cursor/rules/*.mdc` | Markdown + YAML frontmatter | ~12,000 chars por archivo |
-| GitHub Copilot | `.github/copilot-instructions.md` | Markdown | Sin límite documentado |
-| Windsurf | `.windsurfrules` | Markdown | Sin límite documentado |
-
----
-
-## 🔑 Principios del kit
-
-1. **Data-First** — El schema se define antes de codificar. Nunca al revés.
-2. **Nunca adivinar** — Si la IA no tiene contexto, pregunta. No improvisa.
-3. **Conocimiento acumulativo** — Cada sesión deja el proyecto más inteligente.
-4. **Impacto mínimo** — La IA toca solo lo necesario. Sin cambios colaterales.
-5. **Falla con claridad** — Un error ruidoso es mejor que un resultado silenciosamente incorrecto.
-6. **Un kit, todas las herramientas** — El mismo conocimiento alimenta a Gemini, Claude, Cursor, Copilot y Windsurf.
-
----
-
-## 📄 Licencia
-
-Uso interno. Adaptar según necesidad.
+Regla de oro al añadir algo: **una regla entra en el núcleo cuando ha sido útil en dos
+proyectos distintos.** Si solo lo fue en uno, va a un pack. Si es de un dominio concreto,
+va a `prompts/_dominio/` y no se instala por defecto.

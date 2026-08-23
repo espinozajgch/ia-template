@@ -1,0 +1,73 @@
+# La puerta de calidad. Es la FUENTE DE VERDAD de qué significa "hecho" en este proyecto:
+# lo que corre aquí es lo que hay que poder correr en local antes de commitear.
+#
+# Ajusta la matriz `proyecto` a tus subdirectorios (o déjala en "." si es un solo proyecto).
+# Cada paso que quites de aquí deja de estar gateado — quítalo a sabiendas.
+name: calidad
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: calidad-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false          # que un subproyecto en rojo no oculte el estado del otro
+      matrix:
+        proyecto: [client, server]   # ← AJUSTAR. Un solo proyecto: [.]
+    defaults:
+      run:
+        working-directory: ${{ matrix.proyecto }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: ${{ matrix.proyecto }}/package-lock.json
+
+      - name: Instalar dependencias
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Auditar dependencias
+        run: npm audit --audit-level=high
+        continue-on-error: true   # ← ponlo en false cuando el proyecto esté limpio
+
+      - name: Tipos
+        run: npm run typecheck --if-present
+
+      - name: Análisis estático
+        run: npm run lint --if-present
+
+      - name: Ratchets
+        run: npm run ratchets --if-present
+
+      - name: Verificadores estructurales
+        run: |
+          node ../agente/tools/ciclos.mjs   src || node agente/tools/ciclos.mjs   src
+          node ../agente/tools/tamano.mjs validate || node agente/tools/tamano.mjs validate
+
+      - name: Build completo
+        # El chequeo de tipos NO sustituye al build: `tsc --noEmit` pasa en verde
+        # mientras el bundler falla por un import sin usar. Es el fallo que más veces
+        # ha roto el despliegue.
+        run: npm run build
+
+      - name: Tests con cobertura
+        run: npm run coverage --if-present
+
+      - name: Guardar informe de cobertura
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cobertura-${{ matrix.proyecto }}
+          path: ${{ matrix.proyecto }}/coverage
+          retention-days: 14

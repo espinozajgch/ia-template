@@ -1,0 +1,14 @@
+---
+description: Convenciones de informes PDF
+globs: ["**/*pdf*","**/*informe*","**/*report*","**/reporting/**"]
+alwaysApply: false
+---
+- Un PDF NO se compara byte a byte: lleva fecha y orden interno variables. Se compara su
+  FORMA — páginas, líneas por página, número de objetos gráficos — contra una referencia
+  commiteada. `huella.mjs` del pack.
+- Lo que varía por naturaleza (fechas, horas, ids) se NORMALIZA. Lo que se excluye de
+  verdad se DICE en la revisión: una referencia que tapa medio documento no es una red.
+- La maquetación se prueba sin generar el PDF donde se pueda: captura lo que decide la
+  función de estilo en vez de mirar el resultado.
+- Si el documento es de alguien: se descifra al vuelo, nunca se escribe copia en claro, y
+  la autorización se comprueba ANTES de descifrar.

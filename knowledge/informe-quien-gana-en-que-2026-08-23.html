@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quién gana en qué — front, back, PDF, seguridad y datos · 2026-08-23</title>
+<style>
+:root{
+  --ground:#F6F8FA;--surface:#FFFFFF;--surface-2:#EFF2F6;
+  --ink:#121821;--ink-2:#3A4557;--muted:#5D6A80;--faint:#8894A6;
+  --rule:#DFE4EC;--rule-strong:#C6CEDB;
+  --accent:#39479B;--accent-soft:#E8EAF6;
+  --brass:#8A6410;--brass-soft:#F6EEDC;
+  --ok:#1C6E52;--ok-soft:#E3F1EB;
+  --mid:#96690C;--mid-soft:#F8EFDA;
+  --risk:#A8322A;--risk-soft:#FAE9E7;
+  --shadow:0 1px 2px rgba(18,24,33,.05),0 8px 24px -12px rgba(18,24,33,.14);
+  --display:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --body:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#0E1218;--surface:#161C25;--surface-2:#1D242F;
+  --ink:#E6EBF2;--ink-2:#C3CBD8;--muted:#95A1B4;--faint:#6F7C90;
+  --rule:#252D3A;--rule-strong:#37414F;
+  --accent:#96A5EF;--accent-soft:#1E2440;--brass:#D8AC60;--brass-soft:#2A2317;
+  --ok:#5CC79B;--ok-soft:#12291F;--mid:#D7A63F;--mid-soft:#2A2313;
+  --risk:#E8827A;--risk-soft:#2C1917;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -14px rgba(0,0,0,.7);
+}}
+:root[data-theme="dark"]{
+  --ground:#0E1218;--surface:#161C25;--surface-2:#1D242F;
+  --ink:#E6EBF2;--ink-2:#C3CBD8;--muted:#95A1B4;--faint:#6F7C90;
+  --rule:#252D3A;--rule-strong:#37414F;
+  --accent:#96A5EF;--accent-soft:#1E2440;--brass:#D8AC60;--brass-soft:#2A2317;
+  --ok:#5CC79B;--ok-soft:#12291F;--mid:#D7A63F;--mid-soft:#2A2313;
+  --risk:#E8827A;--risk-soft:#2C1917;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -14px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);
+  font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1060px;margin:0 auto;padding:0 24px}
+h1,h2,h3,h4{text-wrap:balance;margin:0}
+code,.mono{font-family:var(--mono);font-size:.88em}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+
+.head{border-bottom:1px solid var(--rule);background:var(--surface)}
+.head .wrap{padding:56px 24px 36px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);margin:0 0 18px}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(36px,5.6vw,58px);line-height:1.02;
+  letter-spacing:-.015em;margin-bottom:18px}
+h1 em{font-style:italic;color:var(--accent)}
+.thesis{font-size:18.5px;color:var(--ink-2);max-width:62ch;line-height:1.55}
+.stats{display:flex;flex-wrap:wrap;margin-top:34px;border-top:1px solid var(--rule)}
+.stat{padding:16px 28px 0 0;margin-right:28px;border-right:1px solid var(--rule)}
+.stat:last-child{border-right:0}
+.stat b{display:block;font-family:var(--mono);font-size:24px;font-weight:600;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.stat span{font-size:12.5px;color:var(--muted)}
+
+section{padding:54px 0;border-bottom:1px solid var(--rule)}
+section:last-of-type{border-bottom:0}
+.shead{display:flex;align-items:baseline;gap:14px;margin-bottom:8px;flex-wrap:wrap}
+h2{font-family:var(--display);font-weight:400;font-size:clamp(26px,3.3vw,36px);letter-spacing:-.01em}
+.tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--accent);background:var(--accent-soft);padding:4px 9px;border-radius:3px}
+.lede{color:var(--muted);font-size:16.5px;margin:0 0 30px;max-width:66ch}
+
+.pieza{background:var(--surface);border:1px solid var(--rule);border-radius:6px;
+  box-shadow:var(--shadow);margin-bottom:18px;overflow:hidden}
+.pieza>header{display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:15px 22px;background:var(--surface-2);border-bottom:1px solid var(--rule);flex-wrap:wrap}
+.pieza h3{font-size:16.5px;font-weight:700}
+.pieza h3 small{display:block;font-family:var(--mono);font-size:10.5px;font-weight:500;
+  color:var(--faint);letter-spacing:.06em;text-transform:uppercase;margin-top:3px}
+.pieza .body{padding:20px 22px;display:flex;flex-direction:column;gap:14px}
+.pieza p{margin:0;font-size:14.5px;color:var(--ink-2);line-height:1.6;max-width:72ch}
+.pieza p b{color:var(--ink)}
+.chip{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;
+  padding:3px 8px;border-radius:3px;white-space:nowrap}
+.c-ok{background:var(--ok-soft);color:var(--ok)}
+.c-new{background:var(--accent-soft);color:var(--accent)}
+.c-risk{background:var(--risk-soft);color:var(--risk)}
+.c-mid{background:var(--mid-soft);color:var(--mid)}
+pre{margin:0;background:var(--surface-2);border:1px solid var(--rule);border-radius:4px;
+  padding:13px 15px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.6;color:var(--ink-2)}
+.why{border-left:2px solid var(--accent);background:var(--surface-2);padding:12px 15px;
+  border-radius:0 4px 4px 0;font-size:14px;color:var(--ink-2);line-height:1.55}
+.why b{color:var(--ink)}
+.why.brass{border-left-color:var(--brass)}
+
+.scroll{overflow-x:auto;border:1px solid var(--rule);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+thead th{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);background:var(--surface-2);
+  border-bottom:1px solid var(--rule-strong);white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:var(--surface-2)}
+td.mono{font-family:var(--mono);font-size:12px}
+td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+
+.lecc{background:var(--brass-soft);border-left:3px solid var(--brass);padding:18px 22px;
+  border-radius:0 5px 5px 0;margin-top:24px}
+.lecc h3{font-size:17px;margin-bottom:8px}
+.lecc p{margin:0 0 10px;font-size:14.5px;color:var(--ink-2);line-height:1.6;max-width:72ch}
+.lecc p:last-child{margin-bottom:0}
+
+.next{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(290px,1fr))}
+.next .n{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:17px 19px}
+.next h4{font-size:15px;margin-bottom:6px}
+.next p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.55}
+.foot{padding:34px 0 56px;color:var(--faint);font-size:13px}
+@media (max-width:640px){.head .wrap{padding-top:38px}.stat{padding-right:18px;margin-right:18px}}
+@media print{body{background:#fff;color:#000}.pieza,.next .n,.lecc{break-inside:avoid;box-shadow:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+<style>
+  .podio{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));margin-top:18px}
+  .p{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:18px 20px;box-shadow:var(--shadow)}
+  .p.oro{border-color:var(--brass);border-width:2px}
+  .p .pos{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--faint);display:block;margin-bottom:6px}
+  .p.oro .pos{color:var(--brass)}
+  .p h4{font-size:16px;margin-bottom:8px}
+  .p p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.55}
+  .razon{border-left:2px solid var(--brass);background:var(--brass-soft);padding:12px 15px;
+    border-radius:0 4px 4px 0;font-size:14px;color:var(--ink-2);line-height:1.6;margin-top:14px}
+  .razon b{color:var(--ink)}
+  td.g{background:var(--brass-soft);font-weight:600}
+</style>
+</head>
+<body>
+
+<header class="head">
+  <div class="wrap">
+    <p class="eyebrow">ia-template · comparativa por dimensión · 23 de agosto de 2026</p>
+    <h1>Quién gana<br><em>en qué</em></h1>
+    <p class="thesis">Cinco dimensiones, seis proyectos, y una razón concreta en cada caso —
+      no una impresión. Todo medido sobre el código de hoy, incluido el de
+      Professional Football Hub, que hasta ayer estaba 119 commits por detrás en mi copia.</p>
+    <div class="stats">
+      <div class="stat"><b>3</b><span>de 5 dimensiones las gana el mismo</span></div>
+      <div class="stat"><b>1</b><span>la gana un proyecto que no compite en las demás</span></div>
+      <div class="stat"><b>0</b><span>proyectos con segundo factor, salvo uno</span></div>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>El cuadro</h2><span class="tag">todo medido</span></div>
+    <p class="lede">Las cifras salen de contar sobre el código actual: ficheros de test,
+      capas con responsabilidad propia, tokens de diseño, restricciones en las migraciones.
+      Las casillas doradas son la mejor de su columna.</p>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Proyecto</th><th>Front</th><th>Back</th><th>PDF</th><th>Seguridad</th><th>Datos</th></tr></thead>
+        <tbody>
+          <tr><td class="mono"><b>ppsportmanagementarg</b></td>
+            <td class="g">56 componentes · 11 ratchets · 21 ficheros con axe</td>
+            <td class="g">15 capas · 815 tests · 6 workflows</td>
+            <td>html2pdf + exportación programada a S3</td>
+            <td class="g">RLS en 48 · RBAC en 72 · escaneo de secretos</td>
+            <td>240 tablas · 1,0 CHECK y 2,1 claves foráneas por tabla · 871 índices</td></tr>
+          <tr><td class="mono"><b>laboratorio</b> · Pulso</td>
+            <td>79 tokens · móvil y sin conexión · auditoría visual por rol</td>
+            <td>3 capas · 59 tests</td>
+            <td>impresión del navegador</td>
+            <td>RLS en 35 · <b>único con segundo factor</b></td>
+            <td class="g">84 tablas · <b>3,4 CHECK</b> y 3,1 claves foráneas por tabla</td></tr>
+          <tr><td class="mono"><b>hipismo</b></td>
+            <td>34 componentes · <span class="chip c-risk">0 tokens</span></td>
+            <td>monorepo · 87 tests · verificadores estructurales</td>
+            <td>jsPDF en el navegador, con tests</td>
+            <td>sin RLS · 10 ficheros de permisos</td>
+            <td>40 migraciones · <span class="chip c-risk">5 CHECK</span></td></tr>
+          <tr><td class="mono"><b>professional-football-hub</b></td>
+            <td>111 vistas · 46 exports compartidos · 68 tokens</td>
+            <td>36 routers · 66 tests · FastAPI</td>
+            <td class="g"><b>descifrado al vuelo, sin copia en claro</b></td>
+            <td>21 ficheros de cifrado · límite de ritmo en 26</td>
+            <td>73 migraciones · 23 CHECK</td></tr>
+          <tr><td class="mono"><b>futbot-v2</b></td>
+            <td>no aplica</td>
+            <td>146 tests de caracterización</td>
+            <td class="g"><b>generador propio · 3 tests del informe</b></td>
+            <td>no expuesto</td>
+            <td>sin base de datos</td></tr>
+          <tr><td class="mono"><b>futbot-web-app</b></td>
+            <td class="g">75 tokens · <b>la mejor suite móvil</b>: matriz de 6 pantallas × 3 anchos</td>
+            <td>42 tests · FastAPI + Pydantic</td>
+            <td>—</td>
+            <td>salta con motivo si faltan credenciales</td>
+            <td>sin migraciones</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>Frontend</h2><span class="tag">gana ppsport</span></div>
+    <div class="podio">
+      <div class="p oro"><span class="pos">1º</span><h4>ppsportmanagementarg</h4>
+        <p>56 componentes con quince piezas base documentadas en 812 líneas, <b>11 validadores</b>
+        que impiden salirse del sistema, y axe corriendo sobre 8 páginas × claro/oscuro.</p></div>
+      <div class="p"><span class="pos">2º</span><h4>laboratorio · Pulso</h4>
+        <p>79 tokens, navegación pensada para el pulgar y rutas propias de sin conexión. Le falta
+        el catálogo: un <span class="mono">ui.tsx</span> de 1.039 líneas sin documentar.</p></div>
+      <div class="p"><span class="pos">3º</span><h4>futbot-web-app</h4>
+        <p>El más pequeño de los seis, y el que mejor mide lo móvil: <b>área táctil y desborde
+        en una matriz de seis pantallas por tres anchos</b>. Los demás lo comprueban en una
+        pantalla — o en ninguna.</p></div>
+      <div class="p"><span class="pos">4º</span><h4>football-hub</h4>
+        <p>46 exports compartidos en un <span class="mono">shared.jsx</span> y 11 áreas. Sin
+        sistema documentado ni verificadores.</p></div>
+    </div>
+    <p class="razon"><b>Por qué gana, y no es por tener más componentes.</b> Es el único donde
+      el sistema <b>no se puede erosionar</b>: once validadores vigilan que no entre un color
+      crudo, una sombra suelta, un <span class="mono">&lt;input&gt;</span> sin envolver o una
+      tabla que esquive el contenedor. Los demás tienen buenas piezas y nada que impida que la
+      pantalla número cincuenta las ignore.</p>
+    <div class="lecc" style="border-left-color:var(--brass);background:var(--brass-soft)">
+      <h3>Corrección · faltaba un proyecto en las medidas</h3>
+      <p>Las dimensiones nuevas se midieron sobre cuatro proyectos y <b>futbot-web-app quedó
+        fuera</b> — por pequeño, que no es una razón. Al mirarlo resultó que tiene <b>la mejor
+        suite móvil del conjunto</b>: mide área táctil y desborde en una matriz de seis
+        pantallas por tres anchos, mientras los demás lo comprueban en una sola.</p>
+      <p>Y su test de PWA comprobaba tres cosas que el del kit no: que <b>ninguna respuesta de
+        la API esté cacheada</b> —justo la regla que el pack exigía por escrito y no
+        verificaba—, el icono <span class="mono">maskable</span> sin el cual Android recorta
+        el logotipo, y que las capturas del manifiesto existan. Ya están incorporadas.</p>
+    </div>
+
+    <p class="razon" style="margin-top:20px"><b>Y una corrección a lo que dije la semana pasada.</b> Escribí que ningún
+      frontend tenía tema oscuro de verdad. Era falso: ppsport lo tiene completo —65 tokens por
+      tema, persistido y con tests— solo que por clase y no por consulta de medios, y yo medí lo
+      segundo. Lo único que le faltaba era seguir la preferencia del sistema operativo, ya
+      corregido.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>Backend</h2><span class="tag">gana ppsport</span></div>
+    <div class="podio">
+      <div class="p oro"><span class="pos">1º</span><h4>ppsportmanagementarg</h4>
+        <p><b>15 capas</b> con responsabilidad propia —dominio, repositorios, servicios, rutas,
+        middleware, validación, auditoría, workers— y 815 ficheros de test, 12 de ellos contra un
+        Postgres efímero real.</p></div>
+      <div class="p"><span class="pos">2º</span><h4>hipismo</h4>
+        <p>Monorepo con la API y la web separadas, y algo que no tiene nadie más: <b>verificadores
+        estructurales en la CI</b> — ciclos de importación, deriva de esquema, tamaño de fichero.</p></div>
+      <div class="p"><span class="pos">3º</span><h4>football-hub</h4>
+        <p>36 routers bien delimitados por área. Pero una sola capa: el router hace de todo.</p></div>
+    </div>
+    <p class="razon"><b>La razón está en los 12 tests de integración, no en los 815.</b> Los tests
+      con la base simulada no ven los fallos que viven en el SQL: un <span class="mono">= ANY($1)</span>
+      mal escrito, una política que no filtra, un join que multiplica filas. Es el único que
+      ejercita el SQL de verdad contra una base que nace y muere con la ejecución. Y el único con
+      <b>mutación</b>: la cobertura dice cuánto código se ejecuta, la mutación dice si los tests
+      comprueban algo.</p>
+    <p class="razon"><b>Mención para hipismo.</b> Sus tres verificadores estructurales detectan
+      degradación de la <b>forma</b>, no del comportamiento — por eso todos los tests pasan y aun
+      así el proyecto empeora. Es la categoría que le falta a los otros cinco, y de ahí salió al
+      kit.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>Informes PDF</h2><span class="tag">empate entre dos, por motivos opuestos</span></div>
+    <div class="podio">
+      <div class="p oro"><span class="pos">Mejor generación</span><h4>futbot-v2</h4>
+        <p>Generador propio con campo de juego, redes de pases, mapas de tiro y escudos.
+        Adaptadores de maquetación con factoría, y <b>tres tests dedicados al informe</b>:
+        escudos, maquetación y el PDF entero.</p></div>
+      <div class="p oro"><span class="pos">Mejor entrega</span><h4>football-hub</h4>
+        <p><span class="mono">pdf_seguro.py</span>: los informes reposan cifrados en S3 y se
+        descifran <b>al vuelo, solo en el canal de la jugadora</b>. Nunca se guarda una copia en
+        claro.</p></div>
+      <div class="p"><span class="pos">3º</span><h4>ppsport · hipismo</h4>
+        <p>ppsport exporta a S3 con una tarea programada; hipismo genera en el navegador con
+        jsPDF y tests del diálogo.</p></div>
+    </div>
+    <p class="razon"><b>futbot-v2 gana la generación porque prueba la maquetación.</b> Un PDF que
+      «se genera sin error» puede salir con los escudos cambiados o el texto pisado, y eso ningún
+      test de integración lo ve. Tener un test que compara contra una referencia visual es lo que
+      separa generar un PDF de generarlo bien.</p>
+    <p class="razon"><b>football-hub gana la entrega por una decisión de diseño poco común:
+      degrada en vez de reventar.</b> Sin clave configurada, con un PDF sin cifrar, con la clave
+      equivocada o sin la librería, devuelve el fichero <b>original intacto</b> en lugar de
+      fallar. En el peor caso la jugadora ve un PDF que le pide clave; nunca ve un error. Esa
+      elección —quién paga el fallo— está escrita en el propio fichero.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>Seguridad</h2><span class="tag">gana ppsport, con un pero</span></div>
+    <div class="podio">
+      <div class="p oro"><span class="pos">1º</span><h4>ppsportmanagementarg</h4>
+        <p>RLS en 48 ficheros, control de acceso en 72, límite de ritmo en 57, <b>279 con
+        auditoría</b>, y un workflow que escanea secretos en cada empujón.</p></div>
+      <div class="p"><span class="pos">2º</span><h4>laboratorio · Pulso</h4>
+        <p>RLS en 35, y el <b>único con segundo factor</b> (TOTP propio, sin dependencias).
+        Cifrado de campos y clasificación de datos sensibles documentada.</p></div>
+      <div class="p"><span class="pos">3º</span><h4>football-hub</h4>
+        <p>21 ficheros con cifrado y límite de ritmo en 26, pero sin aislamiento por filas.</p></div>
+    </div>
+    <p class="razon"><b>Gana por el escaneo de secretos, que es lo único que se comprueba solo.</b>
+      Todo lo demás —RLS, permisos, límites— depende de que alguien lo escriba bien. Un paso de CI
+      que falla cuando entra una credencial es la única defensa que no se olvida. Es también el
+      motivo de que sea el proyecto con el remoto limpio, mientras seis de nueve llevan el token
+      dentro de la URL.</p>
+    <p class="razon"><b>El pero: no tiene segundo factor.</b> Gestiona contratos, finanzas y datos
+      personales de futbolistas, y el acceso es contraseña y nada más. Laboratorio, con menos
+      seguridad en todo lo demás, sí lo tiene — y su <span class="mono">totp.ts</span> son 173
+      líneas sin dependencias que se copian tal cual.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>Base de datos</h2><span class="tag">empate: laboratorio en integridad, ppsport en disciplina</span></div>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Proyecto</th><th class="num">Tablas</th><th class="num">CHECK/tabla</th><th class="num">Foráneas/tabla</th><th class="num">Índices</th><th>Validadores</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">laboratorio</td><td class="num">84</td><td class="num g">3,4</td><td class="num g">3,1</td><td class="num">318</td><td>—</td></tr>
+          <tr><td class="mono">ppsportmanagementarg</td><td class="num">240</td><td class="num">1,0</td><td class="num">2,1</td><td class="num g">871</td><td class="g">journal · idempotencia · deriva</td></tr>
+          <tr><td class="mono">hipismo</td><td class="num">52</td><td class="num">0,1</td><td class="num">1,0</td><td class="num">123</td><td>deriva de esquema</td></tr>
+          <tr><td class="mono">professional-football-hub</td><td class="num">62</td><td class="num">0,05</td><td class="num">0,5</td><td class="num">11</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="lecc" style="border-left-color:var(--brass);background:var(--brass-soft)">
+      <h3>Corrección · esta sección decía otra cosa</h3>
+      <p>La primera versión daba la dimensión a ppsport con «347 CHECK». Al construir la
+        herramienta que mide esto, resultó que <b>103 de esas 347 eran comentarios</b> que
+        mencionan la palabra, no restricciones. El recuento real es <b>243</b> — y laboratorio
+        tiene <b>282</b> con un tercio de las tablas.</p>
+      <p>Por tabla creada la diferencia es grande: <b>3,4 CHECK por tabla en laboratorio frente
+        a 1,0 en ppsport</b>. La conclusión se da la vuelta.</p>
+    </div>
+
+    <p class="razon" style="margin-top:20px"><b>Laboratorio gana la integridad.</b> Una regla que
+      solo vive en el código de la aplicación se rompe desde la consola, desde un script de
+      importación y desde el siguiente servicio que se conecte. Los CHECK, las claves foráneas y
+      las restricciones únicas son las reglas que <b>la base impone</b>, y no se pueden esquivar —
+      y laboratorio pone tres veces más por tabla.</p>
+    <p class="razon"><b>Ppsport gana la disciplina, que es la otra mitad.</b> Journal íntegro, migraciones idempotentes
+      y snapshot de esquema sin deriva: los tres corren en la CI. Es lo que evita el fallo más
+      caro de esta categoría — editar una migración ya aplicada, que en tu máquina funciona
+      porque la aplicaste con la versión nueva y en producción sigue el efecto de la vieja,
+      <b>sin que nada lo diga</b>.</p>
+    <div class="alerta" style="margin-top:22px">
+      <h3>El que más preocupa de este cuadro</h3>
+      <p><b>football-hub: 73 migraciones y solo 23 CHECK, 35 claves foráneas y 11 índices.</b>
+        Es una base de datos de gestión deportiva —lesiones, wellness, antropometría, contratos—
+        donde la integridad la sostiene casi entera la aplicación. Y con 36 routers escribiendo
+        contra ella, basta uno escrito con prisa.</p>
+      <p>Es además el único con una relación invertida: <b>más migraciones que índices</b>.
+        Normalmente cada migración que crea una tabla trae al menos su índice de búsqueda.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>Lo que dice el cuadro entero</h2></div>
+    <p class="lede">Tres de cinco dimensiones las gana el mismo proyecto, y eso no es
+      casualidad ni talento: es el único que instaló mecanismos que <b>se comprueban solos</b>.
+      Las otras dos las ganan quienes hicieron una cosa concreta mejor que él.</p>
+    <div class="grid2" style="display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(320px,1fr))">
+      <div class="p"><h4>La diferencia no está en saber, está en gatear</h4>
+        <p style="font-size:14px;color:var(--ink-2);line-height:1.6">Laboratorio tiene mejores
+        tokens, el único segundo factor y <b>tres veces más restricciones por tabla</b>. Hipismo
+        tiene los mejores verificadores estructurales. futbot-v2 tiene el mejor generador de PDF.
+        Cada uno hizo algo mejor que ppsport — pero ppsport es el único donde nada de lo que hizo
+        bien se puede degradar sin que salte una alarma.</p></div>
+      <div class="p"><h4>Lo que cada uno debería tomar del otro</h4>
+        <p style="font-size:14px;color:var(--ink-2);line-height:1.6">
+        <b>ppsport →</b> el segundo factor y las restricciones de laboratorio.<br>
+        <b>laboratorio →</b> los validadores de migración de ppsport.<br>
+        <b>hipismo →</b> tokens de diseño; tiene cero.<br>
+        <b>football-hub →</b> restricciones en la base, y un escaneo de secretos.<br>
+        Los cuatro caminos ya están en el kit.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap">
+    <p class="mono">ia-template · 23 de agosto de 2026</p>
+    <p>Medido sobre el código actual de cada repositorio. Los tokens de laboratorio se cuentan
+      sobre los 79 originales, no sobre los 123 de hoy: el resto los añadí yo al implementar su
+      tema oscuro. Los recuentos de seguridad son de ficheros que mencionan cada mecanismo, no
+      de líneas: sirven para comparar, no como medida absoluta.</p>
+  </div>
+</footer>
+
+</body>
+</html>

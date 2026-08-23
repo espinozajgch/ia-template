@@ -1,0 +1,57 @@
+# Tests de integración contra una base de datos REAL y efímera.
+#
+# Por qué existe: los tests con la base mockeada no ven los fallos que viven en el SQL —
+# un `= ANY($1)` mal escrito, una política de aislamiento que no filtra, una migración que
+# no es idempotente. Este job los ejercita contra un Postgres de verdad que nace y muere
+# con la ejecución, así que es seguro y no toca ningún entorno.
+name: integracion
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  integracion:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U test"
+          --health-interval 5s --health-timeout 5s --health-retries 12
+    env:
+      TEST_DATABASE_URL: postgresql://test:test@localhost:5432/test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+
+      - name: Instalar dependencias
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Aplicar migraciones
+        run: npm run db:migrate
+
+      - name: Las migraciones son idempotentes
+        # Aplicarlas dos veces debe ser inofensivo. Si la segunda pasada falla o cambia
+        # algo, la migración no se puede reintentar y un despliegue a medias deja la base
+        # en un estado que nadie sabe reparar.
+        run: npm run db:migrate
+
+      - name: Sembrar datos de prueba
+        run: npm run db:seed --if-present
+
+      - name: Tests de integración (SQL real, aislamiento, repositorios)
+        run: npm run test:integration
+
+      - name: Sin deriva entre el modelo y el esquema real
+        # El ORM y la base tienen que decir lo mismo. La deriva silenciosa es la que
+        # produce el fallo en producción que en local no se reproduce.
+        run: npm run db:check-drift --if-present

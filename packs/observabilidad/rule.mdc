@@ -1,0 +1,17 @@
+---
+description: Convenciones de observabilidad
+globs: ["**/logger*","**/logging/**","**/observab*","**/health*","**/salud*","**/middleware/**"]
+alwaysApply: false
+---
+- El registro es estructurado (JSON por salida estándar), nunca cadenas concatenadas.
+- La REDACCIÓN es central, en el registrador: no puede depender de que cada llamada
+  recuerde no pasar el cuerpo de la petición. Dos niveles: exacto para nombres cortos o
+  ambiguos, parcial para largos e inequívocos.
+- Lo que se decide NO redactar (nombre, ip, userAgent) va escrito con su porqué.
+- El registrador NUNCA lanza: se llama dentro de los catch, y si lanza enmascara el
+  incidente original.
+- Identificador de correlación en cada entrada, propagado por AsyncLocalStorage y no por
+  parámetro: si no, lo que registra un servicio o un repositorio queda sin correlación.
+- Se reutiliza el identificador entrante y se devuelve en la respuesta.
+- DOS sondas: vida sin comprobar dependencias (si no, una base caída reinicia todas las
+  instancias en bucle), disponibilidad con ellas y con límite de tiempo.

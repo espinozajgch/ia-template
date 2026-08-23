@@ -1,0 +1,16 @@
+---
+description: Convenciones de notificaciones y correo
+globs: ["**/email/**","**/mail*/**","**/notificac*/**","**/notification*/**","**/webhook*/**","**/outbox*","**/bandeja*"]
+alwaysApply: false
+---
+- Nada se envía dentro de la petición del usuario: se ENCOLA y termina. Un proveedor
+  lento o caído no puede romper la operación que el usuario pidió.
+- Clave única al encolar donde el duplicado sería visible para quien lo recibe.
+- Reclamar con FOR UPDATE SKIP LOCKED; varios workers no pueden repartirse el mismo.
+- Testigo de vigencia al informar del resultado: un worker rezagado no marca como enviado
+  lo que otro está mandando ahora.
+- Rescate programado de los que quedaron «procesando»: sin él la cola se degrada en
+  silencio con cada caída.
+- Lista de supresión GLOBAL alimentada por rebotes, comprobada al encolar y antes de enviar.
+- El panel enmascara destinatarios y sanea errores: un error del proveedor sin sanear
+  arrastra el token que venía dentro.

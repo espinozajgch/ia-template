@@ -1,0 +1,132 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Estilos de los componentes base, sobre TOKENS.
+   ─────────────────────────────────────────────────────────────────────────────
+   Va con CSS y variables, no con clases de un framework, por una razón concreta:
+   las reglas de este pack valen para React, Vue, Svelte o plantillas de servidor,
+   y atarlas a un framework de utilidades reduce a quién sirven.
+
+   Si tu proyecto usa Tailwind, mapea estos tokens en su configuración y usa las
+   clases; el CSS de aquí es el suelo, no la única forma.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* AJUSTAR: estos valores son un punto de partida legible, no una identidad. */
+  --ds-fondo:            #ffffff;
+  --ds-fondo-hundido:    #f6f7f9;
+  --ds-texto:            #16191d;
+  --ds-texto-suave:      #5b6470;
+  /* 3:1 sobre el fondo. Parece más oscuro de lo habitual a propósito: es el borde de un
+     control, y ahí WCAG exige 3:1 — el gris claro de costumbre se queda en 1,35:1 y deja
+     el campo invisible para quien tiene poca visión. */
+  --ds-borde:            #8b95a1;
+  --ds-borde-fuerte:     #5b6470;
+  --ds-marca:            #2f57c4;
+  --ds-marca-suave:      #eaeefb;
+  --ds-error:            #b3261e;
+  --ds-error-suave:      #fdecea;
+  --ds-radio:            10px;
+  --ds-alto-control:     44px;   /* el área táctil mínima, no un capricho estético */
+  --ds-foco:             2px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --ds-fondo:         #14171c;
+    --ds-fondo-hundido: #1b1f26;
+    --ds-texto:         #e6e9ee;
+    --ds-texto-suave:   #a2abb8;
+    --ds-borde:         #6d7580;   /* 3:1 sobre el fondo, igual que en claro */
+    --ds-borde-fuerte:  #9aa3ae;
+    --ds-marca:         #a8bcff;
+    --ds-marca-suave:   #212a45;
+    --ds-error:         #ffb4a9;
+    --ds-error-suave:   #3a1713;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ds-fondo:#14171c; --ds-fondo-hundido:#1b1f26; --ds-texto:#e6e9ee; --ds-texto-suave:#a2abb8;
+  --ds-borde:#6d7580; --ds-borde-fuerte:#9aa3ae; --ds-marca:#a8bcff; --ds-marca-suave:#212a45;
+  --ds-error:#ffb4a9; --ds-error-suave:#3a1713;
+}
+
+/* ── Campo ─────────────────────────────────────────────────────────────────── */
+.campo             { display: flex; flex-direction: column; gap: 4px; }
+.campo-etiqueta    { font-size: .875rem; font-weight: 500; color: var(--ds-texto); }
+.campo-obligatorio { color: var(--ds-error); margin-left: 2px; }
+.campo-ayuda       { margin: 0; font-size: .8125rem; color: var(--ds-texto-suave); }
+.campo-error       { margin: 0; font-size: .8125rem; color: var(--ds-error); }
+
+/* ── Controles ─────────────────────────────────────────────────────────────── */
+.control {
+  min-height: var(--ds-alto-control);   /* 44px: lo que el pulgar acierta */
+  width: 100%;
+  padding: 8px 12px;
+  font: inherit; font-size: .875rem;
+  color: var(--ds-texto);
+  background: var(--ds-fondo);
+  border: 1px solid var(--ds-borde);
+  border-radius: var(--ds-radio);
+}
+.control-area { resize: vertical; }
+
+/* El foco visible es el estado que más se olvida y el que rompe el teclado.
+   `:focus-visible` y no `:focus`: el ratón no debe dejar el anillo puesto. */
+.control:focus-visible,
+.marca:focus-visible,
+.selector-disparador:focus-visible {
+  outline: var(--ds-foco) solid var(--ds-marca);
+  outline-offset: 1px;
+}
+
+/* Un control inválido no se marca SOLO con color: el borde cambia de grosor.
+   El color solo no comunica (WCAG 1.4.1), y hay quien no lo distingue. */
+.control[aria-invalid="true"] {
+  border-color: var(--ds-error);
+  border-width: 2px;
+  background: var(--ds-error-suave);
+}
+
+.control:disabled,
+.esta-deshabilitado { opacity: .55; cursor: not-allowed; }
+
+.marca       { width: 18px; height: 18px; accent-color: var(--ds-marca); }
+.marca-linea { display: inline-flex; align-items: center; gap: 8px;
+               min-height: var(--ds-alto-control); cursor: pointer; user-select: none;
+               font-size: .875rem; color: var(--ds-texto); }
+
+.control-fichero { width: auto; display: inline-flex; align-items: center; gap: 6px;
+                   cursor: pointer; background: var(--ds-fondo-hundido); }
+
+/* Visible solo para lectores de pantalla: sigue siendo enfocable y anunciable. */
+.solo-lectores {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ── Selector ──────────────────────────────────────────────────────────────── */
+.selector            { position: relative; }
+.selector-disparador { display: flex; align-items: center; justify-content: space-between;
+                       gap: 8px; text-align: left; cursor: pointer; }
+.selector-disparador.esta-vacio .selector-valor { color: var(--ds-texto-suave); }
+.selector-valor      { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.selector-flecha     { flex-shrink: 0; color: var(--ds-texto-suave); }
+
+.selector-lista {
+  position: absolute; z-index: 40; top: calc(100% + 4px); left: 0; right: 0;
+  max-height: 260px; overflow-y: auto;
+  background: var(--ds-fondo);
+  border: 1px solid var(--ds-borde);
+  border-radius: var(--ds-radio);
+  box-shadow: 0 8px 24px -8px rgb(0 0 0 / .28);
+}
+.selector-opcion { padding: 10px 12px; font-size: .875rem; color: var(--ds-texto); cursor: pointer; }
+
+/* El resaltado del TECLADO y la opción ELEGIDA son dos cosas distintas y se ven
+   distintas: se puede recorrer la lista sin haber elegido todavía. */
+.selector-opcion.esta-activa  { background: var(--ds-marca-suave); }
+.selector-opcion.esta-elegida { font-weight: 600; color: var(--ds-marca); }
+.selector-vacio  { padding: 10px 12px; font-size: .875rem; color: var(--ds-texto-suave); }
+
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }

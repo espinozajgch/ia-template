@@ -1,0 +1,14 @@
+---
+description: Convenciones multi-cliente
+globs: ["**/tenant*/**","**/empresa*/**"]
+alwaysApply: false
+---
+- El soporte es infraestructura, no accesorio: es el único camino por el que un fallo
+  llega de quien lo sufre a quien puede arreglarlo.
+- Es la ÚNICA tabla con dos lectores legítimos (el cliente los suyos, la plataforma todos):
+  la política lo permite de forma explícita, y la marca de «soy soporte» la pone el
+  servidor tras comprobar el rol, nunca llega del cliente.
+- El estado «esperando cliente» no puede faltar: sin él la cola miente.
+- La prioridad se ordena por PESO DE NEGOCIO, no alfabéticamente («alta» < «baja» en texto).
+- Marca de visto POR LADO: con una sola, soporte marca como leído lo que el cliente no vio.
+- El texto de un ticket viene de fuera: se sanea, se marca y se delimita. No se rechaza.

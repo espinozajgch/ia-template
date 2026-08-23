@@ -1,0 +1,13 @@
+---
+description: Convenciones de API y backend
+globs: ["server/**","api/**","src/routes/**","src/controllers/**","src/handlers/**","app/api/**","**/*_handler.*","**/*_service.*"]
+alwaysApply: false
+---
+- Autorización en el borde, una sola vez. Por cada ruta que ESCRIBE: ¿qué la autoriza?
+- Fail-closed: ante error del comprobador de permisos, denegar.
+- Nunca devolver la excepción cruda; error tipado fuera, detalle en el log con correlación.
+- Nunca convertir un fallo en un resultado vacío (`except: pass`, `catch { return [] }`).
+- Los efectos secundarios no tumban la operación principal, y no se dan por hechos.
+- Timeout + reintentos con espera creciente en toda llamada saliente.
+- Idempotencia donde haya reintentos.
+- Validar en el borde contra el esquema; dentro, confiar en el tipo.

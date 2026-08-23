@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cobertura, migraciones y monorepo — segunda tanda de mejoras · 2026-08-22</title>
+<style>
+:root{
+  --ground:#F6F8FA;--surface:#FFFFFF;--surface-2:#EFF2F6;
+  --ink:#121821;--ink-2:#3A4557;--muted:#5D6A80;--faint:#8894A6;
+  --rule:#DFE4EC;--rule-strong:#C6CEDB;
+  --accent:#39479B;--accent-soft:#E8EAF6;
+  --brass:#8A6410;--brass-soft:#F6EEDC;
+  --ok:#1C6E52;--ok-soft:#E3F1EB;
+  --mid:#96690C;--mid-soft:#F8EFDA;
+  --risk:#A8322A;--risk-soft:#FAE9E7;
+  --shadow:0 1px 2px rgba(18,24,33,.05),0 8px 24px -12px rgba(18,24,33,.14);
+  --display:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --body:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#0E1218;--surface:#161C25;--surface-2:#1D242F;
+  --ink:#E6EBF2;--ink-2:#C3CBD8;--muted:#95A1B4;--faint:#6F7C90;
+  --rule:#252D3A;--rule-strong:#37414F;
+  --accent:#96A5EF;--accent-soft:#1E2440;--brass:#D8AC60;--brass-soft:#2A2317;
+  --ok:#5CC79B;--ok-soft:#12291F;--mid:#D7A63F;--mid-soft:#2A2313;
+  --risk:#E8827A;--risk-soft:#2C1917;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -14px rgba(0,0,0,.7);
+}}
+:root[data-theme="dark"]{
+  --ground:#0E1218;--surface:#161C25;--surface-2:#1D242F;
+  --ink:#E6EBF2;--ink-2:#C3CBD8;--muted:#95A1B4;--faint:#6F7C90;
+  --rule:#252D3A;--rule-strong:#37414F;
+  --accent:#96A5EF;--accent-soft:#1E2440;--brass:#D8AC60;--brass-soft:#2A2317;
+  --ok:#5CC79B;--ok-soft:#12291F;--mid:#D7A63F;--mid-soft:#2A2313;
+  --risk:#E8827A;--risk-soft:#2C1917;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -14px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);
+  font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1060px;margin:0 auto;padding:0 24px}
+h1,h2,h3,h4{text-wrap:balance;margin:0}
+code,.mono{font-family:var(--mono);font-size:.88em}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+
+.head{border-bottom:1px solid var(--rule);background:var(--surface)}
+.head .wrap{padding:56px 24px 36px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);margin:0 0 18px}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(36px,5.6vw,58px);line-height:1.02;
+  letter-spacing:-.015em;margin-bottom:18px}
+h1 em{font-style:italic;color:var(--accent)}
+.thesis{font-size:18.5px;color:var(--ink-2);max-width:62ch;line-height:1.55}
+.stats{display:flex;flex-wrap:wrap;margin-top:34px;border-top:1px solid var(--rule)}
+.stat{padding:16px 28px 0 0;margin-right:28px;border-right:1px solid var(--rule)}
+.stat:last-child{border-right:0}
+.stat b{display:block;font-family:var(--mono);font-size:24px;font-weight:600;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.stat span{font-size:12.5px;color:var(--muted)}
+
+section{padding:54px 0;border-bottom:1px solid var(--rule)}
+section:last-of-type{border-bottom:0}
+.shead{display:flex;align-items:baseline;gap:14px;margin-bottom:8px;flex-wrap:wrap}
+h2{font-family:var(--display);font-weight:400;font-size:clamp(26px,3.3vw,36px);letter-spacing:-.01em}
+.tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--accent);background:var(--accent-soft);padding:4px 9px;border-radius:3px}
+.lede{color:var(--muted);font-size:16.5px;margin:0 0 30px;max-width:66ch}
+
+.pieza{background:var(--surface);border:1px solid var(--rule);border-radius:6px;
+  box-shadow:var(--shadow);margin-bottom:18px;overflow:hidden}
+.pieza>header{display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:15px 22px;background:var(--surface-2);border-bottom:1px solid var(--rule);flex-wrap:wrap}
+.pieza h3{font-size:16.5px;font-weight:700}
+.pieza h3 small{display:block;font-family:var(--mono);font-size:10.5px;font-weight:500;
+  color:var(--faint);letter-spacing:.06em;text-transform:uppercase;margin-top:3px}
+.pieza .body{padding:20px 22px;display:flex;flex-direction:column;gap:14px}
+.pieza p{margin:0;font-size:14.5px;color:var(--ink-2);line-height:1.6;max-width:72ch}
+.pieza p b{color:var(--ink)}
+.chip{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;
+  padding:3px 8px;border-radius:3px;white-space:nowrap}
+.c-ok{background:var(--ok-soft);color:var(--ok)}
+.c-new{background:var(--accent-soft);color:var(--accent)}
+.c-risk{background:var(--risk-soft);color:var(--risk)}
+.c-mid{background:var(--mid-soft);color:var(--mid)}
+pre{margin:0;background:var(--surface-2);border:1px solid var(--rule);border-radius:4px;
+  padding:13px 15px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.6;color:var(--ink-2)}
+.why{border-left:2px solid var(--accent);background:var(--surface-2);padding:12px 15px;
+  border-radius:0 4px 4px 0;font-size:14px;color:var(--ink-2);line-height:1.55}
+.why b{color:var(--ink)}
+.why.brass{border-left-color:var(--brass)}
+
+.scroll{overflow-x:auto;border:1px solid var(--rule);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+thead th{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);background:var(--surface-2);
+  border-bottom:1px solid var(--rule-strong);white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:var(--surface-2)}
+td.mono{font-family:var(--mono);font-size:12px}
+td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+
+.lecc{background:var(--brass-soft);border-left:3px solid var(--brass);padding:18px 22px;
+  border-radius:0 5px 5px 0;margin-top:24px}
+.lecc h3{font-size:17px;margin-bottom:8px}
+.lecc p{margin:0 0 10px;font-size:14.5px;color:var(--ink-2);line-height:1.6;max-width:72ch}
+.lecc p:last-child{margin-bottom:0}
+
+.next{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(290px,1fr))}
+.next .n{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:17px 19px}
+.next h4{font-size:15px;margin-bottom:6px}
+.next p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.55}
+.foot{padding:34px 0 56px;color:var(--faint);font-size:13px}
+@media (max-width:640px){.head .wrap{padding-top:38px}.stat{padding-right:18px;margin-right:18px}}
+@media print{body{background:#fff;color:#000}.pieza,.next .n,.lecc{break-inside:avoid;box-shadow:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="head">
+  <div class="wrap">
+    <p class="eyebrow">ia-template · segunda tanda · 22 agosto 2026</p>
+    <h1>Cobertura, migraciones<br>y <em>monorepo</em></h1>
+    <p class="thesis">Tres piezas más de las quince del informe comparativo. Las dos
+      primeras existen para evitar que un número mienta: la cobertura que se infla
+      excluyendo código, y la migración editada después de aplicarse. La tercera cubre
+      una forma de repositorio que cuatro de tus trece proyectos ya tienen.</p>
+    <div class="stats">
+      <div class="stat"><b>2</b><span>herramientas nuevas</span></div>
+      <div class="stat"><b>1</b><span>pack nuevo</span></div>
+      <div class="stat"><b>5</b><span>verificadores en total</span></div>
+      <div class="stat"><b>14</b><span>packs</span></div>
+      <div class="stat"><b>4</b><span>hallazgos reales</span></div>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>Lo que se añadió</h2></div>
+    <p class="lede">Las dos herramientas se probaron contra los datos reales de tus
+      proyectos —la cobertura medida de ppsport, las migraciones de tres convenciones
+      distintas— antes de darlas por hechas.</p>
+
+    <article class="pieza">
+      <header>
+        <h3>cobertura.mjs<small>nucleo/tools/</small></h3>
+        <span class="chip c-new">nuevo</span>
+      </header>
+      <div class="body">
+        <p>Un porcentaje de cobertura alto no significa nada por sí solo. Tres cosas lo
+          vacían, y esta herramienta detecta las tres.</p>
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Subcomando</th><th>Qué detecta</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">enmascarados</td><td>Ficheros hundidos que su capa está tapando: el umbral sobre <span class="mono">src/pages/**</span> agrega noventa ficheros, y uno al 15 % se compensa con hermanos al 100 %</td></tr>
+              <tr><td class="mono">excluidos</td><td>Código de <span class="mono">src/</span> que no aparece en el resumen: o no lo ejecuta ningún test, o está excluido del cómputo</td></tr>
+              <tr><td class="mono">proponer</td><td>Umbrales por capa a partir de <b>lo medido hoy</b>, no de un 100 aspiracional</td></tr>
+              <tr><td class="mono">validar</td><td>Trinquete: falla si la cobertura baja respecto a la línea base</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="why brass"><b>Probado contra la cobertura real de ppsportmanagementarg:</b>
+          encontró <b>20 ficheros enmascarados</b> en el proyecto más maduro del conjunto —
+          <span class="mono">Representacion.tsx</span> al 46,1 % de líneas mientras
+          <span class="mono">src/pages</span> agrega 90,6 %— y 14.260 líneas fuera del cómputo
+          (traducciones y tipos, exclusiones legítimas: la herramienta informa, la persona
+          juzga).</div>
+        <p class="why"><b>La lección que generaliza.</b> Ese proyecto documentó en su propia
+          configuración el día que dejó de excluir sus páginas y sus rutas, y el número bajó
+          del 93 % al 44 %. Un 93 % que excluye la mitad del código es <b>peor</b> que un
+          44 % honesto, porque impide ver el problema. Bajar un número para que signifique
+          algo es la decisión correcta.</p>
+      </div>
+    </article>
+
+    <article class="pieza">
+      <header>
+        <h3>esquema.mjs<small>nucleo/tools/</small></h3>
+        <span class="chip c-new">nuevo</span>
+      </header>
+      <div class="body">
+        <p>Seis comprobaciones sobre las migraciones. Reconoce las tres convenciones
+          habituales sin configurar nada: <span class="mono">001_nombre.sql</span>,
+          drizzle con <span class="mono">_journal.json</span>, y directorios con sello de
+          tiempo estilo prisma.</p>
+        <pre>esquema.mjs orden          huecos, duplicados y coherencia con el journal
+esquema.mjs sellar         sella el estado — tras aplicar en producción
+esquema.mjs sellos         ¿cambió una migración ya sellada?
+esquema.mjs idempotencia   DDL que no aguanta un reintento
+esquema.mjs instantanea    guarda el esquema vivo (pg_dump)
+esquema.mjs deriva         compara el esquema vivo con la instantánea</pre>
+        <p class="why"><b>Por qué los sellos.</b> Editar una migración ya aplicada es el
+          error más caro de esta categoría: en tu máquina la base está bien porque la
+          aplicaste con la versión nueva; en producción sigue el efecto de la vieja, y
+          <b>nada lo dice</b>. Una migración aplicada es historia: se escribe la siguiente.</p>
+      </div>
+    </article>
+
+    <article class="pieza">
+      <header>
+        <h3>Pack monorepo<small>packs/monorepo/</small></h3>
+        <span class="chip c-new">nuevo</span>
+      </header>
+      <div class="body">
+        <p>Cuatro de tus trece proyectos son monorepo y el instalador asumía un solo
+          proyecto en la raíz. El pack fija dónde va cada cosa —<span class="mono">AGENTS.md</span>
+          y la fuente de verdad solo en la raíz, las líneas base de ratchet una por
+          paquete— y las reglas que evitan que los paquetes se acoplen.</p>
+        <p class="why"><b>La regla que más ahorra.</b> Las dependencias van en una sola
+          dirección: <span class="mono">apps → packages → compartido</span>, y una aplicación
+          nunca importa de otra aplicación. Cuando dos necesitan lo mismo, ese algo baja a un
+          paquete. <span class="mono">ciclos.mjs</span> ya lo verifica.</p>
+        <p class="why"><b>Y la que más se ignora.</b> Un paquete compartido que crece con
+          «lo que hacía falta en los dos sitios» acaba siendo un cajón del que todos dependen
+          y nadie mantiene. <b>Dos copias que evolucionan distinto son más baratas que una
+          abstracción equivocada.</b></p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>Lo que encontraron al probarlos</h2><span class="tag">hallazgos reales</span></div>
+    <p class="lede">Salida de ejecutar las herramientas contra los repositorios, no
+      estimaciones.</p>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Repositorio</th><th>Hallazgo</th><th>Gravedad</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">laboratorio</td>
+            <td>Dos migraciones con el número <b>029</b> — y <span class="mono">scripts/migrate.mjs:49</span> ordena por nombre de fichero, así que el orden de aplicación depende de la máquina</td>
+            <td><span class="chip c-risk">error</span></td></tr>
+          <tr><td class="mono">ppsportmanagementarg</td>
+            <td>Dos migraciones con el número <b>0150</b>. Su journal fija el orden, así que se aplican bien — pero confunde a quien lo lee y a cualquier herramienta que ordene por nombre</td>
+            <td><span class="chip c-mid">aviso</span></td></tr>
+          <tr><td class="mono">ppsportmanagementarg</td>
+            <td><b>20 ficheros enmascarados</b> por el umbral de su capa, en el proyecto con la puerta más completa del conjunto</td>
+            <td><span class="chip c-mid">aviso</span></td></tr>
+          <tr><td class="mono">laboratorio</td>
+            <td>37 sentencias que no aguantan un reintento, en 21 migraciones (sobre todo <span class="mono">ADD CONSTRAINT</span> e <span class="mono">INSERT</span> sin <span class="mono">ON CONFLICT</span>)</td>
+            <td><span class="chip c-mid">aviso</span></td></tr>
+          <tr><td class="mono">hipismo</td>
+            <td>40 migraciones, secuencia coherente</td>
+            <td><span class="chip c-ok">limpio</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="lecc">
+      <h3>Lo que cambió el diseño de la herramienta a mitad de camino</h3>
+      <p>La primera versión de <span class="mono">esquema.mjs</span> marcaba 14 problemas en
+        ppsportmanagementarg. Al verificarlos contra el validador que ese proyecto ya tiene,
+        <b>12 eran excepciones documentadas</b>: migraciones aplicadas a mano en producción,
+        con su propia lista blanca y su explicación escrita.</p>
+      <p>La herramienta tenía razón en los hechos y se equivocaba en el juicio. Un
+        verificador sin forma de declarar una excepción documentada grita cada corrida, y lo
+        que se hace con eso es <b>apagarlo</b> — que es el fallo que este kit lleva tres
+        secciones advirtiendo.</p>
+      <p>Así que ahora las excepciones se declaran <b>con su razón</b> en
+        <span class="mono">.ratchets/esquema-excepciones.json</span>, y la gravedad depende
+        del mecanismo real: un número repetido es <b>error</b> cuando el orden lo decide el
+        nombre del fichero, y <b>aviso</b> cuando lo fija un journal. Con las excepciones
+        declaradas, ppsport pasa de 14 ruidos a 1 aviso legítimo.</p>
+      <p>Por la misma razón, <span class="mono">idempotencia</span> avisa y no falla: hacerla
+        fallar por migraciones históricas que no se pueden tocar dejaría la puerta en rojo
+        permanente. Para gatear solo lo nuevo:
+        <span class="mono">--desde &lt;primera-nueva&gt; --estricto</span>.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>Cómo quedó conectado</h2></div>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Dónde</th><th>Qué cambió</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">protocolo/02_PUERTA…</td><td>Sección 6 nueva: la cobertura y los tres fallos que la vuelven inútil. Los verificadores de §5 incluyen migraciones y cobertura</td></tr>
+          <tr><td class="mono">skills/verificar</td><td>Los seis verificadores estructurales, con su orden</td></tr>
+          <tr><td class="mono">packs/base-de-datos</td><td>Los seis subcomandos de <span class="mono">esquema.mjs</span>, las excepciones declarables y la prueba real de idempotencia en CI</td></tr>
+          <tr><td class="mono">packs/api-backend</td><td>Cobertura por capa, y la regla de no excluir para inflar ni bajar el piso para pasar</td></tr>
+          <tr><td class="mono">instalar.sh</td><td>Pack <span class="mono">monorepo</span>, y el mensaje final indica cómo fijar las cinco líneas base</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>Lo que sigue</h2><span class="tag">quedan 9 de 15</span></div>
+    <div class="next">
+      <div class="n"><h4>Despliegue OIDC + SSM</h4><p>Rol asumido, despliegue al commit ya gateado, verificación del borde público. Sin claves de larga vida.</p></div>
+      <div class="n"><h4>RLS con su test de fuga</h4><p>El esqueleto SQL de las políticas y el test que las ejercita con dos identidades contra una base real.</p></div>
+      <div class="n"><h4>Presupuesto de rendimiento</h4><p>El script con umbral que rompe la puerta cuando el paquete engorda.</p></div>
+      <div class="n"><h4>Suite e2e canónica</h4><p>Los cinco specs escritos, no solo nombrados en el workflow.</p></div>
+      <div class="n"><h4>Puertos y adaptadores</h4><p>Interfaz + implementaciones + factoría, con el ejemplo de almacenamiento.</p></div>
+      <div class="n"><h4>Validador de variante regional</h4><p>Paridad de claves más el voseo tratado como algo que se gatea.</p></div>
+      <div class="n"><h4>Test de PWA</h4><p>Manifiesto, service worker y arranque sin conexión, con config móvil separada.</p></div>
+      <div class="n"><h4>Retorno automático al kit</h4><p>El comando que propone qué subir del proyecto al kit. Hoy sigue siendo copiar a mano.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap">
+    <p class="mono">ia-template · 22 de agosto de 2026 · segunda tanda</p>
+    <p>Herramientas ejecutadas contra ppsportmanagementarg, laboratorio e hipismo.
+      Tandas anteriores: <span class="mono">informe-mejoras-kit-2026-08-22.html</span> ·
+      <span class="mono">informe-comparativo-repos-2026-08-22.html</span></p>
+  </div>
+</footer>
+
+</body>
+</html>

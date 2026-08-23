@@ -1,0 +1,9 @@
+{
+  "_comentario": "Servidores MCP del proyecto. Quitar los que no apliquen: un MCP declarado y no usado gasta contexto en cada arranque.",
+  "mcpServers": {
+    "codebase-memory": {
+      "command": "npx",
+      "args": ["-y", "codebase-memory-mcp@latest"]
+    }
+  }
+}

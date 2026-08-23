@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Las seis últimas — cosecha completa · 2026-08-22</title>
+<style>
+:root{
+  --ground:#F6F8FA;--surface:#FFFFFF;--surface-2:#EFF2F6;
+  --ink:#121821;--ink-2:#3A4557;--muted:#5D6A80;--faint:#8894A6;
+  --rule:#DFE4EC;--rule-strong:#C6CEDB;
+  --accent:#39479B;--accent-soft:#E8EAF6;
+  --brass:#8A6410;--brass-soft:#F6EEDC;
+  --ok:#1C6E52;--ok-soft:#E3F1EB;
+  --mid:#96690C;--mid-soft:#F8EFDA;
+  --risk:#A8322A;--risk-soft:#FAE9E7;
+  --shadow:0 1px 2px rgba(18,24,33,.05),0 8px 24px -12px rgba(18,24,33,.14);
+  --display:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --body:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#0E1218;--surface:#161C25;--surface-2:#1D242F;
+  --ink:#E6EBF2;--ink-2:#C3CBD8;--muted:#95A1B4;--faint:#6F7C90;
+  --rule:#252D3A;--rule-strong:#37414F;
+  --accent:#96A5EF;--accent-soft:#1E2440;--brass:#D8AC60;--brass-soft:#2A2317;
+  --ok:#5CC79B;--ok-soft:#12291F;--mid:#D7A63F;--mid-soft:#2A2313;
+  --risk:#E8827A;--risk-soft:#2C1917;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -14px rgba(0,0,0,.7);
+}}
+:root[data-theme="dark"]{
+  --ground:#0E1218;--surface:#161C25;--surface-2:#1D242F;
+  --ink:#E6EBF2;--ink-2:#C3CBD8;--muted:#95A1B4;--faint:#6F7C90;
+  --rule:#252D3A;--rule-strong:#37414F;
+  --accent:#96A5EF;--accent-soft:#1E2440;--brass:#D8AC60;--brass-soft:#2A2317;
+  --ok:#5CC79B;--ok-soft:#12291F;--mid:#D7A63F;--mid-soft:#2A2313;
+  --risk:#E8827A;--risk-soft:#2C1917;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -14px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);
+  font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1060px;margin:0 auto;padding:0 24px}
+h1,h2,h3,h4{text-wrap:balance;margin:0}
+code,.mono{font-family:var(--mono);font-size:.88em}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+
+.head{border-bottom:1px solid var(--rule);background:var(--surface)}
+.head .wrap{padding:56px 24px 36px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);margin:0 0 18px}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(36px,5.6vw,58px);line-height:1.02;
+  letter-spacing:-.015em;margin-bottom:18px}
+h1 em{font-style:italic;color:var(--accent)}
+.thesis{font-size:18.5px;color:var(--ink-2);max-width:62ch;line-height:1.55}
+.stats{display:flex;flex-wrap:wrap;margin-top:34px;border-top:1px solid var(--rule)}
+.stat{padding:16px 28px 0 0;margin-right:28px;border-right:1px solid var(--rule)}
+.stat:last-child{border-right:0}
+.stat b{display:block;font-family:var(--mono);font-size:24px;font-weight:600;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.stat span{font-size:12.5px;color:var(--muted)}
+
+section{padding:54px 0;border-bottom:1px solid var(--rule)}
+section:last-of-type{border-bottom:0}
+.shead{display:flex;align-items:baseline;gap:14px;margin-bottom:8px;flex-wrap:wrap}
+h2{font-family:var(--display);font-weight:400;font-size:clamp(26px,3.3vw,36px);letter-spacing:-.01em}
+.tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--accent);background:var(--accent-soft);padding:4px 9px;border-radius:3px}
+.lede{color:var(--muted);font-size:16.5px;margin:0 0 30px;max-width:66ch}
+
+.pieza{background:var(--surface);border:1px solid var(--rule);border-radius:6px;
+  box-shadow:var(--shadow);margin-bottom:18px;overflow:hidden}
+.pieza>header{display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:15px 22px;background:var(--surface-2);border-bottom:1px solid var(--rule);flex-wrap:wrap}
+.pieza h3{font-size:16.5px;font-weight:700}
+.pieza h3 small{display:block;font-family:var(--mono);font-size:10.5px;font-weight:500;
+  color:var(--faint);letter-spacing:.06em;text-transform:uppercase;margin-top:3px}
+.pieza .body{padding:20px 22px;display:flex;flex-direction:column;gap:14px}
+.pieza p{margin:0;font-size:14.5px;color:var(--ink-2);line-height:1.6;max-width:72ch}
+.pieza p b{color:var(--ink)}
+.chip{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;
+  padding:3px 8px;border-radius:3px;white-space:nowrap}
+.c-ok{background:var(--ok-soft);color:var(--ok)}
+.c-new{background:var(--accent-soft);color:var(--accent)}
+.c-risk{background:var(--risk-soft);color:var(--risk)}
+.c-mid{background:var(--mid-soft);color:var(--mid)}
+pre{margin:0;background:var(--surface-2);border:1px solid var(--rule);border-radius:4px;
+  padding:13px 15px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.6;color:var(--ink-2)}
+.why{border-left:2px solid var(--accent);background:var(--surface-2);padding:12px 15px;
+  border-radius:0 4px 4px 0;font-size:14px;color:var(--ink-2);line-height:1.55}
+.why b{color:var(--ink)}
+.why.brass{border-left-color:var(--brass)}
+
+.scroll{overflow-x:auto;border:1px solid var(--rule);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+thead th{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);background:var(--surface-2);
+  border-bottom:1px solid var(--rule-strong);white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:var(--surface-2)}
+td.mono{font-family:var(--mono);font-size:12px}
+td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+
+.lecc{background:var(--brass-soft);border-left:3px solid var(--brass);padding:18px 22px;
+  border-radius:0 5px 5px 0;margin-top:24px}
+.lecc h3{font-size:17px;margin-bottom:8px}
+.lecc p{margin:0 0 10px;font-size:14.5px;color:var(--ink-2);line-height:1.6;max-width:72ch}
+.lecc p:last-child{margin-bottom:0}
+
+.next{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(290px,1fr))}
+.next .n{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:17px 19px}
+.next h4{font-size:15px;margin-bottom:6px}
+.next p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.55}
+.foot{padding:34px 0 56px;color:var(--faint);font-size:13px}
+@media (max-width:640px){.head .wrap{padding-top:38px}.stat{padding-right:18px;margin-right:18px}}
+@media print{body{background:#fff;color:#000}.pieza,.next .n,.lecc{break-inside:avoid;box-shadow:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="head">
+  <div class="wrap">
+    <p class="eyebrow">ia-template · cuarta y última tanda · 22 agosto 2026</p>
+    <h1>Las seis últimas,<br>y el <em>camino de vuelta</em></h1>
+    <p class="thesis">Con esto quedan cosechadas las quince piezas del informe comparativo.
+      La última es la que faltaba desde el principio: un comando que mira un proyecto y
+      dice qué merece subir al kit — porque hasta hoy había camino de ida y no lo había
+      de vuelta.</p>
+    <div class="stats">
+      <div class="stat"><b>15/15</b><span>piezas cosechadas</span></div>
+      <div class="stat"><b>8</b><span>herramientas ejecutables</span></div>
+      <div class="stat"><b>14</b><span>packs</span></div>
+      <div class="stat"><b>3</b><span>fallos propios encontrados al probar</span></div>
+      <div class="stat"><b>19</b><span>validadores que el kit ya sabe detectar</span></div>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>Las seis</h2></div>
+
+    <article class="pieza">
+      <header><h3>cosechar.mjs — el camino de vuelta<small>nucleo/tools/</small></h3>
+        <span class="chip c-brass">la que faltaba</span></header>
+      <div class="body">
+        <p>La versión anterior del kit se quedó atrás mientras los proyectos avanzaban:
+          había camino de ida —copiar el kit— y ninguno de vuelta. Las mejoras se quedaban
+          donde nacían, y el mismo fichero acabó con seis versiones distintas en seis
+          repositorios.</p>
+        <pre>node agente/tools/cosechar.mjs          # las dos direcciones
+node agente/tools/cosechar.mjs subir    # qué de aquí le falta al kit
+node agente/tools/cosechar.mjs bajar    # qué del kit falta aquí</pre>
+        <p>Compara skills, protocolo, herramientas, packs, prompts y plantillas de CI. Y
+          detecta lo más valioso: los <b>verificadores propios</b> que el proyecto inventó
+          y el kit no tiene, con su descripción sacada del propio fichero.</p>
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Proyecto</th><th>Verificadores propios detectados</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">ppsportmanagementarg</td><td><b>19</b> — los ocho ratchets, el validador de i18n, el de voseo, el anti-secretos, el de lazy-chunks, el de deriva de esquema…</td></tr>
+              <tr><td class="mono">hipismo</td><td><b>16</b></td></tr>
+              <tr><td class="mono">laboratorio</td><td><b>1</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="why brass"><b>No sube nada solo: propone.</b> Y recuerda la regla que lo
+          gobierna — una pieza entra en el <b>núcleo</b> cuando ha sido útil en <b>dos</b>
+          proyectos distintos; con uno va a un pack; si es de un dominio concreto, ni eso.
+          Sin esa regla el núcleo vuelve a engordar hasta que nadie lo lee.</p>
+      </div>
+    </article>
+
+    <article class="pieza">
+      <header><h3>validar-i18n.mjs<small>packs/i18n/</small></h3>
+        <span class="chip c-ok">probado con 3.019 claves reales</span></header>
+      <div class="body">
+        <p>Tres comprobaciones en un comando: <b>paridad</b> de claves, <b>variante
+          regional</b> del idioma base y <b>formato</b> de las interpolaciones.</p>
+        <p class="why"><b>Hallazgo real en ppsportmanagementarg:</b>
+          <span class="mono">platform.playersBarAria</span> usa <span class="mono">{agency}</span>
+          en inglés y <span class="mono">{company}</span> en español, italiano y portugués.
+          Uno de los dos pinta el marcador crudo o deja el dato fuera del mensaje. Paridad
+          de claves perfecta en las 3.019, y cero voseo — lo mismo que dice su propio
+          validador.</p>
+      </div>
+    </article>
+
+    <article class="pieza">
+      <header><h3>presupuesto.mjs<small>packs/pwa-movil/</small></h3><span class="chip c-new">nuevo</span></header>
+      <div class="body">
+        <p>El rendimiento como número que rompe la puerta. Con un modo
+          <span class="mono">paquete</span> que mide el peso <b>sin navegador</b>, así que
+          se puede usar desde el primer día aunque no haya Lighthouse instalado.</p>
+        <p class="why"><b>Por qué hace falta:</b> un panel nuevo puede tumbar el
+          desplazamiento de diseño de 0 a 0,296 sin que nada se ponga en rojo — compila,
+          pasa el análisis estático y los tests siguen verdes. No pueden verlo: el fallo es
+          que el panel nace vacío y crece al llegar sus datos, empujando lo que tiene
+          debajo. Eso solo se ve pintando la página.</p>
+      </div>
+    </article>
+
+    <article class="pieza">
+      <header><h3>pwa.spec.ts<small>packs/pwa-movil/e2e/</small></h3><span class="chip c-new">nuevo</span></header>
+      <div class="body">
+        <p>Manifiesto servido con el tipo correcto y con icono de 512 px (sin él no hay
+          instalación en Android), iconos que existen de verdad, service worker registrado
+          <b>y activo</b>, la aplicación respondiendo sin conexión, y el <b>caché
+          versionado</b>.</p>
+        <p class="why">Un caché sin versión en el nombre no se puede invalidar al
+          desplegar: el usuario se queda en la versión vieja y <b>no tiene forma de
+          arreglarlo</b>. Es el mayor riesgo de una PWA y no lo ve ningún test unitario.</p>
+      </div>
+    </article>
+
+    <article class="pieza">
+      <header><h3>Puertos y adaptadores<small>packs/cloud-agnostico/puertos/</small></h3>
+        <span class="chip c-ok">16 tests verdes</span></header>
+      <div class="body">
+        <p>El puerto, dos adaptadores —disco y memoria—, la factoría, y el
+          <b>test de contrato que corre contra todos los adaptadores</b>: ocho pruebas × dos
+          implementaciones. Un adaptador nuevo está bien el día que las pasa, y no antes.</p>
+        <p class="why">Es lo que impide el «funciona en local y no en la nube». Escribir
+          tests distintos para cada implementación garantiza que se comporten distinto.</p>
+        <p class="why"><b>Y la regla que evita el trabajo inútil:</b> el puerto se define
+          por lo que la aplicación <b>necesita</b>, no por lo que ofrece el proveedor. Si la
+          interfaz tiene <span class="mono">putObjectWithServerSideEncryption</span>, no es
+          un puerto: es S3 con otro nombre. No todo merece uno — almacenamiento, correo,
+          colas y secretos suelen; el ORM casi nunca.</p>
+      </div>
+    </article>
+
+    <article class="pieza">
+      <header><h3>Instantánea de esquema versionada<small>nucleo/tools/esquema.mjs</small></h3>
+        <span class="chip c-ok">probado contra PostgreSQL</span></header>
+      <div class="body">
+        <p>La instantánea pasa a vivir en el <b>repositorio</b>
+          (<span class="mono">db/esquema.snapshot.sql</span>), no en un directorio ignorado.
+          Un cambio de esquema que nadie revisa en el diff es como no tenerlo.</p>
+        <p class="why"><b>Comprobado de punta a punta:</b> se crea la instantánea, la deriva
+          da verde; alguien crea un índice a mano en la base y la deriva lo señala
+          —<span class="mono">+ CREATE INDEX idx_a_mano</span>— con la explicación de que
+          desaparecerá en el próximo entorno creado de cero.</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>Lo que apareció al probarlas</h2><span class="tag">tres fallos propios</span></div>
+
+    <div class="lecc">
+      <h3>1 · Los acentos y los límites de palabra en JavaScript</h3>
+      <p>El detector de voseo marcó el portugués <span class="mono">«Importáveis»</span>
+        como si fuera <span class="mono">«Importá»</span>. La causa es un clásico que cuesta
+        ver: en JavaScript <span class="mono">\w</span> es
+        <span class="mono">[A-Za-z0-9_]</span>, así que <b>las vocales acentuadas no son
+        caracteres de palabra</b> y <span class="mono">\bimportá\b</span> encuentra un
+        límite justo después de la <span class="mono">á</span>, en mitad de la palabra.</p>
+      <p>Dos correcciones: cerrar con <span class="mono">(?![\wáéíóúüñ])</span> en vez de
+        <span class="mono">\b</span>, y <b>acotar cada variante a los idiomas a los que
+        pertenece</b> — aplicar reglas del español a un locale portugués solo puede producir
+        ruido.</p>
+    </div>
+
+    <div class="lecc">
+      <h3>2 · pg_dump 18 mete un token aleatorio en cada volcado</h3>
+      <p>Las líneas <span class="mono">\restrict</span> / <span class="mono">\unrestrict</span>
+        llevan una cadena distinta cada vez. Sin filtrarlas, la comprobación de deriva
+        <b>falla siempre</b> aunque el esquema no haya cambiado — y una comprobación que
+        falla siempre se acaba desactivando, que es peor que no tenerla.</p>
+      <p>Con el filtro puesto: sin cambios da verde, y con un índice creado a mano señala
+        exactamente esa línea.</p>
+    </div>
+
+    <div class="lecc">
+      <h3>3 · Los falsos positivos que habrían apagado el validador</h3>
+      <p>La primera versión de <span class="mono">validar-i18n</span> marcaba
+        <span class="mono">«Instagram»</span>, <span class="mono">«Transfermarkt»</span> y
+        <span class="mono">«Twitter / X (URL)»</span> como traducciones sin hacer. Son marcas
+        y formatos: se escriben igual en todos los idiomas.</p>
+      <p>El filtro final exige que el texto <b>parezca una frase</b> —tres tokens o más, con
+        al menos dos empezando en minúscula—. Con eso, de 20 avisos por idioma se pasa a
+        cero falsos y quedan los hallazgos reales.</p>
+    </div>
+
+    <p class="lede" style="margin-top:24px">Las tres tienen la misma forma: una herramienta
+      que grita cuando no debe se apaga, y una apagada no vale nada. Afinar el ruido no es
+      cosmética — es lo que decide si la herramienta sigue viva dentro de tres meses.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>Dónde queda el kit</h2><span class="tag">cosecha completa</span></div>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Pieza</th><th>Qué hay</th></tr></thead>
+        <tbody>
+          <tr><td><b>Herramientas</b></td><td class="mono">ratchet · puerta · ciclos · tamano · secretos · esquema · cobertura · cosechar</td></tr>
+          <tr><td><b>Skills</b></td><td class="mono">blueprint · tarea · avanzar · verificar · auditar · informe · estimar</td></tr>
+          <tr><td><b>Packs</b></td><td>14, con reglas, detectores y plantillas ejecutables</td></tr>
+          <tr><td><b>CI</b></td><td>4 workflows de puerta + 1 de despliegue OIDC/SSM</td></tr>
+          <tr><td><b>Plantillas probadas</b></td><td>suite e2e (23 verdes) · políticas RLS + fuga · puertos (16 verdes) · spec de PWA</td></tr>
+          <tr><td><b>Contexto</b></td><td>un <span class="mono">AGENTS.md</span> y cinco punteros de diez líneas</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="lecc" style="border-left-color:var(--accent);background:var(--accent-soft);margin-top:26px">
+      <h3>Y lo que sigue pendiente, que no es del kit</h3>
+      <p>El escáner de secretos lo señaló en la primera tanda y sigue igual: <b>seis de tus
+        nueve repositorios llevan el token de GitHub embebido en la URL del remoto</b> —
+        <span class="mono">ia-template</span>, <span class="mono">cowork-app</span>,
+        <span class="mono">futbot-v2</span>, <span class="mono">futbot-v1</span>,
+        <span class="mono">worldcup2026</span> y <span class="mono">wc2026</span>.</p>
+      <p><b>Corregido el 23-08-2026:</b> la contraseña que este informe señalaba en
+        <span class="mono">cowork-app/db/import_seed.py</span> <b>no existe</b>. Salió de una copia
+        local 119 commits por detrás de la rama principal, donde llevaba meses leyéndose del entorno.
+        Lo que sí queda: esa credencial estuvo en el historial de git y hay que rotarla igualmente.</p>
+      <p>Rotar el token es lo único que arregla una fuga: reescribir el historial no borra
+        los clones ni los forks.</p>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap">
+    <p class="mono">ia-template · 22 de agosto de 2026 · cuarta tanda</p>
+    <p>Herramientas ejecutadas contra ppsportmanagementarg, laboratorio, hipismo y
+      PostgreSQL 18 local en bases desechables, eliminadas al terminar.
+      Serie completa: <span class="mono">informe-comparativo-repos</span> ·
+      <span class="mono">informe-mejoras-kit</span> · <span class="mono">-b</span> ·
+      <span class="mono">-c</span> · <span class="mono">-d</span></p>
+  </div>
+</footer>
+
+</body>
+</html>

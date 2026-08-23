@@ -1,0 +1,137 @@
+# Despliegue a EC2 sin credenciales de larga vida.
+#
+# Dos ideas que lo sostienen:
+#   1. GitHub se autentica ante AWS por OIDC y recibe un rol TEMPORAL. No hay ninguna
+#      clave de acceso guardada en los secretos del repositorio, así que no hay nada que
+#      rotar ni nada que filtrar.
+#   2. Se despliega el COMMIT EXACTO que pasó la puerta, no lo que haya en la rama. Entre
+#      que la puerta pasó y el despliegue arranca puede haber entrado otro commit.
+#
+# AJUSTAR: AWS_REGION · INSTANCE_ID · DEPLOY_ROLE_ARN · el script remoto · las URL de salud.
+name: desplegar
+
+on:
+  workflow_run:
+    workflows: [e2e]          # ← el nombre EXACTO del workflow que hace de puerta
+    types: [completed]
+  workflow_dispatch:
+
+# Nunca se cancela un despliegue a medias: dejaría la máquina en un estado intermedio.
+concurrency:
+  group: despliegue-produccion
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  actions: read
+  id-token: write            # ← lo que habilita OIDC. Sin esto no hay rol temporal.
+
+jobs:
+  desplegar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: production   # ← permite exigir aprobación manual en la configuración del repo
+    env:
+      AWS_REGION: eu-west-1
+      INSTANCE_ID: i-XXXXXXXXXXXXXXXXX
+      DEPLOY_ROLE_ARN: arn:aws:iam::000000000000:role/MiProyectoDeployRole
+      # El SHA que se despliega: el que pasó la puerta, o el actual si es manual.
+      DEPLOY_SHA: ${{ github.event_name == 'workflow_dispatch' && github.sha || github.event.workflow_run.head_sha }}
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_branch == 'main')
+
+    steps:
+      # El disparo manual es el agujero clásico: sirve para saltarse la puerta.
+      # Aquí se comprueba que ESE commit tiene la puerta en verde, o no se despliega.
+      - name: Comprobar que este commit pasó la puerta
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -Eeuo pipefail
+          runs="$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/e2e.yml/runs?head_sha=${GITHUB_SHA}&per_page=100")"
+          total="$(jq '.workflow_runs | length' <<<"$runs")"
+          pendientes="$(jq '[.workflow_runs[] | select(.status != "completed")] | length' <<<"$runs")"
+          resultado="$(jq -r '[.workflow_runs[] | select(.status == "completed")] | sort_by(.updated_at) | last | .conclusion // "ninguno"' <<<"$runs")"
+          [[ "$total" -gt 0 && "$pendientes" -eq 0 && "$resultado" == success ]] || {
+            echo "::error::Este commit necesita la puerta en verde (total=$total pendientes=$pendientes último=$resultado)"
+            exit 1
+          }
+
+      # Las acciones se fijan por SHA, no por etiqueta: una etiqueta se puede mover, y
+      # quien la mueva ejecuta código en un job que tiene permiso para asumir tu rol.
+      - name: Traer el commit exacto
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ env.DEPLOY_SHA }}
+          persist-credentials: false      # el token de git no sigue vivo en pasos posteriores
+
+      - name: Asumir el rol de despliegue por OIDC
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
+        with:
+          role-to-assume: ${{ env.DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: github-${{ github.run_id }}
+          mask-aws-account-id: true
+
+      # Confirmar QUÉ identidad se asumió. Si la configuración cambia y se acaba usando
+      # otra, es mejor enterarse aquí que después de haber tocado producción.
+      - name: Confirmar la identidad temporal
+        run: |
+          set -Eeuo pipefail
+          arn="$(aws sts get-caller-identity --query Arn --output text)"
+          [[ "$arn" == *":assumed-role/MiProyectoDeployRole/"* ]] || {
+            echo "::error::Identidad inesperada: $arn"; exit 1; }
+          echo "OIDC OK — rol temporal asumido"
+
+      # SSM en vez de SSH: sin puerto 22 abierto, sin clave privada en los secretos, y con
+      # la ejecución auditada en CloudTrail.
+      - name: Desplegar por SSM Run Command
+        id: ssm
+        env:
+          TARGET_SHA: ${{ env.DEPLOY_SHA }}
+        run: |
+          set -Eeuo pipefail
+          [[ "$TARGET_SHA" =~ ^[0-9a-f]{40}$ ]] || { echo "::error::SHA inválido"; exit 1; }
+          id="$(aws ssm send-command \
+            --region "$AWS_REGION" --instance-ids "$INSTANCE_ID" \
+            --document-name AWS-RunShellScript \
+            --comment "despliegue ${TARGET_SHA}" \
+            --parameters "commands=[\"sudo -u deploy /usr/local/bin/desplegar.sh ${TARGET_SHA}\"]" \
+            --query Command.CommandId --output text)"
+          [[ "$id" =~ ^[0-9a-f-]{36}$ ]] || { echo "::error::CommandId inválido"; exit 1; }
+          echo "CommandId: $id"
+
+          # El waiter devuelve error en cualquier estado terminal que no sea éxito. Se
+          # captura para poder recuperar la salida remota ANTES de decidir el resultado:
+          # un despliegue que falla sin enseñar su log obliga a entrar a la máquina.
+          aws ssm wait command-executed --region "$AWS_REGION" \
+            --command-id "$id" --instance-id "$INSTANCE_ID" || true
+          estado="$(aws ssm get-command-invocation --region "$AWS_REGION" \
+            --command-id "$id" --instance-id "$INSTANCE_ID" --query Status --output text)"
+          echo "Estado SSM: $estado"
+          echo "--- salida remota ---"
+          aws ssm get-command-invocation --region "$AWS_REGION" \
+            --command-id "$id" --instance-id "$INSTANCE_ID" \
+            --query StandardOutputContent --output text || true
+          echo "--- errores remotos ---" >&2
+          aws ssm get-command-invocation --region "$AWS_REGION" \
+            --command-id "$id" --instance-id "$INSTANCE_ID" \
+            --query StandardErrorContent --output text >&2 || true
+          [[ "$estado" == Success ]] || { echo "::error::El despliegue terminó en $estado"; exit 1; }
+
+      # "El script terminó bien" no es lo mismo que "el sitio funciona". Se comprueba
+      # desde fuera, atravesando DNS, proxy y certificado, que es donde se rompe.
+      - name: Comprobar el borde público
+        run: |
+          set -Eeuo pipefail
+          for intento in $(seq 1 6); do
+            if curl -fsS --max-time 15 https://ejemplo.com/api/health | grep -q '"ok":true' \
+               && curl -fsSI --max-time 15 https://ejemplo.com/ | grep -Eq '^HTTP/[0-9.]+ (200|304)'; then
+              echo "Borde público OK"; exit 0
+            fi
+            echo "Intento $intento/6 — reintento en 10 s"; sleep 10
+          done
+          echo "::error::El borde público no respondió correctamente"; exit 1

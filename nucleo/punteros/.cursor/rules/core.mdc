@@ -1,0 +1,26 @@
+---
+description: Contexto y reglas base del proyecto
+alwaysApply: true
+---
+
+El contexto de este proyecto vive en `AGENTS.md`. Léelo entero antes de trabajar; este
+archivo es solo el recordatorio que Cursor inyecta en cada mensaje.
+
+## Reglas que no se negocian
+
+- **Lo irreversible es del usuario.** Sin petición explícita en esta conversación: no
+  `git push`, no desplegar, no escribir en producción, no gastar, no borrar lo ajeno, no
+  tocar credenciales. Commits locales sí.
+- **Nada está hecho hasta que la puerta de calidad pasa entera** (`AGENTS.md` §4).
+  «Hecho con una salvedad» no existe.
+- **Una decisión que no es tuya no detiene el trabajo**: se anota en
+  `knowledge/wiki/decisiones-pendientes.md` y se sigue con lo que no dependa de ella.
+- **Anti-patrones:** consultar `knowledge/wiki/anti-patterns.md` antes de implementar.
+  La deuda aceptada (`AD-*`) no se re-reporta.
+
+## Cómo trabajar
+
+- Leer antes de escribir, en paralelo. Edición parcial, no reescritura.
+- No pegar en la respuesta el código ya editado.
+- Números, no adjetivos. Sin preámbulos ni halagos.
+- Un detector textual vacío no prueba ausencia.

@@ -1,0 +1,15 @@
+---
+description: Convenciones de trabajo sin conexión
+globs: ["**/offline/**","**/sin-conexion/**","**/cola*","**/bandeja*","**/queue*","**/sw.ts","**/service-worker*"]
+alwaysApply: false
+---
+- LISTA BLANCA: lo que no está declarado como encolable exige conexión. Nunca al revés.
+  Lo que consume un correlativo o publica hacia fuera NO se encola.
+- La cola es FIFO estricta: hay causalidad entre lo capturado.
+- Una entrada rechazada DETIENE las de detrás; no se saltan. Desbloquear es decisión
+  de una persona.
+- Referencias provisionales con prefijo de TEXTO (`tmp:`), nunca números negativos ni 0:
+  tienen que ser imposibles de confundir con un identificador real.
+- Toda mutación lleva un identificador que NO cambia entre reintentos, y el servidor
+  descarta duplicados por él. Sin esa mitad, el reintento de un cobro cobra dos veces.
+- El usuario ve siempre cuántas cosas esperan y qué se rechazó.

@@ -1,0 +1,16 @@
+---
+description: Convenciones de datos personales
+globs: ["**/migrations/**","**/schema/**","**/models/**","**/*.sql","**/gdpr*","**/privac*"]
+alwaysApply: false
+---
+- Toda columna con datos de personas va en knowledge/wiki/inventario-datos-personales.md,
+  con nivel, base legal y retención. Las tablas SIN datos personales se listan también:
+  una tabla que no está en ninguna lista es una que nadie ha mirado.
+- Un dato sensible no sale por un canal si la regla de salida no lo permite, y esa regla
+  tiene que ser verificable (redacción central en el registrador, no buena voluntad).
+- El borrado lógico NO es supresión: la fila retiene el dato. La supresión real anonimiza,
+  y hay que comprobar qué tablas no toca el anonimizador.
+- Un derivado hereda la clasificación de su origen: un vector sobre texto sensible es
+  sensible, no «solo números».
+- El texto libre (notas, observaciones) es sumidero de datos sin tipar: se trata como el
+  nivel más alto que pueda contener.

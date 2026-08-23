@@ -1,0 +1,10 @@
+El contexto de este proyecto vive en AGENTS.md. Léelo entero antes de trabajar.
+
+Reglas que no se negocian (resumen — el detalle está en AGENTS.md §5):
+- Nada de push, deploy, escritura en producción, gasto, borrado ni credenciales sin
+  petición explícita del usuario en esta conversación. Commits locales sí.
+- Nada está hecho hasta que la puerta de calidad pasa entera. Ver AGENTS.md §4.
+- Una decisión que no es tuya se anota en knowledge/wiki/decisiones-pendientes.md y se
+  sigue con lo que no dependa de ella. No se para.
+- Antes de implementar, consultar knowledge/wiki/anti-patterns.md (IDs AP-*).
+- Edición parcial, nunca reescritura completa. Números, no adjetivos. Sin halagos.

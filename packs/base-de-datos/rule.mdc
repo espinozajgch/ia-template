@@ -1,0 +1,12 @@
+---
+description: Convenciones de base de datos y migraciones
+globs: ["**/migrations/**","**/schema/**","**/models/**","**/*.sql","**/db/**","**/repositories/**"]
+alwaysApply: false
+---
+- ANTES de migrar o borrar: verificar a qué base apunta de verdad el comando. Si hay más de
+  una variable de conexión, es una trampa y va en AGENTS.md §7.
+- Las invariantes van en el esquema (NOT NULL, UNIQUE, CHECK, FK), no solo en el código.
+- No se edita una migración aplicada: se escribe la siguiente. Vuelta atrás conocida antes.
+- Índice nuevo = consulta que lo justifica + plan de ejecución que lo usa.
+- Buscar N+1 activamente: con veinte filas es invisible.
+- Aislamiento multi-cliente impuesto por la capa de acceso o por RLS, nunca recordado.

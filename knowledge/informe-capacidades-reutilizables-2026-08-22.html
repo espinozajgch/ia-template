@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Qué sabe hacer cada repo — capacidades reutilizables · 2026-08-22</title>
+<style>
+:root{
+  --ground:#F6F8FA;--surface:#FFFFFF;--surface-2:#EFF2F6;
+  --ink:#121821;--ink-2:#3A4557;--muted:#5D6A80;--faint:#8894A6;
+  --rule:#DFE4EC;--rule-strong:#C6CEDB;
+  --accent:#39479B;--accent-soft:#E8EAF6;
+  --brass:#8A6410;--brass-soft:#F6EEDC;
+  --ok:#1C6E52;--ok-soft:#E3F1EB;
+  --mid:#96690C;--mid-soft:#F8EFDA;
+  --risk:#A8322A;--risk-soft:#FAE9E7;
+  --shadow:0 1px 2px rgba(18,24,33,.05),0 8px 24px -12px rgba(18,24,33,.14);
+  --display:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --body:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#0E1218;--surface:#161C25;--surface-2:#1D242F;
+  --ink:#E6EBF2;--ink-2:#C3CBD8;--muted:#95A1B4;--faint:#6F7C90;
+  --rule:#252D3A;--rule-strong:#37414F;
+  --accent:#96A5EF;--accent-soft:#1E2440;--brass:#D8AC60;--brass-soft:#2A2317;
+  --ok:#5CC79B;--ok-soft:#12291F;--mid:#D7A63F;--mid-soft:#2A2313;
+  --risk:#E8827A;--risk-soft:#2C1917;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -14px rgba(0,0,0,.7);
+}}
+:root[data-theme="dark"]{
+  --ground:#0E1218;--surface:#161C25;--surface-2:#1D242F;
+  --ink:#E6EBF2;--ink-2:#C3CBD8;--muted:#95A1B4;--faint:#6F7C90;
+  --rule:#252D3A;--rule-strong:#37414F;
+  --accent:#96A5EF;--accent-soft:#1E2440;--brass:#D8AC60;--brass-soft:#2A2317;
+  --ok:#5CC79B;--ok-soft:#12291F;--mid:#D7A63F;--mid-soft:#2A2313;
+  --risk:#E8827A;--risk-soft:#2C1917;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -14px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);
+  font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1060px;margin:0 auto;padding:0 24px}
+h1,h2,h3,h4{text-wrap:balance;margin:0}
+code,.mono{font-family:var(--mono);font-size:.88em}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+
+.head{border-bottom:1px solid var(--rule);background:var(--surface)}
+.head .wrap{padding:56px 24px 36px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);margin:0 0 18px}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(36px,5.6vw,58px);line-height:1.02;
+  letter-spacing:-.015em;margin-bottom:18px}
+h1 em{font-style:italic;color:var(--accent)}
+.thesis{font-size:18.5px;color:var(--ink-2);max-width:62ch;line-height:1.55}
+.stats{display:flex;flex-wrap:wrap;margin-top:34px;border-top:1px solid var(--rule)}
+.stat{padding:16px 28px 0 0;margin-right:28px;border-right:1px solid var(--rule)}
+.stat:last-child{border-right:0}
+.stat b{display:block;font-family:var(--mono);font-size:24px;font-weight:600;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.stat span{font-size:12.5px;color:var(--muted)}
+
+section{padding:54px 0;border-bottom:1px solid var(--rule)}
+section:last-of-type{border-bottom:0}
+.shead{display:flex;align-items:baseline;gap:14px;margin-bottom:8px;flex-wrap:wrap}
+h2{font-family:var(--display);font-weight:400;font-size:clamp(26px,3.3vw,36px);letter-spacing:-.01em}
+.tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--accent);background:var(--accent-soft);padding:4px 9px;border-radius:3px}
+.lede{color:var(--muted);font-size:16.5px;margin:0 0 30px;max-width:66ch}
+
+.pieza{background:var(--surface);border:1px solid var(--rule);border-radius:6px;
+  box-shadow:var(--shadow);margin-bottom:18px;overflow:hidden}
+.pieza>header{display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:15px 22px;background:var(--surface-2);border-bottom:1px solid var(--rule);flex-wrap:wrap}
+.pieza h3{font-size:16.5px;font-weight:700}
+.pieza h3 small{display:block;font-family:var(--mono);font-size:10.5px;font-weight:500;
+  color:var(--faint);letter-spacing:.06em;text-transform:uppercase;margin-top:3px}
+.pieza .body{padding:20px 22px;display:flex;flex-direction:column;gap:14px}
+.pieza p{margin:0;font-size:14.5px;color:var(--ink-2);line-height:1.6;max-width:72ch}
+.pieza p b{color:var(--ink)}
+.chip{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;
+  padding:3px 8px;border-radius:3px;white-space:nowrap}
+.c-ok{background:var(--ok-soft);color:var(--ok)}
+.c-new{background:var(--accent-soft);color:var(--accent)}
+.c-risk{background:var(--risk-soft);color:var(--risk)}
+.c-mid{background:var(--mid-soft);color:var(--mid)}
+pre{margin:0;background:var(--surface-2);border:1px solid var(--rule);border-radius:4px;
+  padding:13px 15px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.6;color:var(--ink-2)}
+.why{border-left:2px solid var(--accent);background:var(--surface-2);padding:12px 15px;
+  border-radius:0 4px 4px 0;font-size:14px;color:var(--ink-2);line-height:1.55}
+.why b{color:var(--ink)}
+.why.brass{border-left-color:var(--brass)}
+
+.scroll{overflow-x:auto;border:1px solid var(--rule);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+thead th{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);background:var(--surface-2);
+  border-bottom:1px solid var(--rule-strong);white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:var(--surface-2)}
+td.mono{font-family:var(--mono);font-size:12px}
+td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+
+.lecc{background:var(--brass-soft);border-left:3px solid var(--brass);padding:18px 22px;
+  border-radius:0 5px 5px 0;margin-top:24px}
+.lecc h3{font-size:17px;margin-bottom:8px}
+.lecc p{margin:0 0 10px;font-size:14.5px;color:var(--ink-2);line-height:1.6;max-width:72ch}
+.lecc p:last-child{margin-bottom:0}
+
+.next{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(290px,1fr))}
+.next .n{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:17px 19px}
+.next h4{font-size:15px;margin-bottom:6px}
+.next p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.55}
+.foot{padding:34px 0 56px;color:var(--faint);font-size:13px}
+@media (max-width:640px){.head .wrap{padding-top:38px}.stat{padding-right:18px;margin-right:18px}}
+@media print{body{background:#fff;color:#000}.pieza,.next .n,.lecc{break-inside:avoid;box-shadow:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+<style>
+  .pureza{display:inline-flex;gap:2px;vertical-align:middle}
+  .pureza i{width:8px;height:8px;border-radius:50%;background:var(--rule-strong);display:block}
+  .pureza i.on{background:var(--ok)}
+  .grid2{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+  .col{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:20px 22px;box-shadow:var(--shadow)}
+  .col h3{font-size:16px;margin-bottom:4px}
+  .col h3 small{display:block;font-family:var(--mono);font-size:10.5px;font-weight:500;color:var(--faint);
+    letter-spacing:.06em;text-transform:uppercase;margin-top:3px}
+  .col ul{margin:12px 0 0;padding-left:18px;font-size:14px;color:var(--ink-2);line-height:1.65}
+  .col li{margin-bottom:6px}
+  .col li b{color:var(--ink)}
+</style>
+</head>
+<body>
+
+<header class="head">
+  <div class="wrap">
+    <p class="eyebrow">ia-template · análisis funcional · 22 agosto 2026</p>
+    <h1>Qué sabe hacer<br><em>cada repositorio</em></h1>
+    <p class="thesis">No calidad esta vez, sino <b>capacidades</b>: qué resolvió cada
+      proyecto que sirve en los demás. Hipismo sabe ingerir de cuatro fuentes que se
+      contradicen; laboratorio sabe facturar con dos monedas y trabajar sin conexión;
+      ppsport sabe mandar correo que no se pierde. Nada de eso es de su dominio — es
+      infraestructura de producto atrapada dentro de un proyecto.</p>
+    <div class="stats">
+      <div class="stat"><b>13</b><span>módulos casi puros, listos para extraer</span></div>
+      <div class="stat"><b>4</b><span>packs nuevos que salen de aquí</span></div>
+      <div class="stat"><b>3</b><span>capacidades que solo tiene un repo</span></div>
+      <div class="stat"><b>0</b><span>frontends con tema oscuro por tokens</span></div>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="lecc" style="border-left-color:var(--brass);background:var(--brass-soft)"><h3>Corrección · 23 de agosto de 2026</h3><p>Lo que este informe dice de <span class="mono">cowork-app</span> se midió sobre una copia local que estaba <b>119 commits por detrás</b> de su rama principal. Dos consecuencias:</p><p><b>El proyecto ya no se llama así.</b> Hoy es <b>Professional Football Hub</b> — gestión deportiva del Logroño United, fútbol femenino. <span class="mono">cowork-app</span> es solo el nombre de la carpeta y del repositorio en GitHub.</p><p><b>El repositorio no estaba roto.</b> Los 95 ficheros con marcadores de conflicto y los 44 con error de sintaxis eran de un merge que llevaba meses resuelto en el remoto. La copia local estaba desactualizada, no el proyecto.</p></div>
+
+    <div class="shead"><h2>Backend · lo que se puede compartir</h2><span class="tag">ordenado por facilidad de extracción</span></div>
+    <p class="lede">La columna <b>pureza</b> cuenta lo que impide moverlo: tres puntos
+      verdes significa que no importa nada externo y se puede sacar tal cual. Es el mejor
+      indicador de si una capacidad es infraestructura o dominio disfrazado.</p>
+
+    <p class="lede"><b>Cómo se midió, y por qué importa.</b> El primer barrido fue por
+      expresiones regulares sobre todo el código, y sobreestimaba: contaba
+      <span class="mono">iva</span> dentro de «privado» y «derivado», y daba 93 ficheros de
+      facturación a ppsport y 72 de aprendizaje automático. Cada capacidad de esta tabla se
+      confirmó después <b>leyendo el código</b>. Las dos que marcan «dos implementaciones»
+      salieron precisamente de ese segundo paso: el barrido las señaló, la lectura las
+      confirmó.</p>
+
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Capacidad</th><th>Dónde vive</th><th class="num">Líneas</th><th>Pureza</th><th>Qué resuelve, y por qué sirve fuera</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b>Dinero de doble moneda</b></td><td class="mono">laboratorio · dinero.ts</td><td class="num">37</td>
+            <td><span class="pureza"><i class="on"></i><i class="on"></i><i class="on"></i></span></td>
+            <td>Importe canónico en una moneda, y <b>cada documento guarda la tasa con la que se convirtió</b>. «Una tasa nueva jamás reescribe lo ya emitido» — la regla que evita que una factura de marzo cambie de importe en abril. Vale para cualquier sistema con más de una moneda.</td>
+          </tr>
+          <tr>
+            <td><b>Cotejo de identidades</b></td><td class="mono">hipismo · identity-matching.ts</td><td class="num">320</td>
+            <td><span class="pureza"><i class="on"></i><i class="on"></i><i class="on"></i></span></td>
+            <td>Decidir si dos nombres de fuentes distintas son la misma persona. Pliega <b>homóglifos</b> —letras griegas y cirílicas idénticas a las latinas a la vista, distintas para la máquina— que parten una ficha en dos. Sirve para clientes, proveedores, pacientes, jugadores: cualquier cosa que llegue por más de un sitio.</td>
+          </tr>
+          <tr>
+            <td><b>Cola sin conexión</b></td><td class="mono">laboratorio · encolables + bandeja</td><td class="num">303</td>
+            <td><span class="pureza"><i class="on"></i><i class="on"></i><i class="on"></i></span></td>
+            <td><b>Lista blanca</b> de qué se puede capturar sin red —lo no declarado no se encola— y cola <b>FIFO estricta</b>, porque hay causalidad: la corrección de una ficha va después de su alta. Enviar en desorden produce escrituras que se pisan en silencio.</td>
+          </tr>
+          <tr>
+            <td><b>Texto de terceros</b></td><td class="mono">hipismo · untrusted-text.ts</td><td class="num">155</td>
+            <td><span class="pureza"><i class="on"></i><i class="on"></i><i></i></span></td>
+            <td>Todo campo libre que llega de fuera es dato, nunca instrucción. El riesgo no está en el navegador —React escapa al pintar— sino en <b>el siguiente lector</b>: un panel interno, un resumen automático, un agente. Si ese lector es un modelo, «ignora las instrucciones anteriores» se lee igual que el texto legítimo.</td>
+          </tr>
+          <tr>
+            <td><b>Límite de intentos</b></td><td class="mono">laboratorio · limite-intentos.ts<br>hipismo · login-throttle.ts</td><td class="num">239<br>98</td>
+            <td><span class="pureza"><i class="on"></i><i class="on"></i><i class="on"></i></span></td>
+            <td>Dos implementaciones independientes del mismo problema. <b>Que dos proyectos lo hayan escrito por separado es justo el criterio para que suba al núcleo.</b></td>
+          </tr>
+          <tr>
+            <td><b>Idempotencia</b></td><td class="mono">laboratorio · idempotencia.ts</td><td class="num">195</td>
+            <td><span class="pureza"><i class="on"></i><i class="on"></i><i class="on"></i></span></td>
+            <td>Claves de idempotencia para que un reintento no cobre dos veces. Imprescindible en cuanto hay una cola, un webhook o un botón que se puede pulsar dos veces.</td>
+          </tr>
+          <tr>
+            <td><b>Segundo factor (TOTP)</b></td><td class="mono">laboratorio · totp.ts</td><td class="num">173</td>
+            <td><span class="pureza"><i class="on"></i><i class="on"></i><i></i></span></td>
+            <td>Sin dependencias de terceros. Cualquier producto con usuarios lo acaba necesitando.</td>
+          </tr>
+          <tr>
+            <td><b>Reloj con zona horaria</b></td><td class="mono">hipismo · zoned-clock.ts</td><td class="num">154</td>
+            <td><span class="pureza"><i class="on"></i><i class="on"></i><i class="on"></i></span></td>
+            <td>Cortes por día en la zona del negocio, no en UTC. El fallo que produce «el informe del lunes incluye media hora del domingo» y nadie sabe por qué.</td>
+          </tr>
+          <tr>
+            <td><b>Bandeja de correo</b></td><td class="mono">ppsport · email/ (24 ficheros)</td><td class="num">~2.000</td>
+            <td><span class="pureza"><i class="on"></i><i class="on"></i><i></i></span></td>
+            <td>Outbox con reintentos, lista de supresión, plantillas, firma de notificaciones del proveedor, y un panel que <b>enmascara el destinatario y sanea el error</b> antes de enseñarlo. El correo deja de perderse en silencio y deja de filtrar datos por el log.</td>
+          </tr>
+          <tr>
+            <td><b>Ingesta desde la web</b><br><span class="chip c-brass">dos implementaciones</span></td>
+            <td class="mono">hipismo · ingestion/<br>futbot-v2 · code/scrapper/</td><td class="num">4.597<br>—</td>
+            <td><span class="pureza"><i class="on"></i><i></i><i></i></span></td>
+            <td>Dos proyectos que raspan fuentes distintas —resultados hípicos publicados en cuatro webs, datos de partidos de un proveedor— y llegaron a la misma forma: <b>una función pura que parsea y otra aparte que toca la red</b>. Es lo que permite probar el parser con un fichero guardado, sin conexión y sin base.</td>
+          </tr>
+          <tr>
+            <td><b>Consenso multi-fuente</b></td><td class="mono">hipismo · racing-results-store</td><td class="num">937</td>
+            <td><span class="pureza"><i class="on"></i><i></i><i></i></span></td>
+            <td>Cuatro fuentes publican el mismo hecho y a veces se contradicen. Decide por <b>confianza, prioridad y carácter oficial</b>, y marca conflicto cuando no hay acuerdo. Genérico para cualquier ingesta de varias fuentes; hay que separarlo del almacén.</td>
+          </tr>
+          <tr>
+            <td><b>Facturación fiscal</b><br><span class="chip c-brass">dos implementaciones</span></td>
+            <td class="mono">laboratorio · fiscal.ts<br>ppsport · facturacion + series</td><td class="num">139<br>207</td>
+            <td><span class="pureza"><i class="on"></i><i class="on"></i><i></i></span></td>
+            <td><b>Dos países, dos regímenes, el mismo esqueleto.</b> Laboratorio sigue la Providencia SNAT venezolana con tratamientos exento/general/reducida y validación de RIF; ppsport lleva correlativo por entidad y año, número de control e IVA argentino del 21 %. Lo común —líneas → tratamiento → totales con redondeo, y una serie correlativa que no se puede saltar— es exactamente el núcleo del pack.</td>
+          </tr>
+          <tr>
+            <td><b>Caché de respuesta + eventos</b></td><td class="mono">hipismo · response-cache · sse-manager</td><td class="num">177+</td>
+            <td><span class="pureza"><i class="on"></i><i class="on"></i><i></i></span></td>
+            <td>Caché por ruta con invalidación, y envío de eventos al navegador sin sockets. La pareja que evita el sondeo cada cinco segundos.</td>
+          </tr>
+          <tr>
+            <td><b>Auditoría</b></td><td class="mono">ppsport · audit/<br>laboratorio · auditoria.ts</td><td class="num">63</td>
+            <td><span class="pureza"><i class="on"></i><i class="on"></i><i class="on"></i></span></td>
+            <td>Quién hizo qué, cuándo y sobre qué. Otra vez: dos implementaciones independientes del mismo problema.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="lecc" style="margin-top:24px">
+      <h3>Lo que NO se comparte, y conviene decirlo</h3>
+      <p><b>El pronóstico de hipismo</b> (<span class="mono">forecast-training</span>,
+        <span class="mono">forecast-weights</span>) y <b>el análisis táctico de futbot</b>
+        son dominio puro: su valor está en el modelo, no en el código, y sacarlos del
+        proyecto no ayuda a nadie.</p>
+      <p><b>Los routers de Professional Football Hub</b> —fisioterapia, ginecología, nutrición,
+      wellness, antropometría, análisis de vídeo— son un catálogo de medicina y rendimiento
+      deportivo. La <b>forma</b> (un router por área con el mismo esqueleto, 35 de ellos) sí
+      es reutilizable; el contenido no.</p>
+      <p>Y los <b>parsers concretos</b> de hipismo (liderendeportes, meridiano,
+        desafío hípico) son de sus fuentes. Lo que se comparte es <b>la forma</b>:
+        <span class="mono">parse(html) → tipado</span> puro y comprobable sin red, separado
+        de <span class="mono">scrape(entrada)</span>, que es el que toca la red y la base.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>Frontend · quién resolvió qué</h2></div>
+    <p class="lede">Ningún frontend gana en todo, y las fortalezas están casi en oposición:
+      ppsport tiene el sistema de diseño y los patrones de escritorio; laboratorio tiene
+      móvil y sin conexión. Juntarlos es el trabajo.</p>
+
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Aspecto</th><th>ppsport</th><th>laboratorio</th><th>hipismo</th><th>football-hub</th></tr></thead>
+        <tbody>
+          <tr><td><b>Sistema de diseño</b></td>
+            <td><span class="chip c-best">15 componentes + 812 líneas de doc</span></td>
+            <td>un <span class="mono">ui.tsx</span> de 1.039 líneas, 17 exports</td>
+            <td>24 componentes sueltos, sin doc</td><td>—</td></tr>
+          <tr><td><b>Tabla de datos</b></td>
+            <td><span class="chip c-best">TableShell + Responsive + Sort + VirtualList</span></td>
+            <td>un <span class="mono">DataTable</span> todo-en-uno con filtro, selección y paginación</td>
+            <td>ResponsiveTable</td><td>—</td></tr>
+          <tr><td><b>Formularios</b></td><td><span class="chip c-best">namespace <span class="mono">F</span>, 335 líneas</span></td><td><span class="mono">Field</span> de solo lectura</td><td>—</td><td>—</td></tr>
+          <tr><td><b>Avisos (toast)</b></td><td><span class="chip c-best">182 ficheros</span></td><td>1</td><td>—</td><td>—</td></tr>
+          <tr><td><b>Esqueletos de carga</b></td><td><span class="chip c-best">23</span></td><td>0</td><td>1</td><td>0</td></tr>
+          <tr><td><b>Paleta de comandos</b></td><td><span class="chip c-best">✓ Cmd+K</span></td><td>—</td><td>—</td><td>—</td></tr>
+          <tr><td><b>Navegación inferior móvil</b></td><td>—</td><td><span class="chip c-best">8 ficheros</span></td><td>—</td><td>—</td></tr>
+          <tr><td><b>Sin conexión</b></td><td>1</td><td><span class="chip c-best">15 ficheros + rutas propias</span></td><td>1</td><td>—</td></tr>
+          <tr><td><b>Tokens CSS</b></td><td>65</td><td><span class="chip c-best">79</span></td><td><span class="chip c-risk">0</span></td><td>67</td></tr>
+          <tr><td><b>Tema oscuro</b></td><td><span class="chip c-mid">30 clases <span class="mono">dark:</span> — parcial</span></td><td><span class="chip c-risk">no</span></td><td><span class="chip c-risk">no</span></td><td><span class="chip c-risk">no</span></td></tr>
+          <tr><td><b>Marca por cliente</b></td><td>documentada</td><td><span class="chip c-best">marca.tsx + marca-servidor.ts</span></td><td>campo de imagen</td><td>—</td></tr>
+          <tr><td><b>Gráficos</b></td><td>Recharts + RadarChart propio</td><td><span class="mono">graficos.tsx</span> propio, 375 líneas</td><td>Grafico + StatDonuts</td><td>Recharts</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="grid2" style="margin-top:24px">
+      <div class="col">
+        <h3>De ppsport se lleva<small>el sistema, y la disciplina</small></h3>
+        <ul>
+          <li><b>La separación componentes / <span class="mono">ui/</span></b>: quince piezas base y todo lo demás construido encima. Es lo que hace posible que ocho ratchets vigilen que nadie se salga.</li>
+          <li><b>El namespace <span class="mono">F</span> de formularios</b>: un solo sitio donde viven etiqueta, error, foco y estado deshabilitado.</li>
+          <li><b><span class="mono">TableShell</span> como envoltorio canónico</b>, con su ratchet que detecta la <span class="mono">&lt;table&gt;</span> cruda.</li>
+          <li><b>Paleta de comandos, esqueletos y avisos</b>: los tres patrones que hacen que una aplicación de escritorio se sienta terminada.</li>
+          <li><b>812 líneas documentando el sistema</b> — sin eso, cada pantalla nueva reinventa.</li>
+        </ul>
+      </div>
+      <div class="col">
+        <h3>De laboratorio se lleva<small>móvil, sin conexión y tokens</small></h3>
+        <ul>
+          <li><b>Navegación inferior</b> pensada para el pulgar, no un menú de escritorio encogido.</li>
+          <li><b>Rutas propias de sin conexión</b> (<span class="mono">/sin-conexion</span>, <span class="mono">/offline</span>), no una pantalla de error.</li>
+          <li><b>79 tokens</b> y <span class="mono">stylelint</span> gateando las hojas de estilo.</li>
+          <li><b>Marca por empresa en cliente y servidor</b>: logo, color y nombre por organización, sin bifurcar código.</li>
+          <li><b>Gráficos propios</b> sin librería: 375 líneas y ningún megabyte de dependencia.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>Diseño y UX · el hueco común</h2></div>
+    <p class="lede">Aquí no hay un ganador del que copiar: hay una carencia que comparten
+      los cuatro.</p>
+
+    <div class="alerta">
+      <h3>Ninguno tiene tema oscuro de verdad</h3>
+      <p>Entre los cuatro suman <b>211 tokens CSS</b> y <b>ni un solo bloque</b>
+        <span class="mono">prefers-color-scheme</span> o <span class="mono">[data-theme]</span>
+        en sus hojas de estilo. Lo más cercano son 30 clases <span class="mono">dark:</span>
+        sueltas en ppsport — parcial por definición: lo que no lleva la clase se queda en
+        claro sobre fondo oscuro.</p>
+      <p>Y sin embargo la suite de accesibilidad que el kit ya trae <b>mide los dos temas</b>,
+        y al probarla encontró un fallo de contraste que solo existía en oscuro. La capacidad
+        de detectarlo ya está; falta la de tenerlo.</p>
+      <p>Es además la carencia más barata de cerrar: con 65–79 tokens ya definidos, el
+        trabajo es redefinirlos en un segundo bloque, no rehacer la interfaz.</p>
+    </div>
+
+    <div class="grid2" style="margin-top:22px">
+      <div class="col">
+        <h3>Lo que sí está resuelto<small>y conviene estandarizar</small></h3>
+        <ul>
+          <li><b>Iconografía única</b> — ppsport fijó Material Symbols Rounded y lo documentó; laboratorio tiene su <span class="mono">material-symbol.tsx</span>. Dos proyectos, la misma decisión.</li>
+          <li><b>Estado vacío como componente</b>, no como texto suelto: ppsport y laboratorio lo tienen los dos.</li>
+          <li><b>Confirmación de acción peligrosa</b> — <span class="mono">BotonPeligroso</span> con confirmación en laboratorio, <span class="mono">ConfirmDialog</span> en ppsport.</li>
+          <li><b>Filtros persistidos en la URL</b> (<span class="mono">useUrlState</span>, ppsport): recargar no pierde el filtro, y el enlace se puede compartir.</li>
+        </ul>
+      </div>
+      <div class="col">
+        <h3>Lo que falta en todos<small>por orden de coste</small></h3>
+        <ul>
+          <li><b>Tema oscuro por tokens</b> — barato, y ya hay quien lo mida.</li>
+          <li><b>Esqueletos de carga fuera de ppsport</b> — laboratorio y hipismo enseñan «cargando…» en texto.</li>
+          <li><b>Avisos (toast) fuera de ppsport</b> — sin ellos, una acción que funciona no se distingue de una que no hizo nada.</li>
+          <li><b>Un sistema de diseño documentado fuera de ppsport</b> — laboratorio tiene 79 tokens y ninguna página que explique cuándo usar cuál.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>Qué hacer con esto</h2><span class="tag">propuesta</span></div>
+    <p class="lede">Tres destinos distintos, y la diferencia importa: no todo lo bueno debe
+      acabar en el mismo sitio.</p>
+
+    <article class="pieza">
+      <header><h3>1 · Un paquete de módulos compartidos<small>código que se instala, no se copia</small></h3>
+        <span class="chip c-new">nuevo</span></header>
+      <div class="body">
+        <p>Los ocho módulos con pureza alta son <b>código de infraestructura</b>, no
+          plantillas: tiene sentido que vivan en un paquete versionado que los proyectos
+          instalan, no en el kit que se copia.</p>
+        <p><span class="mono">dinero · idempotencia · limite-intentos · totp · auditoria ·
+          zoned-clock · identity-matching · untrusted-text</span></p>
+        <p class="why"><b>El criterio que ya acordamos aplica tal cual:</b> entran los que
+          han sido útiles en <b>dos</b> proyectos distintos. Califican hoy, con dos
+          implementaciones independientes cada uno: <b>límite de intentos</b>, <b>auditoría</b>,
+          <b>facturación</b> e <b>ingesta desde la web</b>. Los demás entran con el segundo
+          proyecto que los use.</p>
+      </div>
+    </article>
+
+    <article class="pieza">
+      <header><h3>2 · Cuatro packs nuevos del kit<small>reglas, plantillas y checklist</small></h3></header>
+      <div class="body">
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Pack</th><th>De dónde sale</th><th>Qué traería</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">facturacion</td><td><b>laboratorio + ppsport</b></td><td>el cálculo genérico (líneas → tratamiento → totales), la serie correlativa que no se puede saltar, doble moneda con tasa congelada, y la regla de que <b>lo emitido no se recalcula</b>. Dos regímenes distintos ya implementados —Venezuela y Argentina— son la mejor prueba de qué es estructura y qué es configuración</td></tr>
+              <tr><td class="mono">ingesta-datos</td><td><b>hipismo + futbot-v2</b></td><td>parser puro separado del scraper —la forma a la que llegaron los dos por su cuenta—, cotejo de identidades con homóglifos, consenso multi-fuente por confianza, y reconciliación contra la fuente oficial</td></tr>
+              <tr><td class="mono">offline-first</td><td>laboratorio</td><td>lista blanca de acciones encolables, cola FIFO estricta, idempotencia en el servidor, y rutas propias de sin conexión</td></tr>
+              <tr><td class="mono">notificaciones</td><td>ppsport + laboratorio</td><td>bandeja de salida con reintentos, lista de supresión, plantillas, y enmascarado de datos personales en el panel de administración</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="why">Los cuatro son <b>capacidades de producto</b>, no de tecnología: por
+          eso van a packs y no al núcleo. Un proyecto que no factura no debe leer nada sobre
+          facturación.</p>
+      </div>
+    </article>
+
+    <article class="pieza">
+      <header><h3>3 · Un blueprint de sistema de diseño<small>fusionando los dos que funcionan</small></h3></header>
+      <div class="body">
+        <p>Ni ppsport ni laboratorio sirven copiados enteros: uno tiene el sistema y le
+          falta móvil, el otro tiene móvil y le falta el sistema.</p>
+        <ul style="margin:0;padding-left:18px;font-size:14.5px;color:var(--ink-2);line-height:1.7">
+          <li><b>Los quince componentes base de ppsport</b> como catálogo mínimo, con su documento explicando cuándo usar cada uno.</li>
+          <li><b>Los tokens de laboratorio</b> como punto de partida, ampliados con el <b>segundo bloque de tema oscuro</b> que a ninguno le sobra.</li>
+          <li><b>La navegación inferior y las rutas sin conexión</b> de laboratorio como parte del catálogo, no como añadido.</li>
+          <li><b>Los ocho detectores de ratchet</b> que el kit ya trae, que son los que impiden que el sistema se erosione.</li>
+        </ul>
+        <p class="why" style="margin-top:14px">Esto no es un tema visual: es la lista de
+          piezas y las reglas de cuándo usarlas. La marca de cada producto sigue siendo suya
+          — laboratorio ya demostró cómo, con marca por empresa en cliente y servidor y sin
+          bifurcar código.</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap">
+    <p class="mono">ia-template · 22 de agosto de 2026 · análisis funcional</p>
+    <p>Medido sobre ppsportmanagementarg, laboratorio, hipismo, professional-football-hub
+      (carpeta <span class="mono">cowork-app</span>), futbot-v2, futbot-web-app y worldcup2026. La pureza se calcula contando los imports externos de
+      cada módulo. Análisis anterior, de calidad y no de capacidades:
+      <span class="mono">informe-comparativo-repos-2026-08-22.html</span></p>
+  </div>
+</footer>
+
+</body>
+</html>

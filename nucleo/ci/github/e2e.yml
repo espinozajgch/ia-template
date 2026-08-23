@@ -1,0 +1,50 @@
+# Extremo a extremo con navegador real.
+#
+# Cubre lo que los tests unitarios NO ven: roles ARIA inválidos, banners de error sin
+# role="alert", deriva entre fixtures y realidad, selectores rotos, una hoja de estilos que
+# se descarga y no se aplica.
+#
+# La suite simula la red (/api mockeado): no toca el backend ni la base, así que se puede
+# correr en cualquier máquina — y por eso es obligatoria EN LOCAL antes de subir.
+name: e2e
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: client    # ← AJUSTAR
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: client/package-lock.json }
+
+      - name: Instalar dependencias
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Instalar navegador
+        run: npx playwright install --with-deps chromium
+
+      - name: Suite canónica
+        # Cinco specs, cada una cubre una familia de fallo que las otras no ven:
+        #   app-smoke     · los caminos principales cargan y responden
+        #   error-states  · qué se ve cuando la API falla, y que se anuncia
+        #   wcag          · axe-core sobre las páginas principales, claro y oscuro
+        #   mobile-smoke  · viewport de móvil con el teclado virtual abierto
+        #   rbac          · cada rol ve lo suyo y NO lo ajeno
+        run: npx playwright test
+
+      - name: Guardar el informe
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: client/playwright-report
+          retention-days: 14

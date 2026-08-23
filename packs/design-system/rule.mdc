@@ -1,0 +1,17 @@
+---
+description: Convenciones del sistema de diseño
+globs: ["**/components/**","**/ui/**","**/*.tsx","**/*.jsx","**/*.vue","**/*.svelte"]
+alwaysApply: false
+---
+- Antes de escribir un componente nuevo, mira el catálogo del pack: si algo no se puede
+  hacer con las quince piezas, la pieza se añade AL CATÁLOGO, no a la pantalla.
+- Todo campo va dentro del Envoltorio, que asocia etiqueta, ayuda y error e inyecta
+  `aria-invalid` y `aria-describedby`. La accesibilidad se pone de fábrica, no se recuerda.
+- Ningún <input>, <select> ni <textarea> suelto fuera de los componentes base.
+- Siete estados en todo control: reposo, hover, FOCO VISIBLE, activo, deshabilitado,
+  cargando, error. Con `:focus-visible`, no `:focus`.
+- Ningún estado se comunica SOLO con color: cambia el grosor, añade icono o texto.
+- Si el <select> nativo te sirve, úsalo: trae gratis teclado, anuncio y móvil. Lo que
+  nunca vale es un <div onClick>: ni teclado ni lector de pantalla.
+- 44 px de alto en todo lo pulsable.
+- Contraste 4,5:1 en texto y 3:1 en bordes de control, en los DOS temas.

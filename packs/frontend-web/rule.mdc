@@ -1,0 +1,14 @@
+---
+description: Convenciones de frontend
+globs: ["src/**/*.tsx","src/**/*.jsx","src/**/*.vue","src/**/*.svelte","src/**/*.css","src/**/*.scss","app/**/*.tsx","components/**/*"]
+alwaysApply: false
+---
+Antes de crear un componente: leer `knowledge/wiki/product-design.md`.
+
+- Tokens, nunca colores/sombras/radios crudos.
+- Controles nativos solo dentro de los componentes propios del sistema de diseño.
+- Todo control: reposo, hover, FOCO VISIBLE, activo, deshabilitado, cargando, error.
+- Ningún estado se comunica solo con color.
+- Errores: `role="alert"` en el banner, `aria-describedby` en el campo.
+- Probar a 320 px y en tema oscuro.
+- Tras tocar un componente compartido, un fixture o un banner: re-correr E2E.

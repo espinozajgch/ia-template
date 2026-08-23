@@ -1,0 +1,13 @@
+---
+description: Convenciones de monorepo
+globs: ["apps/**","packages/**","client/**","server/**","services/**","libs/**"]
+alwaysApply: false
+---
+- Las dependencias van en UNA dirección: apps → packages → compartido. Nunca app → app.
+- Nada de imports relativos que crucen la frontera de un paquete (`../../otra-app/...`).
+  Si hace falta compartirlo, baja a un paquete.
+- Cada package.json declara lo que usa; no apoyarse en dependencias izadas.
+- Los tipos del contrato entre paquetes se GENERAN del esquema, no se copian a mano.
+- Un paquete compartido declara qué resuelve y qué no. Dos copias que evolucionan distinto
+  son más baratas que una abstracción equivocada.
+- La puerta se corre desde la raíz, con un solo comando que recorre todos los paquetes.

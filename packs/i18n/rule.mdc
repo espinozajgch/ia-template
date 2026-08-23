@@ -1,0 +1,11 @@
+---
+description: Convenciones de internacionalización
+globs: ["**/locales/**","**/i18n/**","**/*.tsx","**/*.jsx","**/messages/**","**/translations/**"]
+alwaysApply: false
+---
+- Ningún texto visible sin la función de traducción: incluye placeholder, title, aria-label,
+  alt, errores y opciones de desplegables.
+- Paridad de claves entre todos los idiomas, comprobada por comando, no a ojo.
+- Sin concatenar frases: interpolación con parámetros y plurales de la librería.
+- Fecha, número y moneda por locale, nunca a mano.
+- Ninguna comparación lógica contra un texto traducido: comparar contra el código.

@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Despliegue, aislamiento y la suite e2e — tercera tanda · 2026-08-22</title>
+<style>
+:root{
+  --ground:#F6F8FA;--surface:#FFFFFF;--surface-2:#EFF2F6;
+  --ink:#121821;--ink-2:#3A4557;--muted:#5D6A80;--faint:#8894A6;
+  --rule:#DFE4EC;--rule-strong:#C6CEDB;
+  --accent:#39479B;--accent-soft:#E8EAF6;
+  --brass:#8A6410;--brass-soft:#F6EEDC;
+  --ok:#1C6E52;--ok-soft:#E3F1EB;
+  --mid:#96690C;--mid-soft:#F8EFDA;
+  --risk:#A8322A;--risk-soft:#FAE9E7;
+  --shadow:0 1px 2px rgba(18,24,33,.05),0 8px 24px -12px rgba(18,24,33,.14);
+  --display:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --body:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#0E1218;--surface:#161C25;--surface-2:#1D242F;
+  --ink:#E6EBF2;--ink-2:#C3CBD8;--muted:#95A1B4;--faint:#6F7C90;
+  --rule:#252D3A;--rule-strong:#37414F;
+  --accent:#96A5EF;--accent-soft:#1E2440;--brass:#D8AC60;--brass-soft:#2A2317;
+  --ok:#5CC79B;--ok-soft:#12291F;--mid:#D7A63F;--mid-soft:#2A2313;
+  --risk:#E8827A;--risk-soft:#2C1917;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -14px rgba(0,0,0,.7);
+}}
+:root[data-theme="dark"]{
+  --ground:#0E1218;--surface:#161C25;--surface-2:#1D242F;
+  --ink:#E6EBF2;--ink-2:#C3CBD8;--muted:#95A1B4;--faint:#6F7C90;
+  --rule:#252D3A;--rule-strong:#37414F;
+  --accent:#96A5EF;--accent-soft:#1E2440;--brass:#D8AC60;--brass-soft:#2A2317;
+  --ok:#5CC79B;--ok-soft:#12291F;--mid:#D7A63F;--mid-soft:#2A2313;
+  --risk:#E8827A;--risk-soft:#2C1917;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -14px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);
+  font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1060px;margin:0 auto;padding:0 24px}
+h1,h2,h3,h4{text-wrap:balance;margin:0}
+code,.mono{font-family:var(--mono);font-size:.88em}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+
+.head{border-bottom:1px solid var(--rule);background:var(--surface)}
+.head .wrap{padding:56px 24px 36px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);margin:0 0 18px}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(36px,5.6vw,58px);line-height:1.02;
+  letter-spacing:-.015em;margin-bottom:18px}
+h1 em{font-style:italic;color:var(--accent)}
+.thesis{font-size:18.5px;color:var(--ink-2);max-width:62ch;line-height:1.55}
+.stats{display:flex;flex-wrap:wrap;margin-top:34px;border-top:1px solid var(--rule)}
+.stat{padding:16px 28px 0 0;margin-right:28px;border-right:1px solid var(--rule)}
+.stat:last-child{border-right:0}
+.stat b{display:block;font-family:var(--mono);font-size:24px;font-weight:600;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.stat span{font-size:12.5px;color:var(--muted)}
+
+section{padding:54px 0;border-bottom:1px solid var(--rule)}
+section:last-of-type{border-bottom:0}
+.shead{display:flex;align-items:baseline;gap:14px;margin-bottom:8px;flex-wrap:wrap}
+h2{font-family:var(--display);font-weight:400;font-size:clamp(26px,3.3vw,36px);letter-spacing:-.01em}
+.tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--accent);background:var(--accent-soft);padding:4px 9px;border-radius:3px}
+.lede{color:var(--muted);font-size:16.5px;margin:0 0 30px;max-width:66ch}
+
+.pieza{background:var(--surface);border:1px solid var(--rule);border-radius:6px;
+  box-shadow:var(--shadow);margin-bottom:18px;overflow:hidden}
+.pieza>header{display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:15px 22px;background:var(--surface-2);border-bottom:1px solid var(--rule);flex-wrap:wrap}
+.pieza h3{font-size:16.5px;font-weight:700}
+.pieza h3 small{display:block;font-family:var(--mono);font-size:10.5px;font-weight:500;
+  color:var(--faint);letter-spacing:.06em;text-transform:uppercase;margin-top:3px}
+.pieza .body{padding:20px 22px;display:flex;flex-direction:column;gap:14px}
+.pieza p{margin:0;font-size:14.5px;color:var(--ink-2);line-height:1.6;max-width:72ch}
+.pieza p b{color:var(--ink)}
+.chip{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;
+  padding:3px 8px;border-radius:3px;white-space:nowrap}
+.c-ok{background:var(--ok-soft);color:var(--ok)}
+.c-new{background:var(--accent-soft);color:var(--accent)}
+.c-risk{background:var(--risk-soft);color:var(--risk)}
+.c-mid{background:var(--mid-soft);color:var(--mid)}
+pre{margin:0;background:var(--surface-2);border:1px solid var(--rule);border-radius:4px;
+  padding:13px 15px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.6;color:var(--ink-2)}
+.why{border-left:2px solid var(--accent);background:var(--surface-2);padding:12px 15px;
+  border-radius:0 4px 4px 0;font-size:14px;color:var(--ink-2);line-height:1.55}
+.why b{color:var(--ink)}
+.why.brass{border-left-color:var(--brass)}
+
+.scroll{overflow-x:auto;border:1px solid var(--rule);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+thead th{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);background:var(--surface-2);
+  border-bottom:1px solid var(--rule-strong);white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:var(--surface-2)}
+td.mono{font-family:var(--mono);font-size:12px}
+td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+
+.lecc{background:var(--brass-soft);border-left:3px solid var(--brass);padding:18px 22px;
+  border-radius:0 5px 5px 0;margin-top:24px}
+.lecc h3{font-size:17px;margin-bottom:8px}
+.lecc p{margin:0 0 10px;font-size:14.5px;color:var(--ink-2);line-height:1.6;max-width:72ch}
+.lecc p:last-child{margin-bottom:0}
+
+.next{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(290px,1fr))}
+.next .n{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:17px 19px}
+.next h4{font-size:15px;margin-bottom:6px}
+.next p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.55}
+.foot{padding:34px 0 56px;color:var(--faint);font-size:13px}
+@media (max-width:640px){.head .wrap{padding-top:38px}.stat{padding-right:18px;margin-right:18px}}
+@media print{body{background:#fff;color:#000}.pieza,.next .n,.lecc{break-inside:avoid;box-shadow:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="head">
+  <div class="wrap">
+    <p class="eyebrow">ia-template · tercera tanda · 22 agosto 2026</p>
+    <h1>Despliegue, aislamiento<br>y la <em>suite e2e</em></h1>
+    <p class="thesis">Tres piezas que el kit describía con palabras y ahora trae con
+      código. Las tres se ejecutaron de verdad antes de darlas por hechas: el SQL contra un
+      PostgreSQL real, la suite contra una aplicación real. Esa ejecución encontró dos
+      errores míos y desmontó una creencia que iba a entregar como cierta.</p>
+    <div class="stats">
+      <div class="stat"><b>3</b><span>piezas nuevas</span></div>
+      <div class="stat"><b>23</b><span>tests e2e verdes</span></div>
+      <div class="stat"><b>2</b><span>errores propios encontrados al probar</span></div>
+      <div class="stat"><b>1</b><span>creencia desmontada</span></div>
+      <div class="stat"><b>6</b><span>piezas restantes de 15</span></div>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>Lo que se añadió</h2></div>
+
+    <article class="pieza">
+      <header>
+        <h3>Despliegue OIDC + SSM<small>packs/cloud-aws/despliegue/</small></h3>
+        <span class="chip c-new">nuevo</span>
+      </header>
+      <div class="body">
+        <p>El pack prohibía las mutaciones sin enseñar el patrón bueno. Ahora trae el
+          workflow completo y la guía de lo que hay que crear en AWS: proveedor OIDC,
+          política de confianza acotada, permisos mínimos y el nodo gestionado.</p>
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Decisión</th><th>Qué evita</th></tr></thead>
+            <tbody>
+              <tr><td><b>OIDC</b> en vez de clave guardada</td><td>no hay credencial permanente que rotar ni que filtrar; el rol es temporal y caduca solo</td></tr>
+              <tr><td><b>SSM</b> en vez de SSH</td><td>sin puerto 22 abierto, sin clave privada en secretos, con cada ejecución en CloudTrail</td></tr>
+              <tr><td>Se despliega el <b>SHA que pasó la puerta</b></td><td>entre que la puerta pasó y el despliegue arranca puede haber entrado otro commit</td></tr>
+              <tr><td>El disparo manual <b>re-comprueba</b> la puerta</td><td>el disparo manual es el agujero clásico para saltarse la puerta</td></tr>
+              <tr><td>Acciones fijadas <b>por SHA</b>, no por etiqueta</td><td>una etiqueta se mueve, y quien la mueva ejecuta código en un job que puede asumir tu rol</td></tr>
+              <tr><td><span class="mono">cancel-in-progress: false</span></td><td>cancelar un despliegue a medias deja la máquina en un estado intermedio</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="why"><b>Y lo que el patrón no hace, dicho.</b> No es blue/green: hay un
+          hueco de segundos al reiniciar. No revierte solo: volver atrás es desplegar el SHA
+          anterior — que funciona precisamente porque se despliega por SHA y no por rama.
+          Escrito antes de necesitarlo.</p>
+      </div>
+    </article>
+
+    <article class="pieza">
+      <header>
+        <h3>Aislamiento con su prueba de fuga<small>packs/saas-multitenant/aislamiento/</small></h3>
+        <span class="chip c-ok">probado contra PostgreSQL real</span>
+      </header>
+      <div class="body">
+        <p>Las políticas de fila y el test que comprueba que aíslan de verdad: lectura,
+          inserción, modificación y borrado cruzados entre dos clientes, sobre
+          <b>todas</b> las tablas.</p>
+        <p class="why"><b>La lista de tablas se descubre del esquema, no se escribe a
+          mano.</b> Una tabla nueva con columna de cliente entra sola en la prueba. Escrita
+          a mano, garantiza que algún día falte una — y esa es la fuga.</p>
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Detalle que decide si sirve</th><th>Qué pasa si falta</th></tr></thead>
+            <tbody>
+              <tr><td><span class="mono">FORCE ROW LEVEL SECURITY</span>, no solo <span class="mono">ENABLE</span></td><td>la política <b>no se aplica al dueño de la tabla</b>: si la aplicación se conecta con el rol propietario, las políticas están ahí y no filtran nada</td></tr>
+              <tr><td>Permisos sobre las <b>secuencias</b></td><td>todo <span class="mono">INSERT</span> en tabla con clave autoincremental falla con «permission denied for sequence»</td></tr>
+              <tr><td>Sin escapatoria <span class="mono">IS NULL OR …</span></td><td>sería fail-open: una conexión que olvide fijar el cliente lo vería <b>todo</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </article>
+
+    <article class="pieza">
+      <header>
+        <h3>La suite e2e canónica<small>packs/frontend-web/e2e/</small></h3>
+        <span class="chip c-ok">23 tests verdes</span>
+      </header>
+      <div class="body">
+        <p>El workflow los nombraba y no existían. Ahora están los cinco, más el simulador
+          de red y un único fichero <span class="mono">rutas.ts</span> que es lo que hay
+          que tocar para adaptarlos.</p>
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Spec</th><th>La familia de fallo que atrapa</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">app-smoke</td><td>la pantalla no carga, la ruta no existe, el bundle se rompió al desplegar</td></tr>
+              <tr><td class="mono">error-states</td><td>la API falla y la interfaz no lo cuenta — o lo convierte en un «no hay datos» que nadie investiga</td></tr>
+              <tr><td class="mono">wcag</td><td>axe en las páginas principales, <b>en claro y en oscuro</b>: roles, contraste, foco, etiquetas</td></tr>
+              <tr><td class="mono">mobile-smoke</td><td>desborde a 320 px señalando <b>qué elemento</b> desborda, área táctil de 44 px, el teclado virtual tapando el botón</td></tr>
+              <tr><td class="mono">rbac</td><td>un rol ve o alcanza lo que no le toca</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="why"><b>La red se simula.</b> La suite no toca el backend ni la base, así
+          que corre en cualquier máquina y en cualquier momento — y por eso puede ser
+          obligatoria antes de subir. Un e2e que necesita levantar producción es un e2e que
+          nadie corre.</p>
+        <p class="why"><b>Y lo que <span class="mono">rbac</span> no demuestra, dicho en el
+          propio fichero:</b> comprueba la interfaz. Esconder un enlace no protege nada,
+          porque la URL se escribe a mano. La autorización de verdad se comprueba en el
+          servidor y, si hay varios clientes, en la prueba de fuga.</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>Lo que apareció al ejecutarlas</h2><span class="tag">por qué se prueban</span></div>
+    <p class="lede">Ninguna de estas tres cosas se ve leyendo el código. Aparecieron al
+      aplicar el SQL contra un PostgreSQL de verdad y al correr la suite contra una
+      aplicación de verdad.</p>
+
+    <div class="lecc">
+      <h3>1 · Una creencia que iba a entregar como cierta</h3>
+      <p>Escribí en el SQL que omitir <span class="mono">WITH CHECK</span> deja «insertar o
+        mover una fila al cliente de otro», y lo llamé «el error más común de esta receta».
+        <b>Es falso.</b> Al probarlo, PostgreSQL rechazó la operación igualmente: en una
+        política <span class="mono">FOR ALL</span>, si se omite <span class="mono">WITH
+        CHECK</span> se reutiliza la expresión de <span class="mono">USING</span> como regla
+        de escritura.</p>
+      <p>El agujero real es otro, y lo verifiqué: un <span class="mono">USING</span>
+        <b>permisivo</b> —un <span class="mono">USING (true)</span> puesto para poder leer un
+        catálogo compartido— se hereda como regla de escritura. Entonces sí:
+        <span class="mono">UPDATE 1</span> sobre la fila de otro cliente, e
+        <span class="mono">INSERT</span> con un identificador de cliente inventado, sin que
+        ningún error lo delate.</p>
+      <p>La comprobación del test cambió en consecuencia: ya no busca políticas sin
+        <span class="mono">WITH CHECK</span>, sino políticas cuya <b>regla efectiva de
+        escritura no mencione la columna de cliente</b>. Que es el fallo que de verdad
+        existe.</p>
+    </div>
+
+    <div class="lecc">
+      <h3>2 · Un error mío que rompía los INSERT legítimos</h3>
+      <p>La primera versión de <span class="mono">politicas.sql</span> concedía permisos
+        sobre las tablas y <b>no sobre las secuencias</b>. Resultado: todo
+        <span class="mono">INSERT</span> en una tabla con clave autoincremental fallaba con
+        «permission denied for sequence».</p>
+      <p>Lo peor no era el fallo: era que el test de «A no puede insertar como B»
+        <b>pasaba por el motivo equivocado</b>. Un test verde que no prueba lo que dice es
+        peor que uno rojo. Con los permisos corregidos, el insert propio funciona
+        (<span class="mono">INSERT 0 1</span>) y el ajeno lo rechaza la política
+        (<span class="mono">new row violates row-level security policy</span>) — que es la
+        pareja de resultados que había que ver.</p>
+    </div>
+
+    <div class="lecc">
+      <h3>3 · La suite corrió contra la aplicación equivocada</h3>
+      <p>Los primeros 18 fallos no eran de los specs: <span class="mono">reuseExistingServer:
+        true</span> reutilizó un servidor que ya escuchaba en el 5173 —otro de tus
+        proyectos— y la suite se ejecutó contra <b>esa</b> aplicación. Los fallos no tenían
+        ningún sentido porque no eran de la aplicación que se pretendía probar.</p>
+      <p>Queda documentado en el README del pack: puerto propio del proyecto, y
+        <span class="mono">false</span> en la integración continua.</p>
+    </div>
+
+    <div style="margin-top:24px" class="scroll">
+      <table>
+        <thead><tr><th>Fallo introducido a propósito</th><th>¿Lo detectó?</th></tr></thead>
+        <tbody>
+          <tr><td>Contraste insuficiente <b>solo en tema oscuro</b></td><td><span class="chip c-ok">sí</span> — <span class="mono">color-contrast (serious) en a[href$="login"]</span></td></tr>
+          <tr><td><span class="mono">h1</span> fuera de un landmark</td><td><span class="chip c-ok">sí</span> — <span class="mono">region</span> y <span class="mono">landmark-one-main</span></td></tr>
+          <tr><td>Indicador de carga sin <span class="mono">aria-busy</span></td><td><span class="chip c-ok">sí</span></td></tr>
+          <tr><td>Todo correcto</td><td><span class="chip c-ok">23 verdes, 0 fallos</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="lede" style="margin-top:20px">La segunda mitad es la que suele faltar: un test
+      que no pasa nunca sobre código correcto es tan inútil como uno que no falla nunca
+      sobre código roto. Se comprobaron las dos direcciones.</p>
+
+    <div class="lecc" style="border-left-color:var(--accent);background:var(--accent-soft)">
+      <h3>Y un defecto de mis propios specs</h3>
+      <p>El mensaje de error de <span class="mono">wcag</span> se construía como un texto
+        multilínea que Playwright no renderizaba: el informe decía «fallos de accesibilidad
+        en /» y <b>nada más</b>, que es inservible para arreglarlos. Ahora el detalle va por
+        consola y adjunto al informe, y el mensaje de la aserción es una línea por fallo con
+        su selector: <span class="mono">landmark-one-main (moderate) en html · region
+        (moderate) en h1</span>.</p>
+      <p>También quité un umbral inventado: el test de teclado exigía alcanzar más de dos
+        controles. Una pantalla con un solo control es perfectamente válida — lo que importa
+        es que <b>todo</b> lo alcanzable tenga foco visible, no cuántos haya.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>Lo que sigue</h2><span class="tag">quedan 6 de 15</span></div>
+    <div class="next">
+      <div class="n"><h4>Presupuesto de rendimiento</h4><p>El script con umbral que rompe la puerta cuando el paquete engorda. De laboratorio.</p></div>
+      <div class="n"><h4>Puertos y adaptadores</h4><p>Interfaz + implementaciones + factoría, con el ejemplo de almacenamiento. De worldcup2026.</p></div>
+      <div class="n"><h4>Validador de variante regional</h4><p>Paridad de claves más el voseo tratado como algo que se gatea, no como estilo.</p></div>
+      <div class="n"><h4>Test de PWA</h4><p>Manifiesto, service worker y arranque sin conexión, con configuración móvil separada.</p></div>
+      <div class="n"><h4>Validadores de journal</h4><p><span class="mono">esquema.mjs</span> ya cubre orden y sellos; falta el snapshot de esquema como fichero versionado.</p></div>
+      <div class="n"><h4>Retorno automático al kit</h4><p>El comando que propone qué subir del proyecto al kit. Sigue siendo copiar a mano.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap">
+    <p class="mono">ia-template · 22 de agosto de 2026 · tercera tanda</p>
+    <p>SQL aplicado contra PostgreSQL 18 local en base desechable, eliminada al terminar.
+      Suite ejecutada con Playwright y axe-core contra una aplicación mínima.
+      Tandas anteriores: <span class="mono">informe-mejoras-kit-2026-08-22.html</span> ·
+      <span class="mono">-b.html</span> · comparativo:
+      <span class="mono">informe-comparativo-repos-2026-08-22.html</span></p>
+  </div>
+</footer>
+
+</body>
+</html>

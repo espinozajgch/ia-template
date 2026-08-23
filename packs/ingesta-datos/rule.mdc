@@ -1,0 +1,15 @@
+---
+description: Convenciones de ingesta y scraping
+globs: ["**/ingest*/**","**/scrap*/**","**/parser*/**","**/importa*/**","**/*-parser.*","**/*-results.*"]
+alwaysApply: false
+---
+- El parser es PURO: recibe contenido, devuelve datos tipados. No toca red ni base.
+  Lo que toca el mundo va en otra función. Así se prueba con un fichero guardado.
+- Guarda el contenido crudo con su origen y su fecha: sin él no se puede responder a
+  «¿lo parseamos mal o vino mal?».
+- La ingesta es idempotente: correrla dos veces no duplica.
+- Cotejo de identidades CONSERVADOR: ante la duda no se fusiona. Fusionar mal corrompe el
+  histórico en silencio; un duplicado solo lo fragmenta.
+- Normaliza plegando homóglifos (griegas y cirílicas idénticas a las latinas).
+- Un conflicto entre fuentes se MARCA, no se esconde eligiendo en silencio.
+- Si una fuente cambia de formato, el parser debe FALLAR, no devolver cero resultados.

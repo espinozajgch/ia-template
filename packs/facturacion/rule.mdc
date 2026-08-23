@@ -1,0 +1,14 @@
+---
+description: Convenciones de facturación
+globs: ["**/factura*/**","**/invoic*/**","**/billing/**","**/fiscal*","**/*factura*.ts","**/*invoice*.ts"]
+alwaysApply: false
+---
+- El cálculo de importes lo hace UNA sola función, la misma en cliente y servidor.
+- Se redondea POR LÍNEA, no al final: la factura impresa tiene que cuadrar al sumarla.
+- El correlativo lo asigna la BASE en la misma transacción, nunca «leer el último y sumar
+  uno» en la aplicación: dos peticiones simultáneas emiten el mismo número.
+- Una factura emitida NO se edita ni se borra. Se anula o se rectifica emitiendo otra.
+- Los importes y la tasa de cambio se GUARDAN en el documento; no se recalculan al leer.
+- La retención se calcula sobre la BASE IMPONIBLE, no sobre el total.
+- Los porcentajes, el identificador fiscal y su etiqueta son configuración por país,
+  nunca literales en el código.

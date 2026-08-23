@@ -1,0 +1,9 @@
+---
+description: Convenciones de seguridad
+globs: ["**/auth*/**","**/security/**","**/*permis*","**/*authz*","**/middleware/**"]
+alwaysApply: false
+---
+- Segundo factor: TOTP sin dependencias (RFC 6238), no SMS — el canal es lo que falla y
+  el SMS se intercepta duplicando la tarjeta.
+- Un código de segundo factor NO vale dos veces: se guarda el último período usado.
+- Comparación de códigos y testigos en tiempo constante, nunca con ===.

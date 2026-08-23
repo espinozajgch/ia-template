@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "_comentario": [
+    "Hooks genéricos del kit. El agente NO puede olvidarse de un hook: lo inyecta el harness.",
+    "Ajusta los textos del checklist a los comandos reales del proyecto (AGENTS.md §4)",
+    "y borra las líneas que no apliquen. Un checklist con pasos falsos deja de leerse."
+  ],
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(git commit*)",
+            "shell": "bash",
+            "command": "echo \"{\\\"systemMessage\\\":\\\"[checklist pre-commit]\\\\n 1. git fetch && git status -sb — rebase si HEAD diverge de origin\\\\n 2. Reglas de AGENTS.md secciones 5 y 6 cumplidas en ESTE cambio\\\\n 3. knowledge/wiki/anti-patterns.md: ningun AP-* nuevo introducido\\\\n 4. La puerta de calidad de AGENTS.md seccion 4 paso ENTERA, en local\\\\n 5. Estructura y conducta en commits separados\\\\n 6. features.md / product-design.md actualizados si el cambio los afecta\\\\nSi alguna falla: NO commitear.\\\"}\""
+          },
+          {
+            "type": "command",
+            "if": "Bash(git push*)",
+            "shell": "bash",
+            "command": "echo \"{\\\"systemMessage\\\":\\\"[checklist pre-push] ¿EL USUARIO PIDIO EXPLICITAMENTE EL PUSH EN ESTA CONVERSACION? Si no, DETENERSE.\\\\n 1. git fetch && git status -sb vs origin\\\\n 2. Reglas de AGENTS.md cumplidas en TODOS los commits a subir, no solo el ultimo\\\\n 3. Puerta de calidad ENTERA en verde en local, incluido e2e — el CI la corre y un fallo rompe el despliegue\\\\n 4. Ratchets sin subir\\\\n 5. Nada de credenciales, .env ni datos reales en el diff: git diff origin..HEAD\\\\nSi alguna falla: NO push.\\\"}\""
+          },
+          {
+            "type": "command",
+            "if": "Bash(*rm -rf*)",
+            "shell": "bash",
+            "command": "echo \"{\\\"systemMessage\\\":\\\"[borrado] AGENTS.md 5.1: no se borra lo que no se creo en esta sesion. Confirmar la ruta exacta y que el usuario lo pidio.\\\"}\""
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git fetch*)",
+      "Bash(git branch*)",
+      "Bash(git show*)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./**/*.pem)",
+      "Read(./**/*.key)",
+      "Read(./**/id_rsa*)",
+      "Read(./**/credentials)"
+    ]
+  }
+}

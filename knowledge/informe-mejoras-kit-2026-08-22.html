@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mejoras del kit — de predicar la puerta a traerla montada · 2026-08-22</title>
+<style>
+:root{
+  --ground:#F6F8FA;--surface:#FFFFFF;--surface-2:#EFF2F6;
+  --ink:#121821;--ink-2:#3A4557;--muted:#5D6A80;--faint:#8894A6;
+  --rule:#DFE4EC;--rule-strong:#C6CEDB;
+  --accent:#39479B;--accent-soft:#E8EAF6;
+  --brass:#8A6410;--brass-soft:#F6EEDC;
+  --ok:#1C6E52;--ok-soft:#E3F1EB;
+  --mid:#96690C;--mid-soft:#F8EFDA;
+  --risk:#A8322A;--risk-soft:#FAE9E7;
+  --shadow:0 1px 2px rgba(18,24,33,.05),0 8px 24px -12px rgba(18,24,33,.14);
+  --display:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --body:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#0E1218;--surface:#161C25;--surface-2:#1D242F;
+  --ink:#E6EBF2;--ink-2:#C3CBD8;--muted:#95A1B4;--faint:#6F7C90;
+  --rule:#252D3A;--rule-strong:#37414F;
+  --accent:#96A5EF;--accent-soft:#1E2440;
+  --brass:#D8AC60;--brass-soft:#2A2317;
+  --ok:#5CC79B;--ok-soft:#12291F;
+  --mid:#D7A63F;--mid-soft:#2A2313;
+  --risk:#E8827A;--risk-soft:#2C1917;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -14px rgba(0,0,0,.7);
+}}
+:root[data-theme="dark"]{
+  --ground:#0E1218;--surface:#161C25;--surface-2:#1D242F;
+  --ink:#E6EBF2;--ink-2:#C3CBD8;--muted:#95A1B4;--faint:#6F7C90;
+  --rule:#252D3A;--rule-strong:#37414F;
+  --accent:#96A5EF;--accent-soft:#1E2440;
+  --brass:#D8AC60;--brass-soft:#2A2317;
+  --ok:#5CC79B;--ok-soft:#12291F;
+  --mid:#D7A63F;--mid-soft:#2A2313;
+  --risk:#E8827A;--risk-soft:#2C1917;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -14px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);
+  font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+h1,h2,h3,h4{text-wrap:balance;margin:0}
+a{color:var(--accent);text-underline-offset:2px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+code,.mono{font-family:var(--mono);font-size:.88em}
+
+.head{border-bottom:1px solid var(--rule);background:var(--surface)}
+.head .wrap{padding:60px 24px 38px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);margin:0 0 18px}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(38px,6vw,62px);line-height:1;
+  letter-spacing:-.015em;margin-bottom:18px}
+h1 em{font-style:italic;color:var(--accent)}
+.thesis{font-size:18.5px;color:var(--ink-2);max-width:62ch;line-height:1.55}
+.stats{display:flex;flex-wrap:wrap;margin-top:36px;border-top:1px solid var(--rule)}
+.stat{padding:16px 30px 0 0;margin-right:30px;border-right:1px solid var(--rule)}
+.stat:last-child{border-right:0}
+.stat b{display:block;font-family:var(--mono);font-size:25px;font-weight:600;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.stat span{font-size:12.5px;color:var(--muted)}
+
+section{padding:58px 0;border-bottom:1px solid var(--rule)}
+section:last-of-type{border-bottom:0}
+.shead{display:flex;align-items:baseline;gap:14px;margin-bottom:8px;flex-wrap:wrap}
+h2{font-family:var(--display);font-weight:400;font-size:clamp(27px,3.4vw,38px);letter-spacing:-.01em}
+.tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--accent);background:var(--accent-soft);padding:4px 9px;border-radius:3px}
+.lede{color:var(--muted);font-size:16.5px;margin:0 0 32px;max-width:66ch}
+
+.pieza{background:var(--surface);border:1px solid var(--rule);border-radius:6px;
+  box-shadow:var(--shadow);margin-bottom:18px;overflow:hidden}
+.pieza>header{display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:16px 22px;background:var(--surface-2);border-bottom:1px solid var(--rule);flex-wrap:wrap}
+.pieza h3{font-size:16.5px;font-weight:700}
+.pieza h3 small{display:block;font-family:var(--mono);font-size:10.5px;font-weight:500;
+  color:var(--faint);letter-spacing:.06em;text-transform:uppercase;margin-top:3px}
+.pieza .body{padding:20px 22px;display:flex;flex-direction:column;gap:14px}
+.pieza p{margin:0;font-size:14.5px;color:var(--ink-2);line-height:1.6;max-width:70ch}
+.pieza p b{color:var(--ink)}
+.chip{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;
+  padding:3px 8px;border-radius:3px;white-space:nowrap}
+.c-ok{background:var(--ok-soft);color:var(--ok)}
+.c-new{background:var(--accent-soft);color:var(--accent)}
+.c-risk{background:var(--risk-soft);color:var(--risk)}
+.c-brass{background:var(--brass-soft);color:var(--brass)}
+pre{margin:0;background:var(--surface-2);border:1px solid var(--rule);border-radius:4px;
+  padding:13px 15px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.6;color:var(--ink-2)}
+.files{display:flex;flex-wrap:wrap;gap:6px}
+.file{font-family:var(--mono);font-size:11.5px;background:var(--ground);border:1px solid var(--rule);
+  padding:3px 8px;border-radius:3px;color:var(--muted)}
+.why{border-left:2px solid var(--accent);background:var(--surface-2);padding:12px 15px;
+  border-radius:0 4px 4px 0;font-size:14px;color:var(--ink-2);line-height:1.55}
+.why b{color:var(--ink)}
+
+.scroll{overflow-x:auto;border:1px solid var(--rule);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+thead th{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);background:var(--surface-2);
+  border-bottom:1px solid var(--rule-strong);white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:var(--surface-2)}
+td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+td.mono{font-family:var(--mono);font-size:12px}
+
+.alerta{border-left:3px solid var(--risk);background:var(--risk-soft);padding:18px 22px;
+  border-radius:0 5px 5px 0}
+.alerta h3{font-size:17px;margin-bottom:8px}
+.alerta p{margin:0 0 10px;font-size:14.5px;color:var(--ink-2);line-height:1.6;max-width:70ch}
+.alerta p:last-child{margin-bottom:0}
+
+.next{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+.next .n{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:18px 20px}
+.next h4{font-size:15px;margin-bottom:6px}
+.next p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.55}
+.next .ord{font-family:var(--mono);font-size:11px;color:var(--brass);font-weight:600;
+  display:block;margin-bottom:8px;letter-spacing:.08em}
+
+.foot{padding:36px 0 60px;color:var(--faint);font-size:13px}
+@media (max-width:640px){.head .wrap{padding-top:40px}.stat{padding-right:18px;margin-right:18px}}
+@media print{
+  body{background:#fff;color:#000}
+  section{break-inside:auto;page-break-inside:auto}
+  .pieza,.next .n,.alerta{break-inside:avoid;box-shadow:none}
+  .head{border-bottom:2px solid #000}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="head">
+  <div class="wrap">
+    <p class="eyebrow">ia-template · informe de mejoras · 22 agosto 2026</p>
+    <h1>De predicar la puerta<br>a <em>traerla montada</em></h1>
+    <p class="thesis">El kit explicaba cómo debía ser la puerta de calidad y no instalaba
+      un solo fichero que la ejecutara. Tres bloques cierran esa contradicción: plantillas
+      de integración continua, verificadores estructurales y los ocho detectores de ratchet
+      ya probados.</p>
+    <div class="stats">
+      <div class="stat"><b>4</b><span>workflows de CI</span></div>
+      <div class="stat"><b>3</b><span>verificadores nuevos</span></div>
+      <div class="stat"><b>8</b><span>detectores de ratchet</span></div>
+      <div class="stat"><b>8</b><span>proyectos usados de banco de pruebas</span></div>
+      <div class="stat"><b>4</b><span>hallazgos reales encontrados</span></div>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>Lo que se añadió</h2><span class="tag">tres bloques</span></div>
+    <p class="lede">Cada pieza se probó contra los repositorios reales antes de darla por
+      hecha. Los números que aparecen abajo salieron de esas ejecuciones, no de una
+      estimación.</p>
+
+    <article class="pieza">
+      <header>
+        <h3>Plantillas de integración continua<small>nucleo/ci/github/</small></h3>
+        <span class="chip c-new">nuevo</span>
+      </header>
+      <div class="body">
+        <p>Cuatro workflows de GitHub Actions. Se instalan en <span class="mono">agente/ci/</span>
+          <b>sin activarse</b>: copiarlos a <span class="mono">.github/workflows/</span> es un
+          paso consciente, porque cada uno asume nombres de scripts que hay que ajustar.</p>
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Workflow</th><th>Qué gatea</th><th>Cuándo</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">calidad.yml</td><td>tipos · lint · ratchets · verificadores estructurales · build completo · cobertura</td><td>siempre</td></tr>
+              <tr><td class="mono">integracion.yml</td><td>migraciones aplicadas <b>dos veces</b> para probar idempotencia · SQL real contra Postgres efímero · deriva de esquema</td><td>si hay base de datos</td></tr>
+              <tr><td class="mono">e2e.yml</td><td>la suite canónica: <span class="mono">app-smoke · error-states · wcag · mobile-smoke · rbac</span></td><td>si hay interfaz</td></tr>
+              <tr><td class="mono">secretos.yml</td><td>secretos en ficheros trackeados y credenciales en la URL del remoto</td><td>siempre</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="why"><b>Por qué el build y no solo los tipos.</b> Las plantillas corren el
+          build completo aunque ya haya un paso de tipos. <span class="mono">tsc --noEmit</span>
+          pasa en verde mientras el empaquetador falla por un import sin usar: es el fallo
+          que más veces ha roto el despliegue en esta cantera de proyectos.</p>
+      </div>
+    </article>
+
+    <article class="pieza">
+      <header>
+        <h3>Verificadores estructurales<small>nucleo/tools/</small></h3>
+        <span class="chip c-new">nuevo</span>
+      </header>
+      <div class="body">
+        <p>Tres cosas que <b>ningún test funcional detecta</b>, porque el código funciona:
+          lo que se degrada es la forma, no el comportamiento. Sin dependencias, portables,
+          probados contra ocho repositorios.</p>
+        <div class="files">
+          <span class="file">ciclos.mjs</span><span class="file">tamano.mjs</span><span class="file">secretos.mjs</span>
+        </div>
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Verificador</th><th>Qué atrapa</th><th>Resultado en la cantera</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">ciclos.mjs</td>
+                <td>Ciclos de importación en JS/TS <em>y</em> Python, por componentes fuertemente conexos</td>
+                <td><span class="chip c-risk">2 ciclos</span> en laboratorio · <span class="chip c-risk">1</span> en futbot-v2 · ppsport limpio</td></tr>
+              <tr><td class="mono">tamano.mjs</td>
+                <td>Ficheros que crecen, y ficheros nuevos que nacen grandes</td>
+                <td>trinquete: acepta lo que hay, prohíbe que empeore</td></tr>
+              <tr><td class="mono">secretos.mjs</td>
+                <td>13 patrones de credencial en lo trackeado, más la URL del remoto</td>
+                <td><span class="chip c-risk">5 repos</span> con hallazgos · 3 limpios</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="why"><b>Por qué un ciclo importa aunque hoy no rompa nada.</b>
+          <span class="mono">A → B → A</span> lo resuelve el empaquetador y los tests pasan.
+          Rompe el día que alguien mueve una inicialización al cuerpo del módulo y uno de los
+          dos lados recibe <span class="mono">undefined</span> al cargar — un fallo que
+          aparece solo en producción y según el orden del bundle.</p>
+        <p class="why"><b>El escáner no imprime el valor del secreto.</b> Solo dónde está y
+          de qué tipo es. Imprimirlo lo copiaría al log de CI, que es exactamente el problema
+          que evita.</p>
+      </div>
+    </article>
+
+    <article class="pieza">
+      <header>
+        <h3>Los ocho detectores de ratchet<small>packs/frontend-web/detectores/</small></h3>
+        <span class="chip c-new">nuevo</span>
+      </header>
+      <div class="body">
+        <p>El kit traía el motor del trinquete y ningún detector. Ahora trae los ocho, con el
+          comando exacto de cada uno, por qué duele lo que atrapan, y un script que los
+          instala y valida de golpe.</p>
+        <pre>bash agente/packs/frontend-web/detectores/detectores.sh instalar
+bash agente/packs/frontend-web/detectores/detectores.sh validar</pre>
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Ratchet</th><th>Qué atrapa</th><th class="num">ppsport</th><th class="num">laboratorio</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">colores</td><td>hex, rgb y clases de color crudas fuera de los tokens</td><td class="num">224</td><td class="num">81</td></tr>
+              <tr><td class="mono">sombras</td><td>elevaciones sueltas en vez del sistema</td><td class="num">1</td><td class="num">44</td></tr>
+              <tr><td class="mono">inputs-nativos</td><td>controles nativos fuera de los componentes propios</td><td class="num">72</td><td class="num">202</td></tr>
+              <tr><td class="mono">radios</td><td>radio equivocado en controles interactivos</td><td class="num">0</td><td class="num">0</td></tr>
+              <tr><td class="mono">componentes-esquivados</td><td>markup que reimplementa a mano un componente compartido</td><td class="num">—</td><td class="num">—</td></tr>
+              <tr><td class="mono">loc</td><td>el componente dios y el router dios</td><td class="num">70</td><td class="num">24</td></tr>
+              <tr><td class="mono">literales-i18n</td><td>texto visible sin pasar por la traducción</td><td class="num">14</td><td class="num">232</td></tr>
+              <tr><td class="mono">supresiones</td><td><span class="mono">@ts-nocheck</span>, <span class="mono">: any</span>, <span class="mono"># type: ignore</span></td><td class="num">0</td><td class="num">0</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="why"><b>Por qué un trinquete y no una regla.</b> Un repositorio real llega
+          con 224 colores crudos. Prohibirlos de golpe bloquea el trabajo el primer día, así
+          que la regla se desactiva y deja de medir. El trinquete acepta los 224 y falla en el
+          225: la deuda deja de crecer sin que nadie tenga que pararlo todo.</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>Lo que encontraron al probarlos</h2><span class="tag">hallazgos reales</span></div>
+    <p class="lede">Las herramientas se validaron ejecutándolas contra los ocho repositorios
+      con código. No son hipótesis: son la salida de esas ejecuciones.</p>
+
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Repositorio</th><th>Hallazgo</th><th>Gravedad</th><th>Qué hacer</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">6 de 9 repos</td>
+            <td>Token de GitHub embebido en la URL del remoto: <span class="mono">ia-template</span>, <span class="mono">cowork-app</span>, <span class="mono">futbot-v2</span>, <span class="mono">futbot-v1</span>, <span class="mono">worldcup2026</span>, <span class="mono">wc2026</span></td>
+            <td><span class="chip c-risk">alta</span></td>
+            <td>Rotar el token en GitHub y volver a poner el remoto sin credencial</td></tr>
+          <tr><td class="mono">professional-football-hub<br><span class="mono" style="color:var(--faint)">(carpeta cowork-app)</span></td>
+            <td>Contraseña de base de datos literal en <span class="mono">db/import_seed.py:91</span><br>
+              <b>CORREGIDO EN ORIGEN.</b> El hallazgo salió de una copia local 119 commits por detrás;
+              la rama principal ya leía la conexión del entorno. El código nunca estuvo así en el remoto.</td>
+            <td><span class="chip c-ok">resuelto</span></td>
+            <td>Nada en el código. <b>Rotar la credencial sigue pendiente</b>: estuvo en el historial de git</td></tr>
+          <tr><td class="mono">worldcup2026</td>
+            <td>Dos claves temporales de AWS dentro de URLs prefirmadas, en un notebook commiteado</td>
+            <td><span class="chip c-mid" style="background:var(--mid-soft);color:var(--mid)">media</span></td>
+            <td>Ya caducadas, pero limpiar el notebook antes de commitear</td></tr>
+          <tr><td class="mono">laboratorio</td>
+            <td>2 ciclos de importación: <span class="mono">aviso-copia-local ↔ dashboard/acciones</span> y <span class="mono">agenda ↔ casos</span></td>
+            <td><span class="chip c-mid" style="background:var(--mid-soft);color:var(--mid)">media</span></td>
+            <td>Extraer lo compartido a un tercer módulo</td></tr>
+          <tr><td class="mono">futbot-v2</td>
+            <td>Ciclo entre <span class="mono">chat/__init__</span>, <span class="mono">chat_manager</span> y <span class="mono">prompt_manager</span></td>
+            <td><span class="chip c-mid" style="background:var(--mid-soft);color:var(--mid)">media</span></td>
+            <td>Invertir la dependencia, o vaciar el <span class="mono">__init__</span></td></tr>
+          <tr><td class="mono">ppsportmanagementarg<br>hipismo · laboratorio</td>
+            <td>Sin secretos. Los tres repos con remoto limpio</td>
+            <td><span class="chip c-ok">limpio</span></td>
+            <td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:26px" class="alerta">
+      <h3>El token del remoto sigue sin rotar</h3>
+      <p>Se señaló en la sesión anterior y hoy el escáner lo confirma en seis repositorios,
+        no en uno. Un token en <span class="mono">.git/config</span> lo tiene cualquiera con
+        acceso al disco, a un backup o a una copia del directorio, y aparece en cualquier
+        <span class="mono">git remote -v</span>.</p>
+      <pre>git remote set-url origin https://github.com/&lt;usuario&gt;/&lt;repo&gt;.git
+gh auth login   # o el gestor de credenciales del sistema</pre>
+      <p>Reescribir el historial <b>no</b> arregla una fuga: los clones y los forks conservan
+        la credencial. Lo único que la arregla es rotarla.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>Cómo quedó conectado</h2></div>
+    <p class="lede">Las piezas nuevas no son ficheros sueltos: entran por el instalador y
+      están citadas donde el agente las va a leer.</p>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Dónde</th><th>Qué cambió</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">instalar.sh</td><td>Instala <span class="mono">agente/ci/</span>, los tres verificadores <span class="mono">.mjs</span> y los detectores de cada pack. El mensaje final indica cómo fijar las líneas base</td></tr>
+          <tr><td class="mono">protocolo/02_PUERTA…</td><td>Sección 5 nueva: verificadores estructurales, con el porqué de cada uno. La salida canónica incluye <span class="mono">sin ciclos · sin secretos</span></td></tr>
+          <tr><td class="mono">skills/verificar</td><td>Los verificadores estructurales entran en el orden de ejecución, como paso 5</td></tr>
+          <tr><td class="mono">packs/frontend-web</td><td>Los ratchets de ejemplo se sustituyen por el catálogo real de ocho detectores</td></tr>
+          <tr><td class="mono">packs/api-backend</td><td>Dos secciones nuevas: mutación como puerta opcional, e integración contra base efímera</td></tr>
+          <tr><td class="mono">packs/seguridad</td><td>El <span class="mono">grep</span> manual se sustituye por <span class="mono">secretos.mjs</span>, que además revisa el remoto</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>Lo que sigue</h2><span class="tag">de las 15 piezas, quedan 12</span></div>
+    <p class="lede">Por orden de lo que más cambia el resultado del próximo proyecto.
+      El detalle de cada una está en el informe comparativo.</p>
+    <div class="next">
+      <div class="n"><span class="ord">Siguiente</span><h4>Cobertura por capa</h4>
+        <p>Umbrales por capa en vez de un global, y la regla de no excluir carpetas para inflar el número. De ppsportmanagementarg.</p></div>
+      <div class="n"><span class="ord">Siguiente</span><h4>Validadores de migración</h4>
+        <p>Journal íntegro, migraciones idempotentes y snapshot de esquema sin deriva. El workflow ya los invoca; faltan los scripts.</p></div>
+      <div class="n"><span class="ord">Siguiente</span><h4>Pack monorepo</h4>
+        <p>Cuatro de los trece repos lo son y ningún pack lo cubre. El instalador aún asume un solo proyecto en la raíz.</p></div>
+      <div class="n"><span class="ord">Después</span><h4>Despliegue OIDC + SSM</h4>
+        <p>El patrón bueno de AWS: rol asumido, despliegue al commit ya gateado, verificación del borde público. Sin claves de larga vida.</p></div>
+      <div class="n"><span class="ord">Después</span><h4>RLS con su test de fuga</h4>
+        <p>El esqueleto SQL de las políticas y el test que las ejercita con dos identidades contra una base real.</p></div>
+      <div class="n"><span class="ord">Después</span><h4>Presupuesto de rendimiento</h4>
+        <p>El script con umbral que rompe la puerta cuando el paquete engorda. De laboratorio.</p></div>
+      <div class="n"><span class="ord">Después</span><h4>Puertos y adaptadores</h4>
+        <p>Interfaz + implementaciones + factoría por configuración. El pack cloud-agnostico lo pide con palabras y no lo demuestra.</p></div>
+      <div class="n"><span class="ord">Después</span><h4>Validador de variante regional</h4>
+        <p>Paridad de claves más el voseo tratado como algo que se gatea, no como estilo.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap">
+    <p class="mono">ia-template · 22 de agosto de 2026</p>
+    <p>Herramientas ejecutadas contra: ppsportmanagementarg, laboratorio, hipismo,
+      professional-football-hub, futbot-v2, futbot-web-app, worldcup2026 e ia-template.
+      <b>Revisado el 23-08-2026:</b> el hallazgo de la contraseña se midió sobre una copia local
+      desactualizada y ya estaba corregido en la rama principal.
+      Informe comparativo de la cantera:
+      <span class="mono">knowledge/informe-comparativo-repos-2026-08-22.html</span></p>
+  </div>
+</footer>
+
+</body>
+</html>
