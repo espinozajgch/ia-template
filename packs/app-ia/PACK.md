@@ -109,6 +109,24 @@ editado en una consola web es un cambio en producción sin control de versiones.
 Un conjunto de casos con su salida esperada, en el repositorio, y una comparación antes /
 después. Sin él, «lo mejoré» significa «lo cambié».
 
+**Y cuando la salida es prosa, no hay «salida esperada».** Ahí la comparación no es contra
+un fichero de referencia sino contra **otra corrida del mismo caso**, y hacen falta dos,
+porque son dos preguntas distintas y mezclarlas deja las dos sin responder:
+
+| Pregunta | Qué se compara |
+|---|---|
+| ¿el cambio de prompt mejoró algo? | coste, longitud, variedad del texto, cuántas veces repite |
+| ¿este refactor cambió la conducta? | lo **observable**: qué se publicó, en qué orden, con qué datos |
+
+La segunda es la que hace falta para refactorizar sin miedo, y es la que casi nadie
+construye: se asume que si las pruebas unitarias pasan, la conducta no cambió — y en un
+sistema con un modelo dentro eso no se sigue. Guardar la corrida de antes, correr la de
+después sobre la misma entrada y **enumerar las diferencias** convierte «creo que no he
+roto nada» en una lista que se puede mirar.
+
+*(De futbot-v2, que tiene las dos: `tools/comparar_ejecuciones.py` para la primera y
+`tools/comparar_regresion.py` para la segunda. Están separadas a propósito.)*
+
 ### El no determinismo se acota
 
 Temperatura fija y baja para tareas de extracción y clasificación. Y la semilla, cuando el
