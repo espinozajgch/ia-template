@@ -121,7 +121,14 @@ if (accion === 'orden') {
   //   · con journal, el orden está fijado ahí → el riesgo baja a que una persona (o una
   //     herramienta que ordene por nombre) se confunda. Es un AVISO.
   // Un journal que cita un fichero inexistente rompe la aplicación siempre: error.
-  const ES_ERROR = new Set(journal ? ['journal-sin-fichero'] : ['duplicado', 'journal-sin-fichero']);
+  // Un journal no siempre es un fichero. Un ejecutor que ordena por nombre y guarda
+  // versión + huella en una tabla da la MISMA garantía: el orden ya está fijado y es el
+  // mismo en todas las máquinas. Se declara en esquema-excepciones.json:
+  //   { "journal-externo": "scripts/migrate.mjs ordena con .sort() y sella en schema_migrations" }
+  // Con journal —de fichero o declarado— un número repetido baja de error a aviso.
+  const journalExterno = typeof exc['journal-externo'] === 'string' ? exc['journal-externo'] : null;
+  const hayJournal = Boolean(journal) || Boolean(journalExterno);
+  const ES_ERROR = new Set(hayJournal ? ['journal-sin-fichero'] : ['duplicado', 'journal-sin-fichero']);
   const clave = p => p.tipo === 'hueco' ? String(p.numero) : (p.mig || '');
   const vivos = [], silenciados = [];
   for (const p of problemas) {
@@ -198,6 +205,29 @@ if (accion === 'sellos') {
 }
 
 // ── idempotencia ──────────────────────────────────────────────────────────────
+/*
+ * ¿El ejecutor envuelve cada migración en una transacción?
+ *
+ * Si lo hace, una migración que falla a medias se deshace ENTERA y el reintento arranca
+ * limpio: la idempotencia sentencia a sentencia deja de ser lo que evita el desastre. En
+ * PostgreSQL el DDL es transaccional, así que el envoltorio funciona también para
+ * `CREATE TABLE` y `ADD CONSTRAINT`; en MySQL u Oracle no, y ahí el aviso sigue vivo.
+ *
+ * Sin esta comprobación la herramienta gritaba 41 sentencias en un proyecto cuyo ejecutor
+ * envuelve todo en `BEGIN … COMMIT/ROLLBACK` (pulso, 2026-08-23). Un verificador que avisa
+ * de algo que el proyecto ya resolvió es un verificador que se acaba desactivando.
+ */
+function ejecutorTransaccional() {
+  for (const cand of ['scripts/migrate.mjs', 'scripts/migrate.js', 'scripts/migrar.mjs',
+                      'db/migrate.mjs', 'migrate.mjs']) {
+    try {
+      const src = readFileSync(cand, 'utf8');
+      if (/\bBEGIN\b/i.test(src) && /\bROLLBACK\b/i.test(src) && /\bCOMMIT\b/i.test(src)) return cand;
+    } catch { /* no está: se prueba el siguiente */ }
+  }
+  return null;
+}
+
 if (accion === 'idempotencia') {
   const estricto = resto.includes('--estricto');
   const di = resto.indexOf('--desde');
@@ -223,6 +253,14 @@ if (accion === 'idempotencia') {
     });
   }
   if (json) { console.log(JSON.stringify(hallazgos, null, 2)); process.exit(hallazgos.length ? 1 : 0); }
+  const conTransaccion = ejecutorTransaccional();
+  if (conTransaccion && hallazgos.length) {
+    console.log(`✓ idempotencia: ${hallazgos.length} sentencia(s) no aguantarían una segunda pasada por sí solas,`);
+    console.log(`  pero ${conTransaccion} envuelve cada migración en BEGIN … COMMIT/ROLLBACK: una que falla`);
+    console.log(`  se deshace entera y el reintento arranca limpio. El aviso no aplica aquí.`);
+    console.log(`  (usa --estricto para verlas de todas formas)`);
+    if (!estricto) process.exit(0);
+  }
   if (!hallazgos.length) { console.log(`✓ idempotencia: las ${aRevisar.length} migraciones revisadas aguantan una segunda pasada`); process.exit(0); }
   const porMig = new Map();
   for (const h of hallazgos) { if (!porMig.has(h.mig)) porMig.set(h.mig, []); porMig.get(h.mig).push(h); }

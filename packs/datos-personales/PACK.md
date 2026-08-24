@@ -12,7 +12,7 @@ tres, dos tienen **cero** — y uno de ellos es una aplicación clínica.
 
 | Fichero | Qué es |
 |---|---|
-| `inventario.plantilla.md` | el documento a rellenar |
+| `knowledge/wiki/inventario-datos-personales.md` | el documento a rellenar; lo instala el pack |
 | `clasificacion.mjs` | comprueba que el inventario no se queda atrás |
 
 ---

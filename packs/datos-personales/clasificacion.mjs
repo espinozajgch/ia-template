@@ -166,7 +166,7 @@ if (!inv) {
   const porTabla = new Map();
   for (const c of sospechosas) { if (!porTabla.has(c.tabla)) porTabla.set(c.tabla, []); porTabla.get(c.tabla).push(c.columna); }
   for (const [t, cs] of [...porTabla].sort()) console.log(`    ${t}: ${cs.join(', ')}`);
-  console.log(`\n  Plantilla: agente/packs/datos-personales/inventario.plantilla.md`);
+  console.log(`\n  Plantilla: knowledge/wiki/inventario-datos-personales.md`);
   process.exit(1);
 }
 

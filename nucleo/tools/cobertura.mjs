@@ -41,7 +41,39 @@ function localizar() {
                    'server/coverage/coverage-summary.json', '.coverage/coverage-summary.json']) {
     if (existsSync(c)) return c;
   }
+  /* El corredor propio de Node (`node --test --experimental-test-coverage`) sólo emite
+     lcov. Cada vez más proyectos lo usan y sin esto la herramienta no arrancaba en
+     ninguno de ellos — pasó en pulso el 2026-08-23. Se convierte al vuelo. */
+  for (const c of ['coverage/lcov.info', '.coverage/lcov.info', 'lcov.info']) {
+    if (existsSync(c)) return c;
+  }
   return null;
+}
+
+/** lcov → la forma de `coverage-summary.json`, que es lo que sabe leer el resto. */
+function desdeLcov(texto) {
+  const salida = {}; let fichero = null, lf = 0, lh = 0, bf = 0, bh = 0, fnf = 0, fnh = 0;
+  const cerrar = () => {
+    if (!fichero) return;
+    salida[fichero] = {
+      lines:      { total: lf,  covered: lh,  pct: lf  ? +(lh  * 100 / lf ).toFixed(2) : 100 },
+      branches:   { total: bf,  covered: bh,  pct: bf  ? +(bh  * 100 / bf ).toFixed(2) : 100 },
+      functions:  { total: fnf, covered: fnh, pct: fnf ? +(fnh * 100 / fnf).toFixed(2) : 100 },
+      statements: { total: lf,  covered: lh,  pct: lf  ? +(lh  * 100 / lf ).toFixed(2) : 100 },
+    };
+    fichero = null; lf = lh = bf = bh = fnf = fnh = 0;
+  };
+  for (const linea of texto.split('\n')) {
+    const [clave, ...val] = linea.trim().split(':');
+    const v = val.join(':');
+    if (clave === 'SF') { cerrar(); fichero = v; }
+    else if (clave === 'LF') lf = +v; else if (clave === 'LH') lh = +v;
+    else if (clave === 'BRF') bf = +v; else if (clave === 'BRH') bh = +v;
+    else if (clave === 'FNF') fnf = +v; else if (clave === 'FNH') fnh = +v;
+    else if (clave === 'end_of_record') cerrar();
+  }
+  cerrar();
+  return salida;
 }
 const ruta = localizar();
 if (!ruta || !existsSync(ruta)) {
@@ -54,7 +86,8 @@ if (!ruta || !existsSync(ruta)) {
   Luego corre los tests con cobertura y vuelve.`);
   process.exit(2);
 }
-const bruto = JSON.parse(readFileSync(ruta, 'utf8'));
+const crudo = readFileSync(ruta, 'utf8');
+const bruto = ruta.endsWith('.info') ? desdeLcov(crudo) : JSON.parse(crudo);
 const raizProy = resolve(dirname(ruta), '..');
 const ficheros = Object.entries(bruto)
   .filter(([k]) => k !== 'total')
@@ -103,11 +136,11 @@ function enmascarados(margen = 20) {
 // o está excluido del cómputo. Las dos cosas hay que saberlas.
 function excluidos() {
   const EXT = ['.ts', '.tsx', '.js', '.jsx', '.mjs', '.py'];
-  const IGN = /(^|\/)(node_modules|\.git|dist|build|coverage|\.next|__pycache__|\.venv|venv)(\/|$)/;
+  const IGN = /(^|\/)(node_modules|\.git|dist|build|coverage|\.next|__pycache__|\.venv|venv|agente)(\/|$)/;
   const ES_TEST = /\.(test|spec)\.|(^|\/)(tests?|__tests__|e2e|__fixtures__|fixtures)(\/)/;
   const vistos = new Set(ficheros.map(([f]) => f));
   const enDisco = [];
-  (function rec(d) {
+  function rec(d) {
     let e; try { e = readdirSync(d, { withFileTypes: true }); } catch { return; }
     for (const x of e) {
       const p = join(d, x.name);
@@ -115,14 +148,23 @@ function excluidos() {
       if (x.isDirectory()) rec(p);
       else if (EXT.includes(extname(x.name)) && !ES_TEST.test(p)) enDisco.push(relative(raizProy, resolve(p)).replace(/\\/g, '/'));
     }
-  })(join(raizProy, 'src'));
+  }
+  // `src` no es universal. Un proyecto de Next tiene el código en `app/`, uno de Python
+  // en un paquete con su nombre, un monorepo en `packages/`. Asumirlo hacía que esta
+  // comprobación diera ✓ sin haber mirado nada: el peor resultado posible, porque un
+  // verificador que no encuentra nada y calla se lee igual que uno que no encuentra fallos.
+  const RAICES = ['src', 'app', 'lib', 'server', 'client', 'pages', 'api', 'scripts', 'db', 'packages', 'apps']
+    .filter(r => { try { return statSync(join(raizProy, r)).isDirectory(); } catch { return false; } });
+  if (!RAICES.length) rec(raizProy); else for (const r of RAICES) rec(join(raizProy, r));
   const fuera = enDisco.filter(f => !vistos.has(f));
   const porCapa = new Map();
   for (const f of fuera) {
     const c = capaDe(f);
     let n = 0; try { n = readFileSync(join(raizProy, f), 'utf8').split('\n').length; } catch {}
-    const a = porCapa.get(c) || { capa: c, ficheros: 0, lineas: 0, ejemplos: [] };
-    a.ficheros++; a.lineas += n; if (a.ejemplos.length < 3) a.ejemplos.push(f);
+    // `ejemplos` es para el humano que lee la salida; `todos` es para el trinquete,
+    // que necesita la lista entera y no una muestra.
+    const a = porCapa.get(c) || { capa: c, ficheros: 0, lineas: 0, ejemplos: [], todos: [] };
+    a.ficheros++; a.lineas += n; a.todos.push(f); if (a.ejemplos.length < 3) a.ejemplos.push(f);
     porCapa.set(c, a);
   }
   return [...porCapa.values()].sort((a, b) => b.lineas - a.lineas);
@@ -168,9 +210,9 @@ if (accion === 'enmascarados') {
 if (accion === 'excluidos') {
   const x = excluidos();
   if (json) { console.log(JSON.stringify(x, null, 2)); process.exit(0); }
-  if (!x.length) { console.log('✓ todo el código de src/ entra en el cómputo'); process.exit(0); }
+  if (!x.length) { console.log('✓ todo el código fuente entra en el cómputo'); process.exit(0); }
   const lineas = x.reduce((a, c) => a + c.lineas, 0);
-  console.log(`⚠ ${x.reduce((a,c)=>a+c.ficheros,0)} fichero(s) de src/ (${lineas.toLocaleString('es')} líneas) NO aparecen en el resumen:\n`);
+  console.log(`⚠ ${x.reduce((a,c)=>a+c.ficheros,0)} fichero(s) (${lineas.toLocaleString('es')} líneas) NO aparecen en el resumen:\n`);
   for (const c of x) {
     console.log(`    ${c.capa}  —  ${c.ficheros} ficheros, ${c.lineas.toLocaleString('es')} líneas`);
     for (const e of c.ejemplos) console.log(`        ${e}`);
@@ -180,6 +222,53 @@ if (accion === 'excluidos') {
   cómputo. Las dos cosas hay que saberlas: un porcentaje alto que excluye la mitad del
   código es peor que uno bajo y honesto, porque impide ver el problema.`);
   process.exit(0);
+}
+
+/*
+ * `fuera` — trinquete sobre el código que NO entra en el cómputo.
+ *
+ * Un porcentaje de cobertura solo significa algo si se sabe sobre qué se calcula. Un 92 %
+ * medido sobre un cuarto del código no es un 92 %: es un 92 % de un cuarto, y se lee igual
+ * de bien que el de verdad. Ésta es la diferencia entre «no sabemos qué cubren las pruebas»
+ * y «lo sabemos, y lo estamos reduciendo».
+ *
+ * No exige cubrirlo todo hoy —eso pondría la puerta en rojo permanente y acabaría
+ * desactivada—. Fija lo que hay y prohíbe que crezca: un fichero nuevo que ningún test
+ * ejecute salta al momento, mientras la deuda vieja se drena al ritmo que se pueda.
+ */
+if (accion === 'fuera') {
+  const F = join(DIR, 'cobertura-fuera.json');
+  const hoy = excluidos().flatMap(c => c.todos ?? c.ejemplos);
+  const actuales = new Set(hoy);
+  if (!existsSync(F)) {
+    mkdirSync(DIR, { recursive: true });
+    writeFileSync(F, JSON.stringify({ ficheros: [...actuales].sort() }, null, 2) + '\n');
+    console.log(`✓ línea base: ${actuales.size} fichero(s) fuera del cómputo.\n
+    A partir de ahora esa lista solo puede encoger. Cubrir uno y quitarlo de aquí es el
+    trabajo; añadir uno nuevo es lo que este trinquete existe para impedir.`);
+    process.exit(0);
+  }
+  const base = new Set(JSON.parse(readFileSync(F, 'utf8')).ficheros ?? []);
+  const nuevos = [...actuales].filter(f => !base.has(f)).sort();
+  const cubiertos = [...base].filter(f => !actuales.has(f)).sort();
+  if (cubiertos.length) {
+    // Que la lista encoja sola no basta: si no se re-fija, mañana vuelve a caber uno nuevo
+    // en el hueco que dejó el que se cubrió, y el trinquete deja de morder.
+    console.log(`✓ ${cubiertos.length} fichero(s) han entrado en el cómputo desde la línea base:`);
+    for (const f of cubiertos.slice(0, 10)) console.log(`      ${f}`);
+    console.log(`\n    Re-fija la línea base para que el hueco no se pueda volver a ocupar:\n      rm ${F} && node ${'agente/tools/cobertura.mjs'} fuera\n`);
+  }
+  if (!nuevos.length) {
+    console.log(`✓ nada nuevo fuera del cómputo  ·  ${actuales.size} fichero(s) de deuda declarada`);
+    process.exit(0);
+  }
+  console.log(`✗ ${nuevos.length} fichero(s) que ningún test ejecuta y no estaban en la línea base:\n`);
+  for (const f of nuevos) console.log(`      ${f}`);
+  console.log(`
+    O no los cubre ninguna prueba —y entonces su cobertura real es 0, por mucho que el
+    porcentaje global siga en verde—, o algo los sacó del cómputo. Escribe la prueba, o
+    declara el motivo añadiéndolo a ${F}.`);
+  process.exit(1);
 }
 
 if (accion === 'validar') {
