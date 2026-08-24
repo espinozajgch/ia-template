@@ -65,15 +65,46 @@ try {
 
 /**
  * Normaliza lo que cambia entre corridas sin que el documento haya cambiado.
- * Sin esto, la referencia falla cada día por la fecha del pie y se acaba borrando.
+ * Sin esto, la referencia falla cada día por la fecha del pie y se acaba borrando —y una
+ * referencia que falla siempre se acaba borrando entera.
+ *
+ * ── Dos lecciones que costaron caro, las dos de futbot-v2 ────────────────────
+ *
+ * 1 · **Anclar, y conservar el prefijo.** Una expresión suelta como `\d{1,2}:\d{2}`
+ *     reescribe CUALQUIER cosa con esa forma, esté donde esté: un marcador «1:23», una
+ *     coordenada, un identificador corto. Eso no normaliza ruido, borra datos — y lo hace
+ *     en silencio, que es peor, porque la comparación sigue saliendo verde sobre un
+ *     documento del que ya no se está mirando la mitad. Las reglas de aquí abajo se anclan
+ *     a la línea entera y **conservan su prefijo**, así que solo tocan la línea que
+ *     nombraron.
+ *
+ * 2 · **Cada regla, su propia marca.** La primera versión de esto en futbot-v2 devolvía
+ *     `<fecha>` para todo lo volátil. Al añadir la segunda regla —la duración de la
+ *     reproducción— se guardó como si fuera una fecha, y la comparación seguía saliendo
+ *     bien con el nombre equivocado. Lo cazó un test, no una revisión.
+ *
+ * Añade aquí una regla por cada cosa que varíe sin que el documento cambie, y dale su
+ * marca. Si no sabes qué varía todavía, corre `ver` dos veces con un día de diferencia.
  */
+const VOLATILES = [
+  // El pie de página. Caduca a medianoche: sin esto, cualquiera que compare al día
+  // siguiente de fijar la referencia ve fallar el test sin haber tocado nada, y un test
+  // que avisa todos los días deja de leerse — también el día que importa.
+  [/^(.*generad[oa] el )\d{1,2}[/-]\d{1,2}[/-]\d{2,4}.*$/i, '<fecha>'],
+  [/^(.*[Ee]lapsed time\s*:\s*).+$/, '<duracion>'],
+  [/^(.*\b[Dd]uración\s*:\s*).+$/, '<duracion>'],
+];
+
+/** Identificadores con forma de UUID: son inequívocos, así que sí se pueden sustituir sueltos. */
+const UUID = /\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi;
+
 function estable(linea) {
-  return linea
-    .replace(/\b\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\b/g, '<fecha>')
-    .replace(/\b\d{1,2}:\d{2}(:\d{2})?\b/g, '<hora>')
-    .replace(/\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi, '<id>')
-    .replace(/\s+/g, ' ')
-    .trim();
+  const plana = linea.replace(/\s+/g, ' ').trim();
+  for (const [patron, marca] of VOLATILES) {
+    const m = plana.match(patron);
+    if (m) return m[1] + marca;
+  }
+  return plana.replace(UUID, '<id>');
 }
 
 async function huella(ruta) {

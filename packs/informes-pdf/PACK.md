@@ -46,9 +46,18 @@ node agente/packs/informes-pdf/huella.mjs comparar informe.pdf   # en la puerta
 
 ### Dos detalles que lo hacen usable
 
-**Se normaliza lo que varía sin que el documento cambie**: fechas, horas e identificadores
-pasan a `<fecha>`, `<hora>`, `<id>`. Sin eso la referencia falla cada día por el pie de
-página, y una referencia que falla siempre se acaba borrando.
+**Se normaliza lo que varía sin que el documento cambie.** Sin eso la referencia falla
+cada día por el pie de página, y una referencia que falla siempre se acaba borrando.
+
+Pero se normaliza **anclando a la línea y conservando su prefijo**, no con expresiones
+sueltas. Una expresión como `\d{1,2}:\d{2}` reescribe cualquier cosa con esa forma esté
+donde esté —un marcador «1:23», una coordenada—: eso no quita ruido, borra datos, y en
+silencio, porque la comparación sigue saliendo verde sobre un documento del que ya no se
+mira la mitad.
+
+Y **cada regla lleva su propia marca**. La primera versión de esto en futbot-v2 devolvía
+`<fecha>` para todo lo volátil; al añadir la duración se guardó como si fuera una fecha y
+la comparación seguía saliendo bien con el nombre equivocado. Lo cazó un test.
 
 **Las líneas se agrupan por posición vertical.** Un PDF no tiene líneas, tiene fragmentos
 con coordenadas: sin agrupar, un simple cambio de fuente parte una línea en dos y la

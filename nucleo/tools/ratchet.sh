@@ -42,7 +42,16 @@ case "$accion" in
       fi
       exit 1
     elif [ "$n" -lt "$base" ]; then
-      echo "✓ $nombre: $base → $n (-$((base-n))). Re-baseliniza para consolidar: $0 baseline $nombre"
+      # Y aquí FALLA, aunque la noticia sea buena. Es la mitad del trinquete que casi nadie
+      # escribe: si lo medido baja y el umbral no, queda un hueco entre los dos por el que
+      # caben ocurrencias nuevas sin que salte nada. El trinquete deja de morder justo
+      # después de haberse ganado el derecho a morder más.
+      #
+      # Cuesta una línea de diff, y ese diff es la prueba de que la mejora ocurrió.
+      # (De futbot-v2, tests/test_analisis_estatico.py, donde ya se usaba así.)
+      echo "✓ buena noticia — $nombre ha bajado de $base a $n (-$((base-n)))."
+      echo "  Consolídalo, o el hueco se puede volver a ocupar:  $0 baseline $nombre"
+      exit 1
     else
       echo "✓ $nombre: $n (sin cambios)"
     fi ;;

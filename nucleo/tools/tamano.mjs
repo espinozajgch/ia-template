@@ -4,6 +4,13 @@
  *
  *   node tamano.mjs baseline [dir...]   fija la línea base con lo que hay hoy
  *   node tamano.mjs validate [dir...]   falla si algún archivo CRECIÓ o si nace uno grande
+ *
+ * A diferencia de `ratchet.sh`, este NO falla cuando un fichero encoge: solo lo sugiere.
+ * La distinción no es un descuido. En un trinquete de CUENTA —cuántas ocurrencias de algo—
+ * bajar es raro y consolidarlo cuesta una línea, así que fallar es correcto: obliga a
+ * cerrar el hueco entre lo medido y el umbral. Aquí la línea base es un MAPA de ciento y
+ * pico ficheros, y encoger pasa en casi cada refactor: fallar añadiría un commit de
+ * re-fijado a cada cambio, y un trinquete que estorba en cada cambio se desactiva.
  *   node tamano.mjs report   [dir...]   los más grandes, sin juzgar
  *
  *   --limite N   umbral para archivos NUEVOS (por defecto 400 líneas)
