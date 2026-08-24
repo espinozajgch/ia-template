@@ -62,12 +62,11 @@ footer { margin-top:56px; padding-top:18px; border-top:1px solid var(--linea);
 <div class="envoltura">
 <header class="portada">
   <p class="rotulo">Estado de los repositorios · Uso interno</p>
-  <h1>Nueve repositorios,<br>una sola puerta cerrada</h1>
-  <p class="entradilla">Barrido del 24 de agosto de 2026 sobre los nueve repositorios en
-  juego. Mide <b>estructura</b> —qué verifica cada CI, qué kit tiene, cuánto trabajo hay sin
-  commitear— y sólo declara verde o rojo donde se ejecutó la suite ese mismo día. Quedan
-  fuera <code>futbot-v1</code>, <code>wc2026</code>, <code>worldcup2026</code> y
-  <code>wc2026_swat</code>.</p>
+  <h1>Cinco repositorios,<br>once mil pruebas en verde</h1>
+  <p class="entradilla">Barrido del 24 de agosto de 2026 sobre los cinco repositorios en
+  juego. A diferencia del barrido anterior, aquí <b>se ejecutó cada suite</b>: donde pone
+  «verdes» es porque pasaron ese día, no porque existan ficheros de prueba. Entre los cinco
+  suman <b>11.343 pruebas en verde</b> y cinco en rojo, todas en el mismo repositorio.</p>
 </header>
 
 <h2>El cuadro</h2>
@@ -77,52 +76,65 @@ footer { margin-top:56px; padding-top:18px; border-top:1px solid var(--linea);
 <th>Último</th><th>CI verifica</th><th>Kit</th><th>Trinq.</th><th>Puerta</th>
 <th>Pruebas</th><th class="n">Líneas</th>
 </tr></thead>
-<tbody><tr><th scope="row">pulso</th><td><code>fortalecer/tailwind-kit-au</code></td><td class="n alerta">105</td><td class="n">132</td><td>2026-08-24</td><td><span class="bien">lint · tipos · pruebas</span></td><td>v2</td><td><b class="si">sí</b></td><td><b class="si">sí</b></td><td>89 ficheros · <b>1.114 verdes</b></td><td class="n">56.050</td></tr><tr><th scope="row">futbot-v2</th><td><code>release</code></td><td class="n ">4</td><td class="n">582</td><td>2026-08-24</td><td><span class="bien">pytest</span></td><td>v1</td><td><span class="no">—</span></td><td><span class="no">—</span></td><td>153 ficheros · <b>2.118 verdes</b></td><td class="n">86.562</td></tr><tr><th scope="row">hipismo</th><td><code>main</code></td><td class="n ">3</td><td class="n">133</td><td>2026-08-24</td><td><span class="bien">pruebas · tipos</span></td><td>v1</td><td><span class="no">—</span></td><td><span class="no">—</span></td><td>89 ficheros</td><td class="n">64.749</td></tr><tr><th scope="row">ppsportmanagementarg</th><td><code>main</code></td><td class="n ">3</td><td class="n">988</td><td>2026-08-24</td><td><span class="bien">pruebas (vitest)</span></td><td>v1</td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><b>847 ficheros</b></td><td class="n">311.520</td></tr><tr><th scope="row">futbot-web-app</th><td><code>release</code></td><td class="n alerta">68</td><td class="n">193</td><td>2026-08-24</td><td><span class="bien">puerta (lint · tipos · 2 suites)</span></td><td>v1</td><td><b class="si">sí</b></td><td><b class="si">sí</b></td><td>59 ficheros</td><td class="n">25.731</td></tr><tr><th scope="row">professional-football-hub</th><td><code>main</code></td><td class="n alerta">38</td><td class="n">1154</td><td>2026-08-21</td><td><span class="mal">— nada —</span></td><td>v1</td><td><span class="no">—</span></td><td><span class="no">—</span></td><td>66 ficheros</td><td class="n">87.324</td></tr><tr><th scope="row">ia-template</th><td><code>kit-v2</code></td><td class="n ">0</td><td class="n">10</td><td>2026-08-24</td><td><span class="mal">— nada —</span></td><td>el kit</td><td><span class="no">—</span></td><td><span class="no">—</span></td><td>22 ficheros</td><td class="n">6.145</td></tr><tr><th scope="row">APP_DUX</th><td><code>main</code></td><td class="n ">8</td><td class="n">9</td><td>2026-04-29</td><td><span class="mal">— nada —</span></td><td>no</td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><b>ninguna</b></td><td class="n">97.150</td></tr><tr><th scope="row">APP_Osasuna</th><td><code>main</code></td><td class="n ">11</td><td class="n">1</td><td>2026-07-28</td><td><span class="mal">— nada —</span></td><td>no</td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><b>ninguna</b></td><td class="n">64.691</td></tr></tbody>
+<tbody><tr><th scope="row">ppsportmanagementarg</th><td><code>main</code></td><td class="n ">3</td><td class="n">988</td><td>2026-08-24</td><td><span class="bien">pruebas (vitest)</span></td><td>v1</td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><b>6.936 verdes</b> · 574 ficheros</td><td class="n">311.520</td></tr><tr><th scope="row">futbot-v2</th><td><code>release</code></td><td class="n ">4</td><td class="n">582</td><td>2026-08-24</td><td><span class="bien">pytest</span></td><td>v1</td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><b>2.118 verdes</b> · 153 ficheros</td><td class="n">86.562</td></tr><tr><th scope="row">pulso</th><td><code>fortalecer/tailwind-kit-au</code></td><td class="n alerta">105</td><td class="n">132</td><td>2026-08-24</td><td><span class="bien">lint · tipos · pruebas</span></td><td>v2</td><td><b class="si">sí</b></td><td><b class="si">sí</b></td><td><b>1.114 verdes</b> · 89 ficheros</td><td class="n">56.050</td></tr><tr><th scope="row">hipismo</th><td><code>main</code></td><td class="n ">3</td><td class="n">133</td><td>2026-08-24</td><td><span class="bien">pruebas · tipos</span></td><td>v1</td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><b>720 verdes</b> · 85 ficheros</td><td class="n">64.749</td></tr><tr><th scope="row">futbot-web-app</th><td><code>release</code></td><td class="n alerta">68</td><td class="n">193</td><td>2026-08-24</td><td><span class="bien">puerta (lint · tipos · 2 suites)</span></td><td>v1</td><td><b class="si">sí</b></td><td><b class="si">sí</b></td><td>455 de 460 · <b>5 en rojo</b></td><td class="n">25.731</td></tr></tbody>
 </table></div>
 
 <h2>Lo que salta a la vista</h2>
 
 <div class="aviso">
-<p><b>Ocho de nueve árboles están sucios, y no poco.</b> 105 ficheros sin commitear en
-pulso, 68 en futbot-web-app, 38 en professional-football-hub. El único limpio es el kit.</p>
-<p>Trabajo sin commitear no tiene red: no hay diff que revisar, no hay a dónde volver y no
-existe para nadie más. Es el riesgo más repartido del conjunto y el más barato de quitar.</p>
+<p><b>La red es mucho mejor de lo que parecía.</b> El barrido anterior contaba ficheros de
+prueba; éste ejecutó las suites. Los cinco repositorios suman <b>11.343 pruebas en verde</b>,
+y ppsport por sí solo aporta 6.936 entre servidor y cliente.</p>
+<p>Los cinco tienen CI que verifica antes de desplegar. Eso no era cierto esta mañana:
+futbot-web-app desplegaba a producción sin ejecutar una sola prueba, y las cuatro que hacían
+falta ya existían — sólo faltaba llamarlas.</p>
 </div>
 
 <div class="aviso">
-<p><b><code>professional-football-hub</code>: 87.000 líneas, 66 ficheros de prueba, y el CI
-no ejecuta ninguno.</b> Tiene un workflow y no llama a las pruebas que ya existen.</p>
-<p>Es exactamente el patrón que futbot-web-app tenía esta mañana, y allí costó cinco
-minutos arreglarlo: las verificaciones ya estaban escritas, sólo faltaba llamarlas. Es el
-mejor cociente entre esfuerzo y riesgo retirado de toda la lista.</p>
+<p><b>Los cinco fallos están todos en futbot-web-app, y cuatro no son defectos.</b> Son
+trinquetes disparando por primera vez.</p>
+<p>Tres son crecimiento deliberado que nadie había declarado —color escrito a mano,
+tipografía fuera de escala, tamaño de fichero— y piden una decisión, no un arreglo: se
+corrigen o se re-fija la línea base diciendo por qué. Los otros dos sí son defectos reales:
+un panel vacío bajo el cargador y una prueba de consumo. Ninguno se podía ver antes de que
+existiera la puerta.</p>
 </div>
 
 <div class="aviso">
-<p><b><code>APP_DUX</code> y <code>APP_Osasuna</code>: 162.000 líneas entre las dos, cero
-pruebas y cero CI.</b> La segunda tiene un solo commit, llamado «Primer commit».</p>
-<p>No es lo mismo que los demás: son herramientas de informes en Streamlit, no productos
-con usuarios. Antes de invertir ahí conviene decidir si son código que se mantiene o
-material que se ejecuta y se archiva — la respuesta cambia por completo qué merece la pena.</p>
+<p><b>El trabajo sin commitear sigue siendo el riesgo más repartido:</b> 105 ficheros en
+pulso y 68 en futbot-web-app. Los otros tres andan entre 3 y 4.</p>
+<p>No tiene red: no hay diff que revisar, no hay a dónde volver y no existe para nadie más.
+Y hoy mismo mordió — un <code>git add -A</code> sobre un árbol que otra sesión estaba
+escribiendo capturó un tipo a medias y dejó HEAD sin compilar.</p>
+</div>
+
+<div class="aviso">
+<p><b>Sólo pulso tiene el kit nuevo.</b> Los otros cuatro siguen con la generación anterior,
+y dos de ellos —futbot-v2 y futbot-web-app— <b>ya tenían trinquetes propios antes</b> de que
+el kit los ofreciera.</p>
+<p>Eso invierte la dirección habitual: el presupuesto por regla de ruff de futbot-v2 es mejor
+que el que el kit traía, y subió al kit esta semana. Instalar el kit entero en esos
+repositorios no es la respuesta; traer sólo lo que les falta, sí.</p>
 </div>
 
 <h2>Repositorio por repositorio</h2>
-<div class="rejilla"><div class="ficha"><h3>pulso</h3><p>El único con el kit nuevo, trinquetes y puerta de un solo comando. 35 commits sin subir.</p></div><div class="ficha"><h3>futbot-v2</h3><p>La suite más grande y más rápida del conjunto: 2.118 en 67 s. CI verifica y el despliegue depende de ello.</p></div><div class="ficha"><h3>hipismo</h3><p>Origen del pack de tasas. Recibió hoy el arreglo del parser, que ya está en <code>main</code>.</p></div><div class="ficha"><h3>ppsportmanagementarg</h3><p>El más grande con diferencia, y el que más pruebas tiene. Seis workflows.</p></div><div class="ficha"><h3>futbot-web-app</h3><p>Recibió hoy la puerta y el trinquete. Su suite de frontend sigue en rojo: 4 de 132.</p></div><div class="ficha"><h3>professional-football-hub</h3><p>87.000 líneas y 66 ficheros de prueba, y <b>el CI no ejecuta ninguno</b>. 38 ficheros sin commitear.</p></div><div class="ficha"><h3>ia-template</h3><p>El kit. Único árbol limpio del conjunto. Rama <code>kit-v2</code> sin fusionar.</p></div><div class="ficha"><h3>APP_DUX</h3><p>Herramienta de informes en Streamlit. Cuatro meses sin tocarse.</p></div><div class="ficha"><h3>APP_Osasuna</h3><p>Un solo commit, «Primer commit». Sin pruebas ni CI.</p></div></div>
+<div class="rejilla"><div class="ficha"><h3>ppsportmanagementarg</h3><p>La suite más grande del conjunto con diferencia: 3.583 en el servidor y 3.353 en el cliente, todas en verde. Y el repositorio más grande, con 311.000 líneas.</p></div><div class="ficha"><h3>futbot-v2</h3><p>La suite más rápida por tamaño: 2.118 en 67 segundos. CI verifica y el despliegue depende de ello. Ya tenía trinquetes propios —presupuesto por regla de ruff— antes de que existiera el kit nuevo.</p></div><div class="ficha"><h3>pulso</h3><p>El único con el kit nuevo, trinquetes enganchados y puerta de un solo comando. También el más sucio: 105 ficheros sin commitear y 35 commits sin subir.</p></div><div class="ficha"><h3>hipismo</h3><p>Origen del pack de tasas de cambio. Recibió hoy el arreglo del parser del BCV, que ya está en <code>main</code>.</p></div><div class="ficha"><h3>futbot-web-app</h3><p>Recibió hoy la puerta, el trinquete y el CI que verifica antes de desplegar. Los cinco fallos son la primera vez que el proyecto puede verlos.</p></div></div>
 
 <h2>Lo que este informe NO dice</h2>
 <ul>
-<li><b>No dice si cada suite pasa hoy.</b> Sólo se ejecutaron las de pulso (1.114 verdes),
-futbot-v2 (2.118 verdes) y parte de las de hipismo y futbot-web-app. En los demás se cuenta
-cuántos ficheros de prueba hay, que es otra cosa.</li>
 <li><b>No mide cobertura.</b> Sólo pulso la calcula, y su propio trinquete declara que 156
-ficheros quedan fuera del cómputo. En los demás se desconoce.</li>
-<li><b>No juzga la calidad del código.</b> Un repositorio con CI y pruebas puede tener
-deuda grave; uno sin ellas puede estar bien escrito. Esto mide qué red hay puesta, no qué
-sostiene.</li>
+ficheros quedan fuera del cómputo. En los otros cuatro se desconoce: tener 6.936 pruebas
+verdes no dice sobre cuánto código corren.</li>
+<li><b>No juzga la calidad del código.</b> Mide qué red hay puesta, no qué sostiene. Un
+repositorio con CI y miles de pruebas puede tener deuda grave.</li>
+<li><b>No incluye las suites que se niegan a correr</b> sin su entorno: la e2e de hipismo
+exige una base efímera y la de ppsport tiene 12 ficheros saltados. Están fuera de los
+recuentos, y es correcto que lo estén.</li>
 </ul>
 
 <footer>
 Estado de los repositorios · 2026-08-24 · medido con <code>git</code>, lectura de los
-workflows y ejecución de las suites donde se indica.<br>
+workflows y <b>ejecución de las cinco suites</b>.<br>
 Documento autocontenido: no carga nada de la red.
 </footer>
 </div>
