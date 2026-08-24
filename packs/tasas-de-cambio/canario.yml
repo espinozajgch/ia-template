@@ -1,0 +1,78 @@
+# Canario del BCV.
+#
+# Lee la página del Banco Central y la parsea. **No toca la base de datos, no lleva
+# secretos y no guarda nada.**
+#
+# ── Por qué existe ───────────────────────────────────────────────────────────
+#
+# Un raspador no se rompe por la red: se rompe el día que rediseñan la página. Y ese
+# fallo es silencioso — sin nadie mirando, se descubre cuando alguien factura con una
+# tasa vieja, o cuando la caja se para porque no hay tasa del día. Con esto, se
+# descubre esa misma mañana y por correo.
+#
+# Vigila además dos cosas que ya sabemos que pueden pasar: que el BCV rote el
+# certificado intermedio que el fichero de TLS del pack aporta —el actual vence en
+# 2036, pero pueden cambiarlo antes— y que publique un número absurdo, que es una
+# rotura tan real como una etiqueta que desaparece, sólo que más callada.
+#
+# ── Por qué SOLO el canario, y no la ingesta ─────────────────────────────────
+#
+# Para que un runner de GitHub escribiera en la base habría que exponerla a internet
+# y meter las credenciales aquí. Los runners no tienen IPs fijas que permitir en una
+# lista, así que en la práctica es abrir el puerto a todo el mundo — y hay bases que
+# no pueden estar expuestas — ver «Quién dispara el reloj» en PACK.md. Escribir una tasa no vale ese precio.
+#
+# Además el `cron` de GitHub no es un reloj serio: se retrasa con carga y los
+# workflows programados **se desactivan solos tras semanas sin actividad** en el
+# repositorio. Para vigilar da igual que se retrase diez minutos; para ingerir un
+# dato del que dependen las facturas, no.
+#
+# La ingesta va donde ya va el trabajo recurrente del proyecto: fuera de la
+# aplicación, disparada por el reloj de su servidor.
+#
+#     0 13 * * *   cd /ruta/del/proyecto && <comando de ingesta>
+#
+# Es idempotente —releer la misma publicación no escribe fila— así que se puede
+# correr cada hora sin miedo.
+
+name: Canario · tasas del BCV
+
+on:
+  schedule:
+    # 13:00 UTC ≈ 09:00 en Venezuela: el BCV ya ha publicado la del día.
+    - cron: "0 13 * * *"
+  # Para poder dispararlo a mano el día que se toque el parser, sin esperar al reloj.
+  workflow_dispatch:
+
+# Sin permisos de escritura: sólo lee su propio código. No commitea, no publica.
+permissions:
+  contents: read
+
+jobs:
+  canario:
+    runs-on: ubuntu-latest
+    # Si el BCV tarda, tarda; pero no se queda colgado ocupando un runner.
+    timeout-minutes: 5
+
+    steps:
+      # Fijadas por SHA como el resto del CI: una etiqueta se puede mover.
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version-file: package.json   # o .nvmrc, según el proyecto
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      # El canario recorre EXACTAMENTE el mismo camino que la ingesta —descarga,
+      # cadena TLS, parser, validación— y lo único que no hace es guardar. Un canario
+      # que ejecutara otro código se quedaría en verde el día que el de verdad falle.
+      #
+      # Sale con 1 si no llegó al BCV (transitorio) y con 2 si la página cambió de
+      # forma o una tasa no valida. Los dos rompen el workflow, que es lo que manda
+      # el correo; la diferencia se lee en el registro y decide si hay que mirar el
+      # parser o simplemente esperar a mañana.
+      - name: Leer y parsear la página del BCV
+        run: <el comando del canario de tu proyecto>

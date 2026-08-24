@@ -18,6 +18,7 @@ validation.ts     las reglas que deciden qué se guarda, antes de tocar la base
 bcv-tls.ts        el arreglo de la cadena TLS incompleta del BCV
 bcv-parser.ts     lectura del HTML público, anclada al código de moneda
 *.test.ts         las pruebas de las tres piezas puras
+canario.yml       plantilla de la Action que vigila que el origen siga legible
 ```
 
 Los cuatro son **independientes del framework**: solo usan `node:https`, `node:tls`,
@@ -125,6 +126,61 @@ Contra el puerto, con el ORM y el servidor de casa:
 
 ---
 
+## Quién dispara el reloj, y qué NO debe dispararlo
+
+La ingesta la dispara el reloj, no la petición de nadie: metida en una ruta dependería de
+que alguien abriera la aplicación a la hora justa. La pregunta es **dónde vive ese reloj**,
+y tiene dos respuestas correctas según el proyecto.
+
+**Una Action programada que escribe en la base sirve si la base ya es alcanzable desde
+internet y lo que guarda no es sensible.** Los runners de GitHub no tienen IPs fijas que
+permitir en una lista, así que en la práctica hay que aceptar conexiones de cualquier
+origen y confiar en las credenciales. Para una base de datos deportivos o de catálogo, es
+un intercambio razonable y ahorra un servidor.
+
+**No sirve cuando la base guarda algo que no puede estar expuesto.** Abrir el puerto de una
+base con historias clínicas para escribir una tasa es un intercambio pésimo, por barato que
+parezca el atajo. Ahí la ingesta va donde ya vive el trabajo recurrente del proyecto —un
+`cron` en su servidor— y, si se quiere que GitHub sea el reloj, la Action **llama a un
+endpoint autenticado** y es la aplicación la que descarga y guarda: GitHub dice «ahora» y
+nunca toca la base.
+
+> Y en ninguno de los dos casos es un reloj de precisión: el `cron` de GitHub se retrasa con
+> carga, y los workflows programados **se desactivan solos tras semanas sin actividad** en el
+> repositorio. Para vigilar da igual; para ingerir un dato del que dependen las facturas, hay
+> que saberlo.
+
+## El canario
+
+Esto sí va en GitHub siempre, y no necesita ni base ni secretos ni despliegue.
+
+Una Action programada que **solo lee y parsea**. Si la página cambió de forma, el proceso
+sale distinto de cero, el workflow falla y llega el correo.
+
+Ataca el fallo que de verdad duele: un raspador no se rompe por la red —eso se reintenta
+solo— sino el día que rediseñan la página. Sin canario, eso se descubre cuando alguien
+factura con una tasa vieja o cuando la caja se para. Vigila además dos cosas que ya sabemos
+que pueden pasar: que roten el certificado intermedio que el pack aporta, y que publiquen un
+número absurdo, que es una rotura tan real como una etiqueta que desaparece y bastante más
+callada.
+
+**El canario tiene que recorrer el mismo camino que la ingesta.** Descarga, cadena TLS,
+parser, validación; lo único que no hace es guardar. Un canario que ejecute otro código se
+queda en verde el día que el que de verdad corre se rompe, y entonces es peor que no
+tenerlo: da confianza sin cubrir nada. Lo natural es una bandera en el mismo script.
+
+**Y tiene que decir lo que NO comprueba.** Sin base no hay última tasa conocida, así que el
+detector de salto diario no actúa ahí. Callarlo dejaría creer que lo comprueba todo.
+
+Dos códigos de salida, no uno: «no llegué» es transitorio y se reintenta solo; «cambió de
+forma» no se reintenta porque hay que mirarlo. Es la misma distinción que hacen los dos
+errores del puerto — un rediseño reintentado cien veces es ruido; avisado una vez, es
+trabajo.
+
+`canario.yml` es la plantilla, con la explicación dentro.
+
+---
+
 ## Checklist de cierre
 
 - [ ] Ningún módulo de negocio importa el adaptador: todos dependen del puerto.
@@ -135,3 +191,8 @@ Contra el puerto, con el ORM y el servidor de casa:
 - [ ] `effectiveDate`, `publishedAt` y `retrievedAt` se guardan por separado.
 - [ ] La atribución se muestra donde el usuario ve la tasa.
 - [ ] Existe una vía manual para el día en que el origen no responda.
+- [ ] Hay un canario programado que lee y parsea sin tocar la base, y comparte el camino
+      de código con la ingesta.
+- [ ] El canario dice qué NO comprueba.
+- [ ] Si la ingesta corre en un runner: la base ya era alcanzable desde internet y lo que
+      guarda puede estarlo. Si no, el reloj vive en el servidor del proyecto.
