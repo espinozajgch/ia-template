@@ -1,0 +1,128 @@
+<title>Estado de los repositorios · 2026-08-24</title>
+<style>
+:root {
+  --tinta:#1a1d21; --suave:#5b6470; --tenue:#8a929c;
+  --fondo:#f7f7f4; --papel:#ffffff; --linea:#e4e3dd;
+  --acento:#0f5c4a; --alerta:#a13b2a; --aviso:#8a6a1f;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --tinta:#e8e6e1; --suave:#a8afb8; --tenue:#79818b;
+    --fondo:#14161a; --papel:#1b1e23; --linea:#2c3038;
+    --acento:#5fbfa3; --alerta:#e08a76; --aviso:#d9b25f;
+  }
+}
+:root[data-theme="dark"] {
+  --tinta:#e8e6e1; --suave:#a8afb8; --tenue:#79818b;
+  --fondo:#14161a; --papel:#1b1e23; --linea:#2c3038;
+  --acento:#5fbfa3; --alerta:#e08a76; --aviso:#d9b25f;
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--fondo); color:var(--tinta);
+  font:16px/1.6 ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif; }
+.envoltura { max-width:1120px; margin:0 auto; padding:48px 24px 80px; }
+header.portada { border-bottom:3px solid var(--tinta); padding-bottom:24px; margin-bottom:40px; }
+.rotulo { font-size:12px; letter-spacing:.16em; text-transform:uppercase;
+  font-weight:800; color:var(--acento); }
+h1 { font-size:clamp(28px,5vw,44px); line-height:1.1; margin:12px 0 8px; text-wrap:balance;
+  font-family:ui-serif,Georgia,"Times New Roman",serif; font-weight:700; }
+.entradilla { color:var(--suave); max-width:62ch; margin:0; }
+h2 { font-family:ui-serif,Georgia,serif; font-size:24px; margin:44px 0 14px;
+  padding-bottom:8px; border-bottom:1px solid var(--linea); }
+h3 { font-size:15px; margin:0 0 4px; }
+.tabla-envoltura { overflow-x:auto; border:1px solid var(--linea); border-radius:10px;
+  background:var(--papel); }
+table { border-collapse:collapse; width:100%; font-size:14px; min-width:900px; }
+th,td { padding:10px 12px; text-align:left; border-bottom:1px solid var(--linea);
+  vertical-align:top; }
+thead th { font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--tenue); font-weight:700; white-space:nowrap; }
+tbody th { font-weight:700; white-space:nowrap; }
+tbody tr:last-child td, tbody tr:last-child th { border-bottom:none; }
+.n { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.alerta { color:var(--alerta); font-weight:700; }
+.bien { color:var(--acento); }
+.mal { color:var(--alerta); font-weight:600; }
+.si { color:var(--acento); }
+.no { color:var(--tenue); }
+code { font-size:12.5px; background:color-mix(in srgb,var(--tinta) 7%,transparent);
+  padding:1px 5px; border-radius:4px; }
+.rejilla { display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); }
+.ficha { background:var(--papel); border:1px solid var(--linea); border-left:3px solid var(--acento);
+  border-radius:8px; padding:14px 16px; }
+.ficha p { margin:0; color:var(--suave); font-size:14px; }
+.aviso { background:var(--papel); border:1px solid var(--linea);
+  border-left:3px solid var(--aviso); border-radius:8px; padding:16px 18px; margin:18px 0; }
+.aviso p { margin:0 0 10px; } .aviso p:last-child { margin:0; }
+ul { padding-left:20px; } li { margin:6px 0; }
+footer { margin-top:56px; padding-top:18px; border-top:1px solid var(--linea);
+  color:var(--tenue); font-size:13px; }
+</style>
+
+<div class="envoltura">
+<header class="portada">
+  <p class="rotulo">Estado de los repositorios · Uso interno</p>
+  <h1>Nueve repositorios,<br>una sola puerta cerrada</h1>
+  <p class="entradilla">Barrido del 24 de agosto de 2026 sobre los nueve repositorios en
+  juego. Mide <b>estructura</b> —qué verifica cada CI, qué kit tiene, cuánto trabajo hay sin
+  commitear— y sólo declara verde o rojo donde se ejecutó la suite ese mismo día. Quedan
+  fuera <code>futbot-v1</code>, <code>wc2026</code>, <code>worldcup2026</code> y
+  <code>wc2026_swat</code>.</p>
+</header>
+
+<h2>El cuadro</h2>
+<div class="tabla-envoltura"><table>
+<thead><tr>
+<th>Repositorio</th><th>Rama</th><th class="n">Sucios</th><th class="n">Commits</th>
+<th>Último</th><th>CI verifica</th><th>Kit</th><th>Trinq.</th><th>Puerta</th>
+<th>Pruebas</th><th class="n">Líneas</th>
+</tr></thead>
+<tbody><tr><th scope="row">pulso</th><td><code>fortalecer/tailwind-kit-au</code></td><td class="n alerta">105</td><td class="n">132</td><td>2026-08-24</td><td><span class="bien">lint · tipos · pruebas</span></td><td>v2</td><td><b class="si">sí</b></td><td><b class="si">sí</b></td><td>89 ficheros · <b>1.114 verdes</b></td><td class="n">56.050</td></tr><tr><th scope="row">futbot-v2</th><td><code>release</code></td><td class="n ">4</td><td class="n">582</td><td>2026-08-24</td><td><span class="bien">pytest</span></td><td>v1</td><td><span class="no">—</span></td><td><span class="no">—</span></td><td>153 ficheros · <b>2.118 verdes</b></td><td class="n">86.562</td></tr><tr><th scope="row">hipismo</th><td><code>main</code></td><td class="n ">3</td><td class="n">133</td><td>2026-08-24</td><td><span class="bien">pruebas · tipos</span></td><td>v1</td><td><span class="no">—</span></td><td><span class="no">—</span></td><td>89 ficheros</td><td class="n">64.749</td></tr><tr><th scope="row">ppsportmanagementarg</th><td><code>main</code></td><td class="n ">3</td><td class="n">988</td><td>2026-08-24</td><td><span class="bien">pruebas (vitest)</span></td><td>v1</td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><b>847 ficheros</b></td><td class="n">311.520</td></tr><tr><th scope="row">futbot-web-app</th><td><code>release</code></td><td class="n alerta">68</td><td class="n">193</td><td>2026-08-24</td><td><span class="bien">puerta (lint · tipos · 2 suites)</span></td><td>v1</td><td><b class="si">sí</b></td><td><b class="si">sí</b></td><td>59 ficheros</td><td class="n">25.731</td></tr><tr><th scope="row">professional-football-hub</th><td><code>main</code></td><td class="n alerta">38</td><td class="n">1154</td><td>2026-08-21</td><td><span class="mal">— nada —</span></td><td>v1</td><td><span class="no">—</span></td><td><span class="no">—</span></td><td>66 ficheros</td><td class="n">87.324</td></tr><tr><th scope="row">ia-template</th><td><code>kit-v2</code></td><td class="n ">0</td><td class="n">10</td><td>2026-08-24</td><td><span class="mal">— nada —</span></td><td>el kit</td><td><span class="no">—</span></td><td><span class="no">—</span></td><td>22 ficheros</td><td class="n">6.145</td></tr><tr><th scope="row">APP_DUX</th><td><code>main</code></td><td class="n ">8</td><td class="n">9</td><td>2026-04-29</td><td><span class="mal">— nada —</span></td><td>no</td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><b>ninguna</b></td><td class="n">97.150</td></tr><tr><th scope="row">APP_Osasuna</th><td><code>main</code></td><td class="n ">11</td><td class="n">1</td><td>2026-07-28</td><td><span class="mal">— nada —</span></td><td>no</td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><b>ninguna</b></td><td class="n">64.691</td></tr></tbody>
+</table></div>
+
+<h2>Lo que salta a la vista</h2>
+
+<div class="aviso">
+<p><b>Ocho de nueve árboles están sucios, y no poco.</b> 105 ficheros sin commitear en
+pulso, 68 en futbot-web-app, 38 en professional-football-hub. El único limpio es el kit.</p>
+<p>Trabajo sin commitear no tiene red: no hay diff que revisar, no hay a dónde volver y no
+existe para nadie más. Es el riesgo más repartido del conjunto y el más barato de quitar.</p>
+</div>
+
+<div class="aviso">
+<p><b><code>professional-football-hub</code>: 87.000 líneas, 66 ficheros de prueba, y el CI
+no ejecuta ninguno.</b> Tiene un workflow y no llama a las pruebas que ya existen.</p>
+<p>Es exactamente el patrón que futbot-web-app tenía esta mañana, y allí costó cinco
+minutos arreglarlo: las verificaciones ya estaban escritas, sólo faltaba llamarlas. Es el
+mejor cociente entre esfuerzo y riesgo retirado de toda la lista.</p>
+</div>
+
+<div class="aviso">
+<p><b><code>APP_DUX</code> y <code>APP_Osasuna</code>: 162.000 líneas entre las dos, cero
+pruebas y cero CI.</b> La segunda tiene un solo commit, llamado «Primer commit».</p>
+<p>No es lo mismo que los demás: son herramientas de informes en Streamlit, no productos
+con usuarios. Antes de invertir ahí conviene decidir si son código que se mantiene o
+material que se ejecuta y se archiva — la respuesta cambia por completo qué merece la pena.</p>
+</div>
+
+<h2>Repositorio por repositorio</h2>
+<div class="rejilla"><div class="ficha"><h3>pulso</h3><p>El único con el kit nuevo, trinquetes y puerta de un solo comando. 35 commits sin subir.</p></div><div class="ficha"><h3>futbot-v2</h3><p>La suite más grande y más rápida del conjunto: 2.118 en 67 s. CI verifica y el despliegue depende de ello.</p></div><div class="ficha"><h3>hipismo</h3><p>Origen del pack de tasas. Recibió hoy el arreglo del parser, que ya está en <code>main</code>.</p></div><div class="ficha"><h3>ppsportmanagementarg</h3><p>El más grande con diferencia, y el que más pruebas tiene. Seis workflows.</p></div><div class="ficha"><h3>futbot-web-app</h3><p>Recibió hoy la puerta y el trinquete. Su suite de frontend sigue en rojo: 4 de 132.</p></div><div class="ficha"><h3>professional-football-hub</h3><p>87.000 líneas y 66 ficheros de prueba, y <b>el CI no ejecuta ninguno</b>. 38 ficheros sin commitear.</p></div><div class="ficha"><h3>ia-template</h3><p>El kit. Único árbol limpio del conjunto. Rama <code>kit-v2</code> sin fusionar.</p></div><div class="ficha"><h3>APP_DUX</h3><p>Herramienta de informes en Streamlit. Cuatro meses sin tocarse.</p></div><div class="ficha"><h3>APP_Osasuna</h3><p>Un solo commit, «Primer commit». Sin pruebas ni CI.</p></div></div>
+
+<h2>Lo que este informe NO dice</h2>
+<ul>
+<li><b>No dice si cada suite pasa hoy.</b> Sólo se ejecutaron las de pulso (1.114 verdes),
+futbot-v2 (2.118 verdes) y parte de las de hipismo y futbot-web-app. En los demás se cuenta
+cuántos ficheros de prueba hay, que es otra cosa.</li>
+<li><b>No mide cobertura.</b> Sólo pulso la calcula, y su propio trinquete declara que 156
+ficheros quedan fuera del cómputo. En los demás se desconoce.</li>
+<li><b>No juzga la calidad del código.</b> Un repositorio con CI y pruebas puede tener
+deuda grave; uno sin ellas puede estar bien escrito. Esto mide qué red hay puesta, no qué
+sostiene.</li>
+</ul>
+
+<footer>
+Estado de los repositorios · 2026-08-24 · medido con <code>git</code>, lectura de los
+workflows y ejecución de las suites donde se indica.<br>
+Documento autocontenido: no carga nada de la red.
+</footer>
+</div>

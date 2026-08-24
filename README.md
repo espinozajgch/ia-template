@@ -218,6 +218,7 @@ entre sí. Un archivo nuevo por corrida; el anterior no se sobrescribe.
 |---|---|
 | [`informe-comparativo-repos-2026-08-22.html`](knowledge/informe-comparativo-repos-2026-08-22.html) | Auditoría de los 13 repositorios: quién resolvió mejor cada problema y las 15 piezas a cosechar |
 | [`informe-capacidades-reutilizables-2026-08-22.html`](knowledge/informe-capacidades-reutilizables-2026-08-22.html) | Análisis funcional: qué sabe hacer cada repo — backend, frontend y diseño — y qué se puede compartir |
+| [`informe-estado-repos-2026-08-24.html`](knowledge/informe-estado-repos-2026-08-24.html) | Estado de los nueve repositorios: qué verifica cada CI, qué kit tiene y cuánto trabajo hay sin commitear |
 | [`informe-quien-gana-en-que-2026-08-23.html`](knowledge/informe-quien-gana-en-que-2026-08-23.html) | Comparativa por dimensión: front, back, informes PDF, seguridad y datos — quién gana cada una y por qué |
 | [`informe-mejoras-kit-2026-08-22.html`](knowledge/informe-mejoras-kit-2026-08-22.html) | CI, verificadores estructurales y detectores de ratchet — con los hallazgos reales que encontraron |
 | [`informe-mejoras-kit-2026-08-22-b.html`](knowledge/informe-mejoras-kit-2026-08-22-b.html) | Cobertura por capa, validadores de migración y pack monorepo |
