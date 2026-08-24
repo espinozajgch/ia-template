@@ -1,0 +1,24 @@
+---
+description: Convenciones de tasas de cambio y orígenes oficiales
+globs: ["**/*tasa*","**/*exchange*","**/*rate*","**/*moneda*","**/*currency*","**/*bcv*"]
+alwaysApply: false
+---
+- Ningún módulo de negocio conoce al origen. Todos dependen del PUERTO
+  (`ExchangeRateProvider`); el adaptador es el único que sabe de HTML, TLS o de un banco
+  central concreto.
+- Dos errores DISTINTOS, nunca uno: «no llegué al origen» y «llegué y cambió de forma». El
+  segundo no se reintenta en bucle — es trabajo para una persona.
+- `rejectUnauthorized: false` NO se usa jamás para arreglar una cadena TLS incompleta. Se
+  aporta el intermedio que falta y se sigue validando. Apagarlo abre el proceso entero.
+- Un scraper NO se ancla en clases CSS: se ancla en el dato que la página tiene que mostrar
+  sí o sí — el código de moneda. Y el parser es una función pura, probada con HTML guardado.
+- Una variación diaria por encima del umbral es un ERROR DE LECTURA hasta que se demuestre lo
+  contrario: un punto decimal mal leído multiplica por cien. Se marca y se revisa, no se
+  publica.
+- Se guardan TRES tiempos: para qué día rige, cuándo lo publicó el origen y cuándo lo leímos.
+  Colapsarlos impide responder «con qué publicación se hizo esta conversión».
+- La tasa se guarda con todos sus decimales. Redondear es cosa de la presentación, y ningún
+  cálculo parte del texto formateado.
+- Una tasa inválida se rechaza y se registra. Nunca llega a pantalla como `Infinity`, `NaN`
+  ni cero disfrazado de precio.
+- El dato no es tuyo: la atribución al organismo va donde el usuario la vea, no en un README.

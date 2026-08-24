@@ -36,7 +36,11 @@ prompts_de_pack() { case "$1" in
   observabilidad)      echo "" ;;
   datos-personales)    echo "" ;;
   auditoria-informes)  echo "FORENSIC_AUDITOR_PROMPT.md AUDITOR_FORENSE.md AUDIT_PROMPT.md STAFF_PROMPT.md" ;;
-  *) return 1 ;;
+  # Un pack sin prompts propios no necesita línea: basta con que exista su carpeta.
+  # Antes esta lista era la ÚNICA verdad y `--packs` leía el directorio, así que al añadir
+  # un pack el instalador lo listaba y luego lo rechazaba por desconocido. Dos vistas de lo
+  # mismo que se pueden desincronizar acaban desincronizadas.
+  *) [ -f "$KIT/packs/$1/PACK.md" ] && echo "" || return 1 ;;
 esac; }
 
 if [ "${1:-}" = "--packs" ]; then

@@ -25,7 +25,7 @@ copias que había que editar a la vez, y nunca se editaban a la vez.
 hípico acabó con el prompt de tácticas de fútbol; una app clínica, con el kit de AWS. Nadie
 los leía, pero el agente sí — y cobraban su contexto.
 
-> **Ahora:** núcleo ligero, siempre. Y **13 packs** que se instalan solo si aplican.
+> **Ahora:** núcleo ligero, siempre. Y **23 packs** que se instalan solo si aplican.
 
 **3 · Las mejoras de cada proyecto no volvían al template.** El mismo archivo tenía 93, 106,
 351, 360, 416 y 552 líneas en seis proyectos: seis linajes divergentes de la misma idea.
@@ -92,24 +92,33 @@ agente/tools/                 8 verificadores ejecutables, probados contra repos
 porque no traen listas de comandos, traen **cómo encontrarlos** — y así no caducan el día
 que alguien añade un paso a la CI.
 
-### Los 14 packs
+### Los 23 packs
 
 | Pack | Se activa si |
 |---|---|
-| `frontend-web` | hay interfaz en navegador |
-| `api-backend` | hay API, servicio o worker que atiende peticiones |
-| `base-de-datos` | hay esquema propio y migraciones |
-| `seguridad` | hay usuarios, datos de terceros o exposición a internet |
-| `i18n` | la interfaz se muestra en más de un idioma |
+| `api-backend` | hay una API, servicio HTTP, RPC o worker que atiende peticiones |
+| `app-ia` | el producto **es** una aplicación de IA — el modelo está en el camino |
+| `auditoria-informes` | el proyecto produce informes para alguien que no es el equipo — |
+| `base-de-datos` | hay una base de datos con esquema propio y migraciones |
+| `bot-automatizacion` | hay un bot, un worker programado, un pipeline que publica solo, o |
+| `cloud-agnostico` | el despliegue no debe atarse a un proveedor, o se quiere poder cambiar |
 | `cloud-aws` | la infraestructura vive en AWS |
-| `cloud-agnostico` | no debe atarse a un proveedor |
-| `datos-rag` | recuperación, embeddings, búsqueda semántica |
-| `app-ia` | **el producto es** una aplicación de IA |
-| `pwa-movil` | instalable, service worker, uso móvil real |
-| `saas-multitenant` | varios clientes en la misma instancia |
-| `monorepo` | el repositorio tiene más de un proyecto con su manifiesto |
-| `bot-automatizacion` | algo actúa sin que nadie mire |
-| `auditoria-informes` | se producen informes para alguien de fuera |
+| `datos-personales` | el sistema guarda datos de personas. Casi siempre |
+| `datos-rag` | hay recuperación de documentos, embeddings, búsqueda semántica o un |
+| `design-system` | el proyecto tiene interfaz y va a tener más de diez pantallas |
+| `facturacion` | el producto emite facturas, recibos o documentos con numeración fiscal |
+| `frontend-web` | hay interfaz de usuario en navegador — SPA, SSR, panel, sitio público |
+| `i18n` | la interfaz se muestra en más de un idioma, o va a mostrarse |
+| `informes-pdf` | el producto genera PDF que alguien de fuera abre — informes, facturas, |
+| `ingesta-datos` | el sistema trae datos de fuera —webs, ficheros, APIs de terceros— y los |
+| `monorepo` | el repositorio contiene más de un proyecto con su propio manifiesto — |
+| `notificaciones` | el sistema manda algo hacia fuera — correo, notificaciones push, |
+| `observabilidad` | el sistema corre en algún sitio donde no puedes ponerle un depurador — |
+| `offline-first` | la aplicación se usa donde la red falla — trabajo de campo, sótanos, |
+| `pwa-movil` | hay aplicación instalable, service worker, o uso móvil real y frecuente |
+| `saas-multitenant` | varios clientes u organizaciones comparten la misma instancia |
+| `seguridad` |  |
+| `tasas-de-cambio` | el producto muestra o calcula importes en más de una moneda y necesita una |
 
 Cada pack trae: reglas con su porqué · ratchets sugeridos · una regla de Cursor **por glob**
 (que no gasta contexto cuando no toca) · un checklist de cierre · y los prompts que necesita.
