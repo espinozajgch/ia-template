@@ -65,6 +65,25 @@ export function parseSpanishDate(value: string): string | null {
  */
 const MAX_ANCESTOR_LEVELS = 6;
 
+/**
+ * El texto de un nodo con sus trozos SEPARADOS por espacio.
+ *
+ * `cheerio.text()` los concatena sin nada en medio. Con HTML minificado —lo normal en
+ * producción— «<span>EUR</span><span>USD</span>» se lee «EURUSD», y ahí `\bUSD\b` deja de
+ * casar porque entre la R y la U no hay frontera de palabra: **la guarda que impide
+ * publicar la tasa del vecino no dispara**, y el euro se lleva el importe del dólar.
+ *
+ * Lo encontró una prueba al portar este parser a otro proyecto el 2026-08-24. La página
+ * real del BCV trae espacios entre etiquetas y por eso nunca se vio en producción — que es
+ * exactamente el tipo de fallo que espera al primer rediseño.
+ */
+const separatedText = ($: cheerio.CheerioAPI, node: ReturnType<cheerio.CheerioAPI>) =>
+  node.find("*").addBack().contents()
+    .filter((_i, child) => child.type === "text")
+    .map((_i, child) => $(child).text())
+    .get()
+    .join(" ");
+
 /** Huella del fragmento: dos lecturas idénticas producen el mismo valor. */
 export const hashFragment = (value: string) =>
   createHash("sha256").update(value.replace(/\s+/g, " ").trim()).digest("hex");
@@ -124,7 +143,7 @@ export function parseBcvPage(html: string, retrievedAt: Date): ParsedBcvPage {
       const parent = node.parent();
       if (!parent.length) break;
       node = parent;
-      const candidate = node.text();
+      const candidate = separatedText($, node);
       const otherCurrency = knownCurrencies.some(
         (other) => other !== currency && new RegExp(`\\b${other}\\b`).test(candidate.toUpperCase()),
       );
