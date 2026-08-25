@@ -225,6 +225,14 @@ entre sí. Un archivo nuevo por corrida; el anterior no se sobrescribe.
 | [`informe-mejoras-kit-2026-08-22-c.html`](knowledge/informe-mejoras-kit-2026-08-22-c.html) | Despliegue OIDC+SSM, aislamiento con prueba de fuga y la suite e2e — con lo que apareció al ejecutarlos |
 | [`informe-mejoras-kit-2026-08-22-d.html`](knowledge/informe-mejoras-kit-2026-08-22-d.html) | Las seis últimas piezas y el camino de vuelta al kit — cosecha completa |
 
+## Encargos
+
+Órdenes de trabajo por proyecto, para dárselas a un agente que no ha visto la conversación
+en que se decidieron. Cada una dice el estado medido del repositorio, qué se le pide, cómo
+se verifica allí y qué no debe hacer.
+
+- [`encargos/2026-08-25/`](encargos/2026-08-25/) — los cinco proyectos en juego
+
 ## Documentación
 
 - [`docs/DE-DONDE-SALIO.md`](docs/DE-DONDE-SALIO.md) — qué proyecto aportó cada pieza y por qué se eligió esa versión
