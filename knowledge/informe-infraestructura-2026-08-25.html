@@ -1,0 +1,119 @@
+<title>Infraestructura de los cinco proyectos · 2026-08-25</title>
+<style>
+:root {{
+  --tinta:#1a1d21; --suave:#5b6470; --tenue:#8a929c;
+  --fondo:#f7f7f4; --papel:#ffffff; --linea:#e4e3dd;
+  --acento:#0f5c4a; --alerta:#a13b2a; --aviso:#8a6a1f;
+}}
+@media (prefers-color-scheme: dark) {{
+  :root:not([data-theme="light"]) {{
+    --tinta:#e8e6e1; --suave:#a8afb8; --tenue:#79818b;
+    --fondo:#14161a; --papel:#1b1e23; --linea:#2c3038;
+    --acento:#5fbfa3; --alerta:#e08a76; --aviso:#d9b25f;
+  }}
+}}
+:root[data-theme="dark"] {{
+  --tinta:#e8e6e1; --suave:#a8afb8; --tenue:#79818b;
+  --fondo:#14161a; --papel:#1b1e23; --linea:#2c3038;
+  --acento:#5fbfa3; --alerta:#e08a76; --aviso:#d9b25f;
+}}
+* {{ box-sizing:border-box; }}
+body {{ margin:0; background:var(--fondo); color:var(--tinta);
+  font:16px/1.6 ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif; }}
+.envoltura {{ max-width:1120px; margin:0 auto; padding:48px 24px 80px; }}
+header.portada {{ border-bottom:3px solid var(--tinta); padding-bottom:24px; margin-bottom:40px; }}
+.rotulo {{ font-size:12px; letter-spacing:.16em; text-transform:uppercase;
+  font-weight:800; color:var(--acento); }}
+h1 {{ font-size:clamp(28px,5vw,44px); line-height:1.1; margin:12px 0 8px; text-wrap:balance;
+  font-family:ui-serif,Georgia,"Times New Roman",serif; font-weight:700; }}
+.entradilla {{ color:var(--suave); max-width:62ch; margin:0; }}
+h2 {{ font-family:ui-serif,Georgia,serif; font-size:24px; margin:44px 0 14px;
+  padding-bottom:8px; border-bottom:1px solid var(--linea); }}
+h3 {{ font-size:15px; margin:0 0 4px; }}
+.tabla-envoltura {{ overflow-x:auto; border:1px solid var(--linea); border-radius:10px;
+  background:var(--papel); }}
+table {{ border-collapse:collapse; width:100%; font-size:14px; min-width:900px; }}
+th,td {{ padding:10px 12px; text-align:left; border-bottom:1px solid var(--linea);
+  vertical-align:top; }}
+thead th {{ font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--tenue); font-weight:700; white-space:nowrap; }}
+tbody th {{ font-weight:700; white-space:nowrap; }}
+tbody tr:last-child td, tbody tr:last-child th {{ border-bottom:none; }}
+.n {{ text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }}
+.alerta {{ color:var(--alerta); font-weight:700; }}
+.bien {{ color:var(--acento); }}
+.mal {{ color:var(--alerta); font-weight:600; }}
+.si {{ color:var(--acento); }}
+.no {{ color:var(--tenue); }}
+code {{ font-size:12.5px; background:color-mix(in srgb,var(--tinta) 7%,transparent);
+  padding:1px 5px; border-radius:4px; }}
+.rejilla {{ display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); }}
+.ficha {{ background:var(--papel); border:1px solid var(--linea); border-left:3px solid var(--acento);
+  border-radius:8px; padding:14px 16px; }}
+.ficha p {{ margin:0; color:var(--suave); font-size:14px; }}
+.aviso {{ background:var(--papel); border:1px solid var(--linea);
+  border-left:3px solid var(--aviso); border-radius:8px; padding:16px 18px; margin:18px 0; }}
+.aviso p {{ margin:0 0 10px; }} .aviso p:last-child {{ margin:0; }}
+ul {{ padding-left:20px; }} li {{ margin:6px 0; }}
+footer {{ margin-top:56px; padding-top:18px; border-top:1px solid var(--linea);
+  color:var(--tenue); font-size:13px; }}
+</style>
+<div class="envoltura">
+<header class="portada">
+  <p class="rotulo">Infraestructura y mejoras · Uso interno</p>
+  <h1>Cinco plataformas,<br>cero infraestructura como código</h1>
+  <p class="entradilla">Dónde corre cada uno de los cinco proyectos, y qué le conviene
+  mejorar en seguridad, diseño y coste. Medido el 25 de agosto de 2026 leyendo los
+  workflows, los <code>Dockerfile</code> y la documentación de despliegue de cada
+  repositorio.</p>
+</header>
+
+<h2>Dónde vive cada uno</h2>
+<div class="tabla-envoltura"><table>
+<thead><tr><th>Proyecto</th><th>Dónde corre</th><th>Base de datos</th><th>Secretos</th>
+<th>Despliegue</th></tr></thead>
+<tbody><tr><th scope="row">ppsport</th><td>AWS · EC2 con Nginx (80/443) delante y <code>systemd</code> detrás</td><td><b>RDS PostgreSQL gestionado</b> · copias automáticas a S3 · CloudWatch + SNS</td><td><b>AWS SSM con rol IAM</b>, leídos en el arranque del servicio</td><td>Determinista: materializa el <b>SHA exacto</b> (regla OPS-01)</td></tr><tr><th scope="row">hipismo</th><td>Contenedor · <code>Dockerfile</code> + <code>docker-compose</code></td><td>PostgreSQL gestionado · sesiones en base, no en memoria</td><td>Variables de entorno · <code>DATABASE_URL</code> en secretos de CI</td><td>Imagen de contenedor; migraciones aparte, no al arrancar</td></tr><tr><th scope="row">futbot-v2</th><td>AWS · EC2, servicio <code>systemd</code></td><td>Ficheros del lago + PostgreSQL</td><td>Siete secretos de GitHub, incluida la <b>clave SSH</b> del servidor</td><td><code>ssh</code> + <code>git pull origin main</code> sobre la máquina viva</td></tr><tr><th scope="row">futbot-web-app</th><td>AWS · la <b>misma</b> EC2 que el bot</td><td>PostgreSQL · lago compartido con el bot</td><td>Los mismos siete secretos</td><td><code>ssh</code> + <code>git pull origin main</code></td></tr><tr><th scope="row">pulso</th><td><b>Nada todavía.</b> Hay <code>Dockerfile</code> multietapa con imágenes fijadas por SHA</td><td>PostgreSQL local de desarrollo · un Supabase parado en la migración 006</td><td>Ninguno declarado: no hay CI que despliegue</td><td>No existe</td></tr></tbody>
+</table></div>
+
+<h2>El hallazgo que ordena todo lo demás</h2>
+
+<div class="aviso">
+<p><b>Ninguno de los cinco tiene infraestructura como código.</b> Se buscó Terraform,
+CloudFormation, CDK, Pulumi, Ansible y Serverless en los cinco repositorios: cero ficheros.</p>
+<p>Cuatro de ellos corren sobre máquinas que alguien configuró a mano y que sólo existen
+mientras existan. Lo que hay en los repositorios es <b>cómo llegar</b> a esas máquinas —una
+clave SSH, un host— pero no <b>qué son</b>. Reconstruir cualquiera de ellas hoy es
+arqueología: leer prosa, mirar el servidor vivo y adivinar.</p>
+<p>No es un problema urgente hasta el día que lo es, y ese día no se elige. Es además la
+mejora que más se comparte: la misma solución vale para los cuatro.</p>
+</div>
+
+<h2>Proyecto por proyecto</h2>
+<div class="aviso"><p style="margin-bottom:12px"><b style="font-size:17px">ppsport</b> <span class="no">· madurez alta</span></p><p><b>Seguridad.</b> Lo que ya hace bien no hay que tocarlo: secretos en SSM con rol IAM en vez de ficheros de entorno, y despliegue que fija el SHA. <b>El hueco es que la infraestructura no está en el repositorio</b>: 311.000 líneas de producto sobre una máquina construida a mano. Si esa EC2 desaparece, reconstruirla es arqueología.</p><p><b>Diseño.</b> Nginx sirve los estáticos desde la misma máquina que corre la API. Sacar el frontend a S3 + CloudFront quita carga y latencia, y deja la máquina para lo que sólo ella puede hacer.</p><p><b>Precio.</b> Ese mismo movimiento es el que más ahorra: servir estáticos desde una CDN cuesta céntimos y permite bajar el tamaño de la instancia. Y RDS gestionado admite capacidad reservada — descuento inmediato sobre algo que ya se paga.</p></div><div class="aviso"><p style="margin-bottom:12px"><b style="font-size:17px">hipismo</b> <span class="no">· madurez media-alta</span></p><p><b>Seguridad.</b> <b>CI escribe en la base de producción</b>: la ingesta corre en un runner con <code>DATABASE_URL</code> como secreto. Los runners de GitHub no tienen IPs fijas que permitir en una lista, así que en la práctica la base acepta conexiones de cualquier origen. Para datos de carreras es un intercambio defendible; conviene que sea una decisión y no una herencia.</p><p><b>Diseño.</b> La alternativa sin coste: que la Action llame a un <b>endpoint autenticado</b> y sea la aplicación la que escriba. GitHub dice «ahora» y nunca toca la base.</p><p><b>Precio.</b> Un servicio siempre encendido para una ingesta que ocurre unas veces al día. Si el tráfico web es bajo, la mayor parte de la factura es tiempo ocioso.</p></div><div class="aviso"><p style="margin-bottom:12px"><b style="font-size:17px">futbot-v2 · futbot-web-app</b> <span class="no">· madurez media-baja</span></p><p><b>Seguridad.</b> El despliegue hace <code>git pull origin main</code> <b>sobre la máquina viva</b>. Eso significa tres cosas: la máquina guarda credenciales de git, lo desplegado es «lo que sea que haya en main» y no un artefacto identificable, y un <code>push --force</code> desafortunado llega a producción sin que nada lo distinga de un despliegue normal.</p><p><b>Diseño.</b> Copiar la solución del hermano mayor: materializar un <b>SHA exacto</b>, como hace ppsport. No requiere cambiar de proveedor ni de máquina — sólo dejar de confiar en el estado de una rama.</p><p><b>Precio.</b> Las dos aplicaciones comparten EC2, que es lo correcto. El ahorro real no está aquí sino en no necesitar reconstruir la máquina a mano el día que falle.</p></div><div class="aviso"><p style="margin-bottom:12px"><b style="font-size:17px">pulso</b> <span class="no">· madurez sin desplegar</span></p><p><b>Seguridad.</b> Es el único con <b>datos clínicos</b>, y precisamente por eso su falta de infraestructura no es un retraso sino una oportunidad: las decisiones aún no están tomadas. Dos son irreversibles en la práctica — <b>la región de alojamiento</b> (su propio inventario la marca <code>PENDIENTE</code>) y que la base <b>nunca</b> sea alcanzable desde internet.</p><p><b>Diseño.</b> El <code>Dockerfile</code> ya está bien hecho: multietapa, imágenes fijadas por SHA, salida standalone. Eso permite elegir destino sin reescribir nada, y descarta de entrada el patrón de <code>git pull</code> sobre la máquina.</p><p><b>Precio.</b> Aquí el precio es el argumento equivocado. Para datos de salud, lo que decide es la copia de seguridad con recuperación a un punto en el tiempo y la región — no el coste de la instancia. Empezar barato en el sitio equivocado se paga entero al migrar.</p></div>
+
+<h2>Lo que este informe NO dice</h2>
+<ul>
+<li><b>No dice cuánto cuesta nada.</b> No tengo acceso a las facturas ni a las consolas.
+Lo que se señala son <i>palancas de coste</i> —servir estáticos desde una CDN, capacidad
+reservada, tiempo ocioso— no cifras. Cualquier número aquí sería inventado.</li>
+<li><b>No audita la configuración viva.</b> Se leyó lo que está en los repositorios. Un
+grupo de seguridad demasiado abierto o una copia que nunca se probó a restaurar no se ven
+desde aquí, y son justo los fallos que más duelen.</li>
+<li><b>No propone cambiar de proveedor.</b> Ninguna de las mejoras de arriba lo exige.
+Migrar es caro y arriesgado, y ninguno de los cinco tiene un problema que lo justifique.</li>
+</ul>
+
+<h2>Si sólo se hace una cosa</h2>
+<div class="aviso">
+<p>Escribir la infraestructura de <b>una</b> de las máquinas —la de ppsport, que es la que
+más sostiene— y comprobar que se puede levantar otra igual desde cero.</p>
+<p>No por tenerla escrita: por descubrir, haciéndolo, cuántas cosas del servidor actual
+nadie recuerda haber puesto. Ese descubrimiento es el entregable, y llega antes de terminar.</p>
+</div>
+
+<footer>
+Infraestructura de los cinco proyectos · 2026-08-25 · medido leyendo workflows,
+<code>Dockerfile</code> y documentación de despliegue.<br>
+Documento autocontenido: no carga nada de la red.
+</footer>
+</div>
