@@ -234,6 +234,7 @@ en que se decidieron. Cada una dice el estado medido del repositorio, qué se le
 se verifica allí y qué no debe hacer.
 
 - [`encargos/2026-08-25/`](encargos/2026-08-25/) — los cinco proyectos en juego
+- [`encargos/2026-08-26/`](encargos/2026-08-26/) — facturación fiscal en hipismo
 
 ## Documentación
 
