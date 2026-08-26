@@ -23,11 +23,37 @@ una imprenta y tarda días.
 
 **34 pruebas nuevas**, y la puerta entera del proyecto en verde: 723 unitarias y 793 e2e.
 
+## El documento imprimible — hecho el 2026-08-26
+
+El PDF con la forma que exige la Providencia SNAT/2011/00071, generado en el servidor con
+`pdfkit`: `GET /api/v1/facturas/:id/documento.pdf`.
+
+**Está partido en dos a propósito.** `documento.ts` es puro —qué va impreso y qué campo
+obligatorio falta— y `documento-pdf.ts` sólo dibuja. Las dos mitades fallan de formas
+distintas: que falte un campo es incumplimiento, que salga en el sitio equivocado es
+maquetación. Juntas, la única prueba posible sería mirar el papel.
+
+**Se comprueba leyendo el PDF de verdad**, con el mismo `pdfjs-dist` que el proyecto ya usa
+para los programas oficiales. Un campo que se calcula pero no se dibuja no lo detecta
+ninguna prueba del modelo.
+
+**PDF de servidor y no una página para imprimir**: un HTML con hoja de impresión sale
+distinto según el navegador y sus márgenes, y esto se archiva por años.
+
+**Un documento incompleto se genera igual, y lo dice** — en el propio papel y en la cabecera
+`X-Factura-Incompleta`. Negarse a imprimir una factura ya emitida no la des-emite: deja al
+cliente sin papel y el problema sin resolver.
+
+**Faltaba un dato y sólo apareció al ponerlo en el papel:** la factura congelaba el número de
+la providencia de la imprenta pero no su fecha, y la providencia exige los dos. Migración
+`20260826180000_fecha_de_la_providencia_en_la_factura`.
+
+**+41 pruebas** (19 del modelo, 17 del PDF leído, 5 contra la base) y la puerta en verde.
+
 ## Lo que quedó fuera, y sigue pendiente
 
   · El **documento de cobro de la suscripción** —lo que hipismo le cobra a sus empresas—.
   · La **factura fiscal a esas empresas**, que pulso tampoco tiene y su propio esquema lo
     dice por escrito.
-  · La **impresión** del documento: el PDF con la forma que exige la providencia.
 
 Los cinco encargos anteriores están en [`../2026-08-25/`](../2026-08-25/) y siguen vigentes.
