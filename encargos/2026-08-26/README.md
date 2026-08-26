@@ -56,4 +56,6 @@ la providencia de la imprenta pero no su fecha, y la providencia exige los dos. 
   · La **factura fiscal a esas empresas**, que pulso tampoco tiene y su propio esquema lo
     dice por escrito.
 
-Los cinco encargos anteriores están en [`../2026-08-25/`](../2026-08-25/) y siguen vigentes.
+Los cinco encargos anteriores están en [`../2026-08-25/`](../2026-08-25/) y **ya no están
+vigentes**: cuatro se cerraron —tres los cerró otra sesión— y el de pulso caducó. El estado
+de cada uno, con quién lo resolvió, está en su propio índice.
