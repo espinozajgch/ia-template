@@ -1,3 +1,13 @@
+<!-- ejemplo-rellenado -->
+> ## ⚠️ Este prompt de dominio se escribió sobre **hipismo**
+>
+> Los nombres de tabla, los campos y las reglas de juego son los de aquel sistema. El
+> dominio —cómo se analiza una carrera— sí es general; el modelo de datos no.
+>
+> Comprueba que tus tablas se llaman así antes de dar por buena una consulta.
+
+---
+
 # Especificación técnica — Plataforma de análisis hípico venezolano
 
 ## 1. Objetivo del proyecto

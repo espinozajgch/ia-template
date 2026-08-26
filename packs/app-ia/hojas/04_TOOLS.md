@@ -1,3 +1,20 @@
+<!-- ejemplo-rellenado -->
+> ## ⚠️ ESTO ES UN EJEMPLO YA RELLENADO, DE OTRO PROYECTO
+>
+> Lo que hay debajo son las respuestas de **un recomendador con Smart Searcher** — una API de scouting en TypeScript—, no las de este
+> proyecto. Se instala así a propósito: **una hoja bien rellenada enseña qué nivel de
+> detalle hace falta**, y una plantilla vacía no enseña nada.
+>
+> **Reemplázalo antes de que ningún agente lo lea como si fuera cierto aquí.** Una hoja
+> de otro proyecto no es contexto neutro: es contexto FALSO con formato de verdad, y se
+> obedece igual que el bueno. Los modelos, las rutas de fichero y los GAP de abajo son
+> de aquel sistema.
+>
+> Las rutas relativas apuntan a la raíz del proyecto (`../../`) porque esta hoja se
+> instala en `agente/sistema/`.
+
+---
+
 # Tools — Catálogo de Endpoints, Tools del Agente y Operaciones
 
 > Regenerado por auditoría B.L.A.S.T.: 2026-07-19
@@ -17,7 +34,7 @@
 
 ## Tools del Agente LLM (Smart Searcher)
 
-Definidas en [`server/src/lib/recommender/agentTools.ts`](../server/src/lib/recommender/agentTools.ts).
+Definidas en [`server/src/lib/recommender/agentTools.ts`](../../server/src/lib/recommender/agentTools.ts).
 El LLM decide **cuándo** llamarlas; el ejecutor (`makeAgentRunTool`) las corre con la
 **visibilidad del usuario** (permisos + género + cross-permissions) y reusa el pipeline
 determinista (features + ranking). Todas son **solo-lectura**. Loop agéntico acotado a

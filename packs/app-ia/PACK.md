@@ -14,6 +14,18 @@ sí.
 Se rellenan por proyecto, en este orden. Vienen de la v1 del kit y siguen siendo su mejor
 aportación.
 
+> **⚠️ Se instalan RELLENADAS, con las respuestas de otros proyectos** —futbot-v2, un
+> recomendador de scouting y una cartelera de pronósticos—. Es deliberado: una hoja bien
+> rellenada enseña qué nivel de detalle hace falta y una plantilla vacía no enseña nada.
+>
+> Pero **hay que reemplazarlas antes de que un agente las lea**. Una hoja de otro proyecto
+> no es contexto neutro: es contexto falso con formato de verdad, y se obedece igual que el
+> bueno. Cada una lleva la advertencia arriba con el proyecto del que salió.
+>
+> Reemplazar la hoja **es** rellenarla: no hace falta un paso aparte. Si una no aplica, se
+> escribe `NO APLICA` y por qué — como hace el ejemplo de `03_RETRIEVAL.md`—, que es mejor
+> que dejar la plantilla y muchísimo mejor que dejar la de otro.
+
 | Hoja | Qué fija | Cuándo la consulta el agente |
 |---|---|---|
 | `01_LLM_STRATEGY.md` | qué modelo, por qué, y el plan B | al elegir o cambiar de modelo |

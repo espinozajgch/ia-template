@@ -1,3 +1,20 @@
+<!-- ejemplo-rellenado -->
+> ## ⚠️ ESTO ES UN EJEMPLO YA RELLENADO, DE OTRO PROYECTO
+>
+> Lo que hay debajo son las respuestas de **futbot-v2** — un bot de narración deportiva en Discord—, no las de este
+> proyecto. Se instala así a propósito: **una hoja bien rellenada enseña qué nivel de
+> detalle hace falta**, y una plantilla vacía no enseña nada.
+>
+> **Reemplázalo antes de que ningún agente lo lea como si fuera cierto aquí.** Una hoja
+> de otro proyecto no es contexto neutro: es contexto FALSO con formato de verdad, y se
+> obedece igual que el bueno. Los modelos, las rutas de fichero y los GAP de abajo son
+> de aquel sistema.
+>
+> Las rutas relativas apuntan a la raíz del proyecto (`../../`) porque esta hoja se
+> instala en `agente/sistema/`.
+
+---
+
 # Integrations — Servicios Externos
 
 > Fase B (Blueprint) y **verificado en Fase L (Link) el 2026-07-31**.
@@ -77,7 +94,7 @@ equivocado. Blueprint §7.1.7. **No está cubierto por el aplazamiento de la deu
 ### Fuga del token
 
 El token llega por `argv` (legible con `ps aux`), se vuelca al log del partido
-([`main.py:104`](../code/main.py#L104)), se registra otra vez en `set_env_variable`, y **se escribe
+([`main.py:104`](../../code/main.py#L104)), se registra otra vez en `set_env_variable`, y **se escribe
 en el fichero `.env`**. Cuatro caminos para el mismo secreto. Blueprint §7.1.1 y §7.1.4.
 
 ---
@@ -106,7 +123,7 @@ en cada ejecución y con ruta relativa: lanzar desde `code/` escribe en `code/.e
 
 ## X / Twitter — inactivo
 
-Import comentado ([`main.py:27`](../code/main.py#L27)), las 7 llamadas a `manage_tweets`
+Import comentado ([`main.py:27`](../../code/main.py#L27)), las 7 llamadas a `manage_tweets`
 comentadas, y `python-twitter` comentado en `requirements.txt`. Sigue vivo un prompt `twitter` que
 nada invoca. Decidir si se recupera o se retira.
 

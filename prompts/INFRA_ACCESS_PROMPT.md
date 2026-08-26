@@ -1,3 +1,20 @@
+<!-- ejemplo-rellenado -->
+> ## 🛑 ESTE PROMPT CONTIENE ÓRDENES REALES CONTRA UNA INFRAESTRUCTURA CONCRETA
+>
+> No es una plantilla: son las rutas, el servidor y el repositorio de
+> `ppsportmanagementarg`, con órdenes ejecutables tal cual — entre ellas un
+> `git remote set-url origin …` y un `cd` a un directorio de su máquina.
+>
+> **Ejecutarlo sin reescribirlo puede apuntar TU repositorio al de otro**, o hacer trabajo
+> contra un servidor que no es el tuyo. No es «contexto desactualizado»: es una orden que
+> funciona, dirigida al sitio equivocado.
+>
+> **Antes de usarlo:** sustituye cada ruta, cada nombre de host y cada URL de repositorio, y
+> repasa una por una las órdenes con `git remote`, `ssh`, `scp` y `rm`. Lo que se conserva es
+> el procedimiento —qué hay que comprobar para dar por bueno un acceso—, nunca los valores.
+
+---
+
 # INFRA_ACCESS_PROMPT — Acceso a AWS (SSM) y GitHub para agentes
 
 > **Qué es esto:** el manual de puesta en marcha y operación de la infraestructura de

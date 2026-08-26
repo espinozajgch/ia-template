@@ -1,3 +1,14 @@
+<!-- ejemplo-rellenado -->
+> ## ⚠️ EL ÁRBOL DE DIRECTORIOS DE ESTE PROMPT ES DE OTRO PROYECTO
+>
+> La estructura que aparece más abajo es la de `ppsportmanagementarg`. En tu proyecto **no
+> existe**, y un agente que la busque dará por vacío lo que no encontró — que es la peor
+> forma de fallar en una auditoría, porque parece un resultado.
+>
+> Sustitúyela por la tuya. Lo que se conserva es qué hay que mirar de un RAG, no dónde.
+
+---
+
 # PROMPT MAESTRO — AGENTEPRO AI SCOUTING + RAG + RECOMENDADOR INTELIGENTE DE FUTBOLISTAS
 
 ## 0. Rol del agente

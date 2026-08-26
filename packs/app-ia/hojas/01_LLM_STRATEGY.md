@@ -1,9 +1,26 @@
+<!-- ejemplo-rellenado -->
+> ## ⚠️ ESTO ES UN EJEMPLO YA RELLENADO, DE OTRO PROYECTO
+>
+> Lo que hay debajo son las respuestas de **futbot-v2** — un bot de narración deportiva en Discord—, no las de este
+> proyecto. Se instala así a propósito: **una hoja bien rellenada enseña qué nivel de
+> detalle hace falta**, y una plantilla vacía no enseña nada.
+>
+> **Reemplázalo antes de que ningún agente lo lea como si fuera cierto aquí.** Una hoja
+> de otro proyecto no es contexto neutro: es contexto FALSO con formato de verdad, y se
+> obedece igual que el bueno. Los modelos, las rutas de fichero y los GAP de abajo son
+> de aquel sistema.
+>
+> Las rutas relativas apuntan a la raíz del proyecto (`../../`) porque esta hoja se
+> instala en `agente/sistema/`.
+
+---
+
 # LLM Strategy — Estrategia del Modelo
 
 > Fase A (Architect), ejecutada el 2026-07-31 sobre el código real de `futbot-v2`.
 > **Documenta lo que el sistema hace hoy, no lo que debería hacer.** Las divergencias respecto a
 > lo que prescribe el protocolo están marcadas como GAP.
-> Fuente: [`code/chat/`](../code/chat/) · Blueprint: [`knowledge/wiki/project.md`](../knowledge/wiki/project.md)
+> Fuente: [`code/chat/`](../../code/chat/) · Blueprint: [`knowledge/wiki/project.md`](../../knowledge/wiki/project.md)
 
 ---
 
@@ -25,7 +42,7 @@ detalle: mantiene la trazabilidad que exige el North Star.
 | Campo | Valor real |
 |---|---|
 | Proveedor | **OpenAI** — no Anthropic. La plantilla de este documento asume modelos Claude; no aplica |
-| Modelo | **`gpt-4o-mini`**, de `OPENAI_MODEL`; el mismo valor por defecto en [`openai_service.py:17`](../code/chat/openai_service.py#L17) |
+| Modelo | **`gpt-4o-mini`**, de `OPENAI_MODEL`; el mismo valor por defecto en [`openai_service.py:17`](../../code/chat/openai_service.py#L17) |
 | Cliente | `openai>=2.0`, `chat.completions.create` directo. Sin framework |
 | Temperatura | **NO SE FIJA** → la API aplica su valor por defecto, `1.0` |
 | Max tokens output | **NO SE FIJA** |
@@ -43,7 +60,7 @@ contradictorio y **la única transmisión donde se nota es la que ya se emitió*
 ### GAP A2 — sin `max_tokens`, el control de longitud es posterior
 
 Los prompts piden «no más de 60 palabras» y la salida se trunca a **1 020 caracteres** en
-[`chat_util.py`](../code/chat/chat_util.py) por el límite de embed de Discord. El truncado es
+[`chat_util.py`](../../code/chat/chat_util.py) por el límite de embed de Discord. El truncado es
 **duro y silencioso**: corta a mitad de frase y añade `...`. No hay presupuesto de tokens que
 evite llegar a ese punto.
 
@@ -62,7 +79,7 @@ evite llegar a ese punto.
 ```
 
 El mensaje 3 y el 4 viajan **juntos en el mismo mensaje `user`**:
-`content = f"{prompt}\n\n{question}"` ([`chat_manager.py`](../code/chat/chat_manager.py)).
+`content = f"{prompt}\n\n{question}"` ([`chat_manager.py`](../../code/chat/chat_manager.py)).
 
 ### Ventana de conversación
 

@@ -1,3 +1,18 @@
+<!-- ejemplo-rellenado -->
+> ## ⚠️ ESTE PROMPT ESTÁ CALIBRADO PARA **PULSO**, NO PARA TU PROYECTO
+>
+> Dice literalmente «el SaaS de gestión de laboratorios clínicos **de este repositorio**».
+> Instalado en cualquier otro sitio eso es **falso**, y un agente lo dará por cierto: irá a
+> auditar pantallas que no existen y no mirará las que sí.
+>
+> **Reemplaza el producto, los dos canales y la regla de contexto** por los tuyos antes de
+> ejecutarlo. Lo que se conserva —y es lo que vale— es la forma: auditar cada canal por
+> separado con sus propias exigencias, y elevar a **Crítica** lo que en tu dominio hace daño
+> de verdad. En Pulso eso es un dato de salud que se ve quien no debe; en el tuyo será otra
+> cosa, pero será algo.
+
+---
+
 # Prompt de Diseño B.L.A.S.T. — Auditoría UX/UI Responsive y Frontend Architecture (Pulso)
 
 > Usa este prompt para auditorías profundas de UX/UI, Design System, accesibilidad y consistencia visual

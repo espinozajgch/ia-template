@@ -1,3 +1,20 @@
+<!-- ejemplo-rellenado -->
+> ## ⚠️ ESTO ES UN EJEMPLO YA RELLENADO, DE OTRO PROYECTO
+>
+> Lo que hay debajo son las respuestas de **futbot-v2** — un bot de narración deportiva en Discord—, no las de este
+> proyecto. Se instala así a propósito: **una hoja bien rellenada enseña qué nivel de
+> detalle hace falta**, y una plantilla vacía no enseña nada.
+>
+> **Reemplázalo antes de que ningún agente lo lea como si fuera cierto aquí.** Una hoja
+> de otro proyecto no es contexto neutro: es contexto FALSO con formato de verdad, y se
+> obedece igual que el bueno. Los modelos, las rutas de fichero y los GAP de abajo son
+> de aquel sistema.
+>
+> Las rutas relativas apuntan a la raíz del proyecto (`../../`) porque esta hoja se
+> instala en `agente/sistema/`.
+
+---
+
 # Retrieval — NO APLICA a la narración (pero hay RAG en un camino aparte)
 
 > Fase A (Architect), resuelta el 2026-07-31.
@@ -62,7 +79,7 @@ en un vector store FAISS y responde preguntas sobre ellos. `faiss-cpu` es requis
 
 **Lo que sigue siendo cierto:** el **camino del partido no usa nada de esto**. La narración accede
 al modelo con una llamada directa a `chat.completions.create` en
-[`openai_service.py`](../code/chat/openai_service.py), sin recuperación de ningún tipo, y la
+[`openai_service.py`](../../code/chat/openai_service.py), sin recuperación de ningún tipo, y la
 decisión de §1 —contexto directo, no RAG— se mantiene para la narración.
 
 **Estado real de esa funcionalidad:**

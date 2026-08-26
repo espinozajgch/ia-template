@@ -83,6 +83,18 @@ Analiza el uso de React Query y los componentes que muestran listas:
 
 ### 0.5 Archivos de PRIORIDAD ALTA (donde aparecen bugs históricamente)
 
+> **⚠️ LA TABLA DE ABAJO ES DE OTRO PROYECTO. Sustitúyela antes de usar este prompt.**
+>
+> Son los ficheros calientes de una API de scouting en Node/Express/Drizzle, con los
+> hallazgos que salieron allí. En cualquier otro proyecto **no existen**, y un agente que
+> los busque perderá el pase entero mirando rutas que no están — o peor, dará por
+> auditado lo que no miró.
+>
+> Se deja rellenada y no vacía porque **enseña qué columnas hacen falta**: no basta con
+> el nombre del fichero, hace falta POR QUÉ es caliente y en qué pase apareció. Rellénala
+> con los tuyos después del primer pase; antes del primero, bórrala y prioriza por lo que
+> diga el propio código.
+
 Estos archivos concentran la mayoría de los hallazgos B.L.A.S.T. históricos. Si el pase debe priorizar por tiempo, empezar aquí:
 
 | Archivo / Carpeta | Por qué | Pase donde apareció |

@@ -1,0 +1,64 @@
+# El kit se verifica a sí mismo.
+#
+# Hasta hoy no lo hacía: `nucleo/ci/github/` son PLANTILLAS que se instalan en los
+# proyectos destino, y este repositorio no tenía ninguna propia. Un kit que reparte
+# verificadores y no se los aplica es el zapatero descalzo, y se notó — el pack `app-ia`
+# llevaba semanas instalando las hojas rellenadas de tres proyectos distintos sin que
+# ninguna lo dijera, y nadie tenía forma de enterarse salvo leyéndolas.
+#
+# Es barato a propósito: sin `npm install`, sin caché, sin matriz. Un minuto de Node y
+# las herramientas del propio kit. Si esto tarda, se deja de mirar.
+name: El kit se verifica
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  # A mano, para poder comprobarlo sin empujar nada.
+  workflow_dispatch:
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      # Fijado por SHA como en el resto de la casa: una etiqueta se puede mover.
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22'
+
+      # Lo más barato primero. Una herramienta que no compila no verifica nada, y
+      # descubrirlo tras cuatro pasos es tiempo tirado.
+      - name: Las herramientas del kit compilan
+        run: |
+          for f in nucleo/tools/*.mjs packs/*/*.mjs; do
+            [ -f "$f" ] || continue
+            node --check "$f" || exit 1
+          done
+          for f in instalar.sh nucleo/tools/*.sh packs/*/*.sh; do
+            [ -f "$f" ] || continue
+            bash -n "$f" || exit 1
+          done
+
+      # `instalar.sh` valida un pack comprobando que existe su PACK.md. Un pack sin él
+      # no se puede instalar, y el fallo aparecería en la máquina de otro.
+      - name: Todo pack tiene su PACK.md
+        run: |
+          faltan=0
+          for d in packs/*/; do
+            [ -f "$d/PACK.md" ] || { echo "✗ sin PACK.md: $d"; faltan=1; }
+          done
+          exit $faltan
+
+      # Que ningún ejemplo rellenado se instale como si fuera del proyecto que lo recibe.
+      - name: Ningún ejemplo se hace pasar por propio
+        run: node nucleo/tools/plantillas.mjs .
+
+      # El propio detector del kit, aplicado al kit. Incluye la URL del remoto: en un
+      # runner no lleva credencial, así que si esto se enciende aquí es que alguien
+      # commiteó un secreto de verdad.
+      - name: Sin secretos
+        run: node nucleo/tools/secretos.mjs .
