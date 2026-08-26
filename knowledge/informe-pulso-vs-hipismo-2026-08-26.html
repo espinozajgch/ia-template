@@ -75,15 +75,15 @@ clínico —el paciente, la muestra, el resultado, la factura y la nómina— y 
 complejidad está en la <b>corrección de cada hecho</b>. hipismo trata datos de carreras y
 pronósticos, y su complejidad está en la <b>ingesta y el volumen</b>.</p>
 <p>Esa diferencia explica casi todas las de abajo, y es la razón por la que «quién va por
-delante» no siempre tiene sentido: la factura fiscal <b>al paciente</b> no le falta a
-hipismo, le sobra. El <b>documento de cobro de su suscripción</b> sí le falta, y ésa es
-otra conversación — está más abajo.</p>
+delante» no siempre tiene sentido en todos los ejes. En facturación sí lo tiene, y desde
+el 26 de agosto más: <b>hipismo pasa a vender al público</b>, así que necesita emitir
+factura fiscal y pulso ya tiene una implementación en pie.</p>
 </div>
 
 <h2>Eje por eje</h2>
 <div class="tabla-envoltura"><table>
 <thead><tr><th>Dimensión</th><th>pulso</th><th>hipismo</th><th>Delante</th></tr></thead>
-<tbody><tr><th scope="row">Dominio</th><td>Operación clínica: pacientes, casos, resultados, historias, facturación y nómina</td><td>Datos de carreras: jornadas, pronosticadores, tickets y resultados oficiales</td><td><span class="no">—</span></td></tr><tr><th scope="row">Backend</th><td>Next.js (App Router) · <code>pg</code> directo, sin ORM</td><td>Express 5 · Prisma · zod · <code>express-rate-limit</code></td><td><span class="no">—</span></td></tr><tr><th scope="row">Aislamiento multiempresa</th><td><b>En la base: Row Level Security.</b> Políticas por tabla, con guardianes que fallan si una tabla nueva no las trae</td><td><b>En la aplicación: 345 usos de <code>companyId</code></b>. Cero RLS en el esquema</td><td><b class="si">pulso</b></td></tr><tr><th scope="row">Frontend</th><td>React 19 · Next · Tailwind v4 con tokens propios en castellano</td><td>React · Vite · Tailwind con tokens propios (<code>text-turf</code>)</td><td><span class="no">—</span></td></tr><tr><th scope="row">Masa de CSS</th><td><b>5.319 líneas</b>, de las que 2.835 son un <code>portal.css</code> heredado</td><td><b>496 líneas</b> en un solo fichero</td><td><b class="si">hipismo</b></td></tr><tr><th scope="row">PWA</th><td><code>manifest.ts</code> + <b><code>sw.js</code> escrito a mano</b></td><td><code>vite-plugin-pwa</code>: manifiesto y service worker generados</td><td><b class="si">hipismo</b></td></tr><tr><th scope="row">Sin conexión</th><td><b>Copia local del portal</b>, pantalla propia de sin-conexión y aviso al usuario · 24 ficheros implicados</td><td>Mención en 3 ficheros</td><td><b class="si">pulso</b></td></tr><tr><th scope="row">Factura fiscal al cliente final</th><td><b>Completa</b>: RIF, IVA, <b>número de control</b>, SENIAT · datos del emisor congelados al emitir</td><td><b>No aplica</b> — no atiende pacientes ni vende al público</td><td><span class="no">—</span></td></tr><tr><th scope="row">Cobro de la suscripción</th><td><code>plataforma_facturas</code>: un documento por empresa y período, con plan e importe congelados</td><td><b>Sólo la relación comercial</b>: plan, estado y precio acordado. No emite documento</td><td><b class="si">pulso</b></td></tr><tr><th scope="row">Tasas de cambio</th><td>Histórico con tres tiempos, huella, detector de salto, <b>constancia de la oficial</b> al fijar la del centro, y canario diario</td><td><b>En producción desde julio</b> · <code>ExchangeRateIncident</code> persistido: anomalía, cambio de estructura, fallo de descarga, validación</td><td><span class="no">empate</span></td></tr><tr><th scope="row">Verificación</th><td>Puerta de un comando · trinquetes en <code>.ratchets/</code> · <b>1.114 pruebas</b></td><td>CI con tipos, ciclos de importación y tamaño de fichero · <b>720 pruebas</b></td><td><b class="si">pulso</b></td></tr><tr><th scope="row">Infraestructura</th><td><b>Ninguna todavía.</b> <code>Dockerfile</code> multietapa listo; región sin decidir</td><td>Contenedor + PostgreSQL gestionado · HTTPS obligatorio · cookies <code>__Host-</code></td><td><b class="si">hipismo</b></td></tr></tbody>
+<tbody><tr><th scope="row">Dominio</th><td>Operación clínica: pacientes, casos, resultados, historias, facturación y nómina</td><td>Datos de carreras: jornadas, pronosticadores, tickets y resultados oficiales</td><td><span class="no">—</span></td></tr><tr><th scope="row">Backend</th><td>Next.js (App Router) · <code>pg</code> directo, sin ORM</td><td>Express 5 · Prisma · zod · <code>express-rate-limit</code></td><td><span class="no">—</span></td></tr><tr><th scope="row">Aislamiento multiempresa</th><td><b>En la base: Row Level Security.</b> Políticas por tabla, con guardianes que fallan si una tabla nueva no las trae</td><td><b>En la aplicación: 345 usos de <code>companyId</code></b>. Cero RLS en el esquema</td><td><b class="si">pulso</b></td></tr><tr><th scope="row">Frontend</th><td>React 19 · Next · Tailwind v4 con tokens propios en castellano</td><td>React · Vite · Tailwind con tokens propios (<code>text-turf</code>)</td><td><span class="no">—</span></td></tr><tr><th scope="row">Masa de CSS</th><td><b>5.319 líneas</b>, de las que 2.835 son un <code>portal.css</code> heredado</td><td><b>496 líneas</b> en un solo fichero</td><td><b class="si">hipismo</b></td></tr><tr><th scope="row">PWA</th><td><code>manifest.ts</code> + <b><code>sw.js</code> escrito a mano</b></td><td><code>vite-plugin-pwa</code>: manifiesto y service worker generados</td><td><b class="si">hipismo</b></td></tr><tr><th scope="row">Sin conexión</th><td><b>Copia local del portal</b>, pantalla propia de sin-conexión y aviso al usuario · 24 ficheros implicados</td><td>Mención en 3 ficheros</td><td><b class="si">pulso</b></td></tr><tr><th scope="row">Factura fiscal al cliente final</th><td><b>Completa</b>: Providencia SNAT/2011/00071 · serie y número consecutivos · <b>número de control por rangos de imprenta</b> · datos del emisor y de la imprenta congelados al emitir · IVA por línea</td><td><b>No existe, y va a hacer falta</b>: el producto pasa a venderse al público (decisión de negocio, 2026-08-26)</td><td><b class="si">pulso</b></td></tr><tr><th scope="row">Cobro de la suscripción</th><td><code>plataforma_facturas</code>: un documento por empresa y período, con plan e importe congelados</td><td><b>Sólo la relación comercial</b>: plan, estado y precio acordado. No emite documento</td><td><b class="si">pulso</b></td></tr><tr><th scope="row">Tasas de cambio</th><td>Histórico con tres tiempos, huella, detector de salto, <b>constancia de la oficial</b> al fijar la del centro, y canario diario</td><td><b>En producción desde julio</b> · <code>ExchangeRateIncident</code> persistido: anomalía, cambio de estructura, fallo de descarga, validación</td><td><span class="no">empate</span></td></tr><tr><th scope="row">Verificación</th><td>Puerta de un comando · trinquetes en <code>.ratchets/</code> · <b>1.114 pruebas</b></td><td>CI con tipos, ciclos de importación y tamaño de fichero · <b>720 pruebas</b></td><td><b class="si">pulso</b></td></tr><tr><th scope="row">Infraestructura</th><td><b>Ninguna todavía.</b> <code>Dockerfile</code> multietapa listo; región sin decidir</td><td>Contenedor + PostgreSQL gestionado · HTTPS obligatorio · cookies <code>__Host-</code></td><td><b class="si">hipismo</b></td></tr></tbody>
 </table></div>
 
 <h2>La diferencia que más pesa</h2>
@@ -101,21 +101,47 @@ devuelva nada, que es ruidoso y por tanto seguro.</p>
 <h2>Qué puede tomar cada uno del otro</h2>
 <div class="aviso"><p style="margin-bottom:12px"><b style="font-size:17px">pulso puede tomar de hipismo</b></p><p><b>Persistir las incidencias del feed de tasas.</b> hipismo guarda <code>ExchangeRateIncident</code> con cuatro códigos —anomalía, cambio de estructura, fallo de descarga, validación fallida— consultables después. pulso registra lo mismo en el log del proceso y en códigos de salida, que se pierden. Cuando alguien pregunte «¿por qué el martes no había tasa?», hipismo puede responder y pulso no.</p><p><b>Retirar la hoja de estilos heredada.</b> 2.835 líneas de <code>portal.css</code> conviviendo con Tailwind. hipismo demuestra que 496 bastan para una aplicación de tamaño parecido. La migración ya empezó; lo que falta es terminarla.</p><p><b>Generar el service worker en vez de escribirlo.</b> Un <code>sw.js</code> a mano es una pieza más que mantener y que se queda atrás sola. <code>vite-plugin-pwa</code> lo genera en cada compilación.</p></div><div class="aviso"><p style="margin-bottom:12px"><b style="font-size:17px">hipismo puede tomar de pulso</b></p><p><b>Bajar el aislamiento a la base.</b> 345 sitios que deben acordarse de <code>companyId</code> son 345 oportunidades de olvidarlo, y el que se olvide no falla: <b>devuelve los datos de otra empresa</b>. Una política de fila no se puede olvidar, y un guardián que recorra el esquema hace imposible que una tabla nueva nazca sin ella.</p><p><b>La constancia de qué decía el organismo.</b> pulso guarda, junto a la tasa que fija cada centro, <b>cuál era la oficial en ese momento</b>. No una bandera «aceptó la oficial» —que la escribiría el mismo formulario— sino el número, para que la comparación sea rehacible y diga además cuánto se apartó.</p><p><b>El canario del raspador.</b> Una Action diaria que sólo lee y parsea, sin base ni secretos, y comparte el camino de código con la ingesta. Avisa el día que el BCV rediseñe, no cuando alguien facture con una tasa vieja.</p><p><b><b>El documento de cobro de la suscripción</b>.</b> hipismo tiene la <b>relación comercial</b> —<code>plan</code>, <code>subscriptionStatus</code> y un <code>monthlyPriceCents</code> congelado por empresa para no cambiarle el precio a quien ya firmó— pero <b>no emite nada</b>. Sabe lo que cobra; no sabe qué cobró. pulso tiene la otra mitad en <code>plataforma_facturas</code>: un documento por empresa y período, con el <b>nombre del plan y el importe congelados dentro</b>, de modo que cambiar la tarifa mañana no reescribe lo ya cobrado.</p><p><b>Las tres reglas que ese documento lleva puestas.</b> No son de contabilidad, son de que el dato no mienta. <b>Una sola por empresa y período</b> —lo que impide que dos clics generen dos mensualidades—. <b>«Pagada» exige fecha de pago</b>, porque si no acaba siendo una casilla que alguien marcó sin saber cuándo. Y <b>«anulada» exige motivo</b>. Las tres son restricciones de la base, no validaciones de formulario: no se pueden saltar desde ningún sitio.</p></div>
 
-<h2>Lo fiscal es un tercer trabajo, y no lo ha hecho ninguno</h2>
+<h2>Facturación: qué se lleva hipismo de pulso, y qué no</h2>
+
 <div class="aviso">
-<p>Conviene no confundir tres cosas que se llaman «facturar»:</p>
-<p><b>1 · La factura fiscal que el centro le hace a su paciente.</b> Sólo pulso la tiene, y
-completa: RIF, IVA, número de control, datos del emisor congelados al emitir. A hipismo no
-le falta — no atiende pacientes.</p>
-<p><b>2 · El documento de cobro de la suscripción.</b> Lo tiene pulso, le falta a hipismo, y
-es lo que se recomienda arriba.</p>
-<p><b>3 · La factura fiscal que la plataforma le emite a su cliente venezolano.</b>
-<b>No la tiene ninguno de los dos</b>, y la migración de pulso lo dice por escrito en el
-propio esquema: «no lleva número de control, ni imprenta, ni alícuota… el día que haya que
-emitirle una factura fiscal a un cliente venezolano, eso es otro trabajo y otra tabla».</p>
-<p>Recomendarle a hipismo «facturación fiscal» sería venderle algo que el modelo de
-referencia tampoco tiene. Lo que sí puede tomar hoy es el punto 2; el 3 es una decisión de
-negocio que los dos tienen pendiente por igual.</p>
+<p><b>Con la venta al público, hipismo necesita las dos capas.</b> El documento de cobro de
+la suscripción y, ahora, la factura fiscal al comprador. pulso tiene las dos, y la fiscal
+sigue la Providencia SNAT/2011/00071 con una decisión escrita en el propio esquema:
+seguirla hasta que el SENIAT publique sustituta, porque «cumplir de más no es un problema;
+cumplir de menos sí».</p>
+</div>
+
+<div class="aviso">
+<p style="margin-bottom:12px"><b style="font-size:17px">Lo que transfiere tal cual</b></p>
+<p><b>La numeración no se reutiliza.</b> Una factura anulada <b>conserva su número</b>, y por
+eso las facturas no se borran nunca — se marcan anuladas con motivo, fecha y autor.</p>
+<p><b>El número de control no lo inventa el sistema.</b> Lo asigna la imprenta autorizada en
+rangos, y la factura declara de cuál procede. El rango vive en su tabla, con
+<code>desde</code>, <code>hasta</code> y <code>siguiente</code>, y la restricción
+<code>siguiente ≤ hasta + 1</code> es la que representa «agotado» sin inventar un estado.</p>
+<p><b>Los datos del emisor y de la imprenta se copian en cada factura.</b> Si mañana cambia
+el domicilio fiscal, lo ya emitido no se reescribe. Es la misma regla que la tasa congelada
+por documento.</p>
+<p><b>El IVA va por línea</b>, no por factura. Y la tasa del día se congela en la factura,
+con los totales en dólares y los bolívares derivados de ella.</p>
+</div>
+
+<div class="aviso">
+<p style="margin-bottom:12px"><b style="font-size:17px">Lo que NO transfiere, y hay que pensar</b></p>
+<p><b>El consumidor final.</b> pulso exige <code>receptor_rif NOT NULL</code>: sus receptores
+son pacientes de un centro, y todos tienen documento. Quien compra al público muchas veces
+no da RIF. Ése es el primer cambio de modelo, no un detalle de formulario.</p>
+<p><b>El IVA deja de ser la excepción.</b> En pulso el grueso está <b>exento</b> —servicios
+médico-asistenciales, LIVA art. 19— y la alícuota general es el camino menos recorrido. En
+hipismo será el principal, así que la parte de pulso menos ejercitada es justo la que más se
+va a usar.</p>
+<p><b>El volumen.</b> Vender al público son muchas facturas pequeñas, y los rangos de
+imprenta se consumen deprisa. pulso modela el rango pero <b>no avisa cuando se está
+agotando</b>: quedarse sin números es dejar de poder cobrar. Eso hay que añadirlo, no
+copiarlo.</p>
+<p><b>El aislamiento de debajo.</b> hipismo montaría un módulo fiscal sobre un aislamiento
+que vive en la aplicación —345 usos de <code>companyId</code>—. Los datos fiscales son
+justo donde una fuga entre empresas duele más.</p>
 </div>
 
 <h2>Lo que les falta a los dos, y es del mercado</h2>
