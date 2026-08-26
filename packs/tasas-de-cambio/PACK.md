@@ -120,9 +120,49 @@ Contra el puerto, con el ORM y el servidor de casa:
   operación entera.
 - **Trabajo programado** — con bitácora de cada intento, y sin reintentar en bucle un
   `ExchangeRateStructureError`: eso es trabajo para una persona.
+- **Registro de incidencias** — la otra mitad del almacén, y la que se olvida. Ver abajo.
 - **Exposición** — la tasa que se guarda va con todos sus decimales (el BCV publica ocho);
   redondear es cosa de la presentación. Cualquier cálculo parte del valor guardado, nunca del
   texto formateado.
+
+---
+
+## Las incidencias: la mitad que se olvida
+
+El almacén guarda lo que el origen SÍ publicó. Hace falta guardar **lo que no llegó**, y no
+es «registros con más pasos»:
+
+> **La tabla de tasas no puede distinguir «no publicaron» de «no pudimos leerlo».**
+> Las dos se ven igual: un día sin fila nueva.
+
+Un fin de semana y un raspador roto son indistinguibles hasta que alguien factura con la tasa
+del martes creyendo que es la de hoy. El código de salida del proceso programado no lo tapa:
+nadie lee la consola de un `cron`, y menos el día que funciona.
+
+**Lo mínimo:**
+
+- Una tabla de sólo inserción, con un **conjunto cerrado de códigos** —origen inalcanzable,
+  estructura cambiada, cotización rechazada—. Un código libre acaba siendo una frase distinta
+  cada vez y deja de poderse agrupar.
+- **Una fila por intento.** Un origen caído un día con el proceso cada hora deja veinticuatro
+  filas, a propósito: cuántas veces seguidas falló es lo que separa un tropiezo de una caída.
+- **Registrar no puede tumbar la ingesta.** Devuelve un booleano, no lanza. Perder el aviso es
+  malo; perder además la tasa del día porque el aviso falló es peor.
+- **El canario NO registra**, y esa excepción es lo que le permite correr sin credenciales.
+- La constancia se deja **donde se decide el rechazo**, no en quien llama: un consumidor nuevo
+  que se olvide perdería el aviso sin que nada se queje.
+
+**Y una función que conteste la pregunta**, o la tabla es un sitio donde se escribe y nadie
+lee. La pregunta no es «¿ha fallado alguna vez?» sino **«¿está rota AHORA?»**, y se responde
+comparando dos instantes: incidencias **posteriores** a la última lectura que sí entró.
+Contar filas a secas diría que sí para siempre.
+
+Eso además apaga solo el falso positivo del domingo: no hubo incidencia porque no hubo fallo,
+sólo no había nada nuevo que leer.
+
+**Llévalo hasta la pantalla.** El indicador típico —«¿hay tasa de hoy?»— se enciende igual el
+domingo que con el lector roto desde el martes, y las dos se responden al revés. Y que cada
+código diga **qué hacer**: un aviso que no lo dice no es un aviso.
 
 ---
 
@@ -191,6 +231,11 @@ trabajo.
 - [ ] `effectiveDate`, `publishedAt` y `retrievedAt` se guardan por separado.
 - [ ] La atribución se muestra donde el usuario ve la tasa.
 - [ ] Existe una vía manual para el día en que el origen no responda.
+- [ ] Los fallos de la ingesta se GUARDAN, con código cerrado y una fila por intento.
+- [ ] Registrar una incidencia no puede tumbar la ingesta: devuelve, no lanza.
+- [ ] Hay una función que contesta «¿está rota AHORA?» comparando la última lectura buena
+      con lo posterior, y su respuesta llega a una pantalla.
+- [ ] Un domingo sin publicación NO enciende el aviso de avería.
 - [ ] Hay un canario programado que lee y parsea sin tocar la base, y comparte el camino
       de código con la ingesta.
 - [ ] El canario dice qué NO comprueba.
