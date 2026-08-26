@@ -8,13 +8,17 @@ Los datos son **medidos el 2026-08-25**, no recordados. Si al abrirlos ha pasado
 lo primero de cada encargo es volver a medir: en estos repositorios trabaja más de una
 sesión y el árbol cambia bajo los pies.
 
-| Proyecto | Encargo | Tamaño |
+> **Estado al 2026-08-26.** Cuatro de los cinco están cerrados, y tres los cerró otra
+> sesión mientras estos ficheros existían. Se deja constancia en vez de borrarlos: saber
+> qué se pidió y cómo se resolvió vale más que una lista limpia.
+
+| Proyecto | Encargo | Estado |
 |---|---|---|
-| [pulso](pulso.md) | Poner a salvo 116 ficheros sin commitear | una sesión |
-| [futbot-web-app](futbot-web-app.md) | Resolver los 5 fallos de la puerta | media sesión |
-| [futbot-v2](futbot-v2.md) | Comando único de verificación local | corto |
-| [hipismo](hipismo.md) | Comando único de verificación local | corto |
-| [ppsport](ppsport.md) | Comando único de raíz para los dos paquetes | corto |
+| [pulso](pulso.md) | Poner a salvo 116 ficheros sin commitear | ✅ **caducado** — otra sesión lo limpió y la rama se fusionó a `main` |
+| [futbot-web-app](futbot-web-app.md) | Resolver los 5 fallos de la puerta | ✅ **superado** — los cinco resueltos por otra sesión; lo rojo de hoy es trabajo en curso, no esto |
+| [futbot-v2](futbot-v2.md) | Comando único de verificación local | ✅ **hecho** — `tools/puerta.py`, y CI llama a ese mismo comando |
+| [hipismo](hipismo.md) | Comando único de verificación local | ✅ **hecho por otra sesión** — `npm run puerta` encadena nueve pasos y CI lo invoca |
+| [ppsport](ppsport.md) | Comando único de raíz para los dos paquetes | ✅ **hecho por otra sesión** — `Makefile` con `verify` |
 
 ## Lo que NO se pide en ninguno
 
