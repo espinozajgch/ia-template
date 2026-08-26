@@ -1,0 +1,128 @@
+<title>pulso frente a hipismo · 2026-08-26</title>
+<style>
+:root {{
+  --tinta:#1a1d21; --suave:#5b6470; --tenue:#8a929c;
+  --fondo:#f7f7f4; --papel:#ffffff; --linea:#e4e3dd;
+  --acento:#0f5c4a; --alerta:#a13b2a; --aviso:#8a6a1f;
+}}
+@media (prefers-color-scheme: dark) {{
+  :root:not([data-theme="light"]) {{
+    --tinta:#e8e6e1; --suave:#a8afb8; --tenue:#79818b;
+    --fondo:#14161a; --papel:#1b1e23; --linea:#2c3038;
+    --acento:#5fbfa3; --alerta:#e08a76; --aviso:#d9b25f;
+  }}
+}}
+:root[data-theme="dark"] {{
+  --tinta:#e8e6e1; --suave:#a8afb8; --tenue:#79818b;
+  --fondo:#14161a; --papel:#1b1e23; --linea:#2c3038;
+  --acento:#5fbfa3; --alerta:#e08a76; --aviso:#d9b25f;
+}}
+* {{ box-sizing:border-box; }}
+body {{ margin:0; background:var(--fondo); color:var(--tinta);
+  font:16px/1.6 ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif; }}
+.envoltura {{ max-width:1120px; margin:0 auto; padding:48px 24px 80px; }}
+header.portada {{ border-bottom:3px solid var(--tinta); padding-bottom:24px; margin-bottom:40px; }}
+.rotulo {{ font-size:12px; letter-spacing:.16em; text-transform:uppercase;
+  font-weight:800; color:var(--acento); }}
+h1 {{ font-size:clamp(28px,5vw,44px); line-height:1.1; margin:12px 0 8px; text-wrap:balance;
+  font-family:ui-serif,Georgia,"Times New Roman",serif; font-weight:700; }}
+.entradilla {{ color:var(--suave); max-width:62ch; margin:0; }}
+h2 {{ font-family:ui-serif,Georgia,serif; font-size:24px; margin:44px 0 14px;
+  padding-bottom:8px; border-bottom:1px solid var(--linea); }}
+h3 {{ font-size:15px; margin:0 0 4px; }}
+.tabla-envoltura {{ overflow-x:auto; border:1px solid var(--linea); border-radius:10px;
+  background:var(--papel); }}
+table {{ border-collapse:collapse; width:100%; font-size:14px; min-width:900px; }}
+th,td {{ padding:10px 12px; text-align:left; border-bottom:1px solid var(--linea);
+  vertical-align:top; }}
+thead th {{ font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--tenue); font-weight:700; white-space:nowrap; }}
+tbody th {{ font-weight:700; white-space:nowrap; }}
+tbody tr:last-child td, tbody tr:last-child th {{ border-bottom:none; }}
+.n {{ text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }}
+.alerta {{ color:var(--alerta); font-weight:700; }}
+.bien {{ color:var(--acento); }}
+.mal {{ color:var(--alerta); font-weight:600; }}
+.si {{ color:var(--acento); }}
+.no {{ color:var(--tenue); }}
+code {{ font-size:12.5px; background:color-mix(in srgb,var(--tinta) 7%,transparent);
+  padding:1px 5px; border-radius:4px; }}
+.rejilla {{ display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); }}
+.ficha {{ background:var(--papel); border:1px solid var(--linea); border-left:3px solid var(--acento);
+  border-radius:8px; padding:14px 16px; }}
+.ficha p {{ margin:0; color:var(--suave); font-size:14px; }}
+.aviso {{ background:var(--papel); border:1px solid var(--linea);
+  border-left:3px solid var(--aviso); border-radius:8px; padding:16px 18px; margin:18px 0; }}
+.aviso p {{ margin:0 0 10px; }} .aviso p:last-child {{ margin:0; }}
+ul {{ padding-left:20px; }} li {{ margin:6px 0; }}
+footer {{ margin-top:56px; padding-top:18px; border-top:1px solid var(--linea);
+  color:var(--tenue); font-size:13px; }}
+</style>
+<div class="envoltura">
+<header class="portada">
+  <p class="rotulo">Comparativa de dos SaaS venezolanos · Uso interno</p>
+  <h1>Dos apuestas opuestas<br>sobre el mismo mercado</h1>
+  <p class="entradilla">pulso e hipismo atienden al mismo país y a las mismas restricciones
+  —bolívar, tasa oficial, RIF—, y han resuelto casi todo de forma distinta. Medido el 26 de
+  agosto de 2026 leyendo esquemas, manifiestos, configuraciones y código de los dos
+  repositorios.</p>
+</header>
+
+<h2>Lo que hace que todo lo demás sea distinto</h2>
+<div class="aviso">
+<p><b>No compiten: uno opera y el otro pronostica.</b> pulso lleva la operación de un centro
+clínico —el paciente, la muestra, el resultado, la factura y la nómina— y por eso su
+complejidad está en la <b>corrección de cada hecho</b>. hipismo trata datos de carreras y
+pronósticos, y su complejidad está en la <b>ingesta y el volumen</b>.</p>
+<p>Esa diferencia explica casi todas las de abajo, y es la razón por la que «quién va por
+delante» no siempre tiene sentido: facturar con número de control no le falta a hipismo,
+le sobra.</p>
+</div>
+
+<h2>Eje por eje</h2>
+<div class="tabla-envoltura"><table>
+<thead><tr><th>Dimensión</th><th>pulso</th><th>hipismo</th><th>Delante</th></tr></thead>
+<tbody><tr><th scope="row">Dominio</th><td>Operación clínica: pacientes, casos, resultados, historias, facturación y nómina</td><td>Datos de carreras: jornadas, pronosticadores, tickets y resultados oficiales</td><td><span class="no">—</span></td></tr><tr><th scope="row">Backend</th><td>Next.js (App Router) · <code>pg</code> directo, sin ORM</td><td>Express 5 · Prisma · zod · <code>express-rate-limit</code></td><td><span class="no">—</span></td></tr><tr><th scope="row">Aislamiento multiempresa</th><td><b>En la base: Row Level Security.</b> Políticas por tabla, con guardianes que fallan si una tabla nueva no las trae</td><td><b>En la aplicación: 345 usos de <code>companyId</code></b>. Cero RLS en el esquema</td><td><b class="si">pulso</b></td></tr><tr><th scope="row">Frontend</th><td>React 19 · Next · Tailwind v4 con tokens propios en castellano</td><td>React · Vite · Tailwind con tokens propios (<code>text-turf</code>)</td><td><span class="no">—</span></td></tr><tr><th scope="row">Masa de CSS</th><td><b>5.319 líneas</b>, de las que 2.835 son un <code>portal.css</code> heredado</td><td><b>496 líneas</b> en un solo fichero</td><td><b class="si">hipismo</b></td></tr><tr><th scope="row">PWA</th><td><code>manifest.ts</code> + <b><code>sw.js</code> escrito a mano</b></td><td><code>vite-plugin-pwa</code>: manifiesto y service worker generados</td><td><b class="si">hipismo</b></td></tr><tr><th scope="row">Sin conexión</th><td><b>Copia local del portal</b>, pantalla propia de sin-conexión y aviso al usuario · 24 ficheros implicados</td><td>Mención en 3 ficheros</td><td><b class="si">pulso</b></td></tr><tr><th scope="row">Facturación fiscal</th><td><b>Completa</b>: RIF, IVA, <b>número de control</b>, SENIAT · datos del emisor congelados al emitir</td><td><b>No factura.</b> Cero modelos de factura; RIF e IVA se usan para la ficha de empresa y la suscripción</td><td><b class="si">pulso</b></td></tr><tr><th scope="row">Tasas de cambio</th><td>Histórico con tres tiempos, huella, detector de salto, <b>constancia de la oficial</b> al fijar la del centro, y canario diario</td><td><b>En producción desde julio</b> · <code>ExchangeRateIncident</code> persistido: anomalía, cambio de estructura, fallo de descarga, validación</td><td><span class="no">empate</span></td></tr><tr><th scope="row">Verificación</th><td>Puerta de un comando · trinquetes en <code>.ratchets/</code> · <b>1.114 pruebas</b></td><td>CI con tipos, ciclos de importación y tamaño de fichero · <b>720 pruebas</b></td><td><b class="si">pulso</b></td></tr><tr><th scope="row">Infraestructura</th><td><b>Ninguna todavía.</b> <code>Dockerfile</code> multietapa listo; región sin decidir</td><td>Contenedor + PostgreSQL gestionado · HTTPS obligatorio · cookies <code>__Host-</code></td><td><b class="si">hipismo</b></td></tr></tbody>
+</table></div>
+
+<h2>La diferencia que más pesa</h2>
+<div class="aviso">
+<p><b>pulso impide en la base lo que hipismo confía a la aplicación.</b> El aislamiento entre
+empresas de pulso son políticas de fila que PostgreSQL aplica siempre; el de hipismo son 345
+usos de <code>companyId</code> repartidos por la API.</p>
+<p>Lo que hace grave esa diferencia no es el número: es <b>cómo falla</b>. Un
+<code>companyId</code> olvidado no lanza ningún error — devuelve los datos de otra empresa,
+con estado 200, y nadie se entera. Una política de fila que falta hace que la consulta no
+devuelva nada, que es ruidoso y por tanto seguro.</p>
+<p>Con 345 sitios, la pregunta no es si alguno se olvidará. Es cuándo, y si alguien lo verá.</p>
+</div>
+
+<h2>Qué puede tomar cada uno del otro</h2>
+<div class="aviso"><p style="margin-bottom:12px"><b style="font-size:17px">pulso puede tomar de hipismo</b></p><p><b>Persistir las incidencias del feed de tasas.</b> hipismo guarda <code>ExchangeRateIncident</code> con cuatro códigos —anomalía, cambio de estructura, fallo de descarga, validación fallida— consultables después. pulso registra lo mismo en el log del proceso y en códigos de salida, que se pierden. Cuando alguien pregunte «¿por qué el martes no había tasa?», hipismo puede responder y pulso no.</p><p><b>Retirar la hoja de estilos heredada.</b> 2.835 líneas de <code>portal.css</code> conviviendo con Tailwind. hipismo demuestra que 496 bastan para una aplicación de tamaño parecido. La migración ya empezó; lo que falta es terminarla.</p><p><b>Generar el service worker en vez de escribirlo.</b> Un <code>sw.js</code> a mano es una pieza más que mantener y que se queda atrás sola. <code>vite-plugin-pwa</code> lo genera en cada compilación.</p></div><div class="aviso"><p style="margin-bottom:12px"><b style="font-size:17px">hipismo puede tomar de pulso</b></p><p><b>Bajar el aislamiento a la base.</b> 345 sitios que deben acordarse de <code>companyId</code> son 345 oportunidades de olvidarlo, y el que se olvide no falla: <b>devuelve los datos de otra empresa</b>. Una política de fila no se puede olvidar, y un guardián que recorra el esquema hace imposible que una tabla nueva nazca sin ella.</p><p><b>La constancia de qué decía el organismo.</b> pulso guarda, junto a la tasa que fija cada centro, <b>cuál era la oficial en ese momento</b>. No una bandera «aceptó la oficial» —que la escribiría el mismo formulario— sino el número, para que la comparación sea rehacible y diga además cuánto se apartó.</p><p><b>El canario del raspador.</b> Una Action diaria que sólo lee y parsea, sin base ni secretos, y comparte el camino de código con la ingesta. Avisa el día que el BCV rediseñe, no cuando alguien facture con una tasa vieja.</p></div>
+
+<h2>Lo que les falta a los dos, y es del mercado</h2>
+<div class="aviso">
+<p><b>Ninguno tiene pago móvil.</b> Es el medio de cobro dominante en Venezuela y no aparece
+en ninguno de los dos repositorios.</p>
+<p>En pulso el hueco es menor de lo que parece: los medios de cobro <b>los declara cada
+centro</b> y no están fijos en el código, así que cabe como dato — lo que falta es la
+integración, no el modelo. En hipismo, que cobra suscripción, es una decisión de producto
+sin empezar.</p>
+</div>
+
+<h2>Lo que este informe NO dice</h2>
+<ul>
+<li><b>No mide la calidad del código de ninguno</b>, ni su rendimiento real. Compara
+decisiones de arquitectura y superficie de funcionalidad, que se leen del repositorio.</li>
+<li><b>No dice cuál es «mejor».</b> Atienden problemas distintos: la comparación sirve para
+ver qué ha resuelto cada uno que el otro todavía no, no para elegir.</li>
+<li><b>No evalúa el frontend en ejecución.</b> Que los dos declaren PWA no dice si instalan
+bien, ni cómo se comportan con red mala — que en este mercado es la prueba que importa.</li>
+</ul>
+
+<footer>
+pulso frente a hipismo · 2026-08-26 · medido sobre esquemas, manifiestos, configuración y
+código de los dos repositorios.<br>
+Documento autocontenido: no carga nada de la red.
+</footer>
+</div>
