@@ -105,9 +105,19 @@ if [ ${#PACKS[@]} -gt 0 ]; then
   for p in "${PACKS[@]}"; do
     poner "$KIT/packs/$p/PACK.md" "agente/packs/$p/PACK.md"
     [ -f "$KIT/packs/$p/rule.mdc" ] && poner "$KIT/packs/$p/rule.mdc" ".cursor/rules/$p.mdc"
-    # herramientas propias del pack, sueltas en su raíz
-    for x in "$KIT/packs/$p"/*.mjs "$KIT/packs/$p"/*.sh "$KIT/packs/$p"/*.py "$KIT/packs/$p"/*.ts "$KIT/packs/$p"/*.sql "$KIT/packs/$p"/*.css; do
-      [ -f "$x" ] && poner "$x" "agente/packs/$p/$(basename "$x")"
+    # Herramientas propias del pack, sueltas en su raíz: TODAS, sin lista de extensiones.
+    #
+    # Había una —mjs, sh, py, ts, sql, css— y dejaba fuera `canario.yml` del pack de tasas,
+    # que su propio PACK.md manda usar: «canario.yml es la plantilla, con la explicación
+    # dentro». Quien lo instalaba iba a buscarlo y no estaba, sin un solo aviso.
+    #
+    # Es el mismo fallo que el comentario de abajo cuenta de `soporte/`, un nivel más
+    # arriba y con extensiones en vez de carpetas. Una lista explícita deja fuera en
+    # silencio lo que se añada después, y el día que se añade nadie se acuerda de la lista.
+    for x in "$KIT/packs/$p"/*; do
+      [ -f "$x" ] || continue
+      case "$(basename "$x")" in PACK.md|rule.mdc) continue ;; esac   # ya colocados arriba
+      poner "$x" "agente/packs/$p/$(basename "$x")"
     done
     chmod +x "$DESTINO/agente/packs/$p"/*.mjs "$DESTINO/agente/packs/$p"/*.sh 2>/dev/null
     [ -d "$KIT/packs/$p/activos" ] && for a in "$KIT/packs/$p/activos"/*; do poner "$a" "knowledge/wiki/$(basename "$a")"; done

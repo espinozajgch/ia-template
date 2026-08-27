@@ -66,11 +66,29 @@ Lo que ningún proyecto tenía todavía:
 |---|---|
 | `AGENTS.md` como fuente única + punteros | la versión anterior asumía que había que duplicar por herramienta |
 | `instalar.sh` | se copiaba a mano, y por eso derivaba |
-| Los 13 packs | los prompts existían sueltos, sin decir **cuándo** aplican |
+| Los packs | los prompts existían sueltos, sin decir **cuándo** aplican |
 | `agente/tools/ratchet.sh` genérico | los ratchets de ppsport estaban atados a npm y a Tailwind |
 | `agente/tools/puerta.sh` | descubrir la puerta era conocimiento tácito |
 | Skills `blueprint`, `auditar`, `informe`, `estimar` | existían como prompts sueltos o como skills de Antigravity, sin paridad con Claude Code |
 | `protocolo/02_PUERTA_DE_CALIDAD.md` y `03_MEMORIA.md` | el mecanismo estaba en la cabeza de quien lo montó en ppsport |
+
+---
+
+## Lo que entró después del destilado
+
+El corte de arriba es del **2026-08-22**. Esto se añadió trabajando en los proyectos, y se
+anota aquí porque la regla del kit es que **una pieza entra cuando fue útil en dos sitios**.
+
+| Pieza | Fecha | De dónde salió |
+|---|---|---|
+| `packs/tasas-de-cambio` | 2026-08-24 | **hipismo**, que ya leía el BCV. Se generalizó al portarlo a **pulso**: dos usuarios, luego va al núcleo del catálogo y no a un proyecto |
+| · el arreglo de la cadena TLS | 2026-08-24 | hipismo. El BCV sirve una cadena incompleta; se suministra el intermedio de su propia extensión AIA. **Nunca** `rejectUnauthorized: false` |
+| · el canario en Actions | 2026-08-24 | pulso. Un raspador no se rompe por la red: se rompe el día que rediseñan la página, y sin nadie mirando eso se descubre facturando |
+| · **las incidencias** | 2026-08-26 | pulso, y era la mitad que faltaba: la tabla de tasas no distingue «no publicaron» de «no pudimos leerlo» |
+| el fallo de `cheerio.text()` | 2026-08-24 | pulso. Concatena sin separador, así que en HTML minificado el euro heredaba la tasa del dólar. Corregido en los tres repositorios |
+| la segunda mitad de `ratchet.sh` | 2026-08-23 | **futbot-v2**. Su trinquete no sólo impedía crecer: obligaba a bajar el número al mejorar. El del kit sólo hacía la mitad |
+| `tools/plantillas.mjs` | 2026-08-26 | **el propio kit**, al descubrir que instalaba las hojas rellenadas de tres proyectos sin advertirlo |
+| `verificar.sh` + su workflow | 2026-08-27 | **el propio kit**. Predicaba «un solo comando, y CI llama a ese mismo» —el encargo que se le dio a futbot-v2— y no se lo aplicaba |
 
 ---
 

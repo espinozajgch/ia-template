@@ -19,7 +19,8 @@ sí mismo.**
 
 ```text
 nucleo/       lo que se instala SIEMPRE — plantillas, skills, protocolo, hooks, herramientas
-packs/        13 packs por nicho; se instalan solo los que aplican
+packs/        23 packs por nicho (2026-08-27); se instalan solo los que aplican
+tools/        herramientas del kit que NO se instalan en nadie
 prompts/      una versión canónica de cada prompt especializado
 prompts/_dominio/   prompts de un dominio concreto — NUNCA se instalan por defecto
 docs/         de dónde salió cada pieza, cómo migrar, y lo que quedó superado
@@ -39,11 +40,15 @@ bash -n instalar.sh nucleo/tools/*.sh  # sintaxis de los scripts
 **La puerta de calidad de este repositorio** (no hay build; son ficheros y scripts):
 
 ```bash
-for d in packs/*/;   do [ -f "$d/PACK.md" ] || echo "✗ falta PACK.md en $d"; done
-for f in nucleo/skills/*/SKILL.md; do sed -n '2,4p' "$f" | grep -q '^name:' || echo "✗ frontmatter en $f"; done
-python3 -c "import json;json.load(open('nucleo/hooks/settings.json'));json.load(open('nucleo/mcp/.mcp.json'))"
-bash -n instalar.sh nucleo/tools/ratchet.sh nucleo/tools/puerta.sh
+./verificar.sh                         # la puerta entera. Es la que corre CI.
 ```
+
+Sintaxis, estructura de packs y skills, JSON, plantillas y secretos. **No copies aquí lo
+que comprueba.** Esta lista estuvo escrita a mano en este fichero mientras CI corría otra,
+y para el 2026-08-27 ya habían divergido: la de aquí no incluía ni el detector de
+plantillas ni el de secretos. Es lo que el kit le exige a los proyectos que instala —ver
+[`nucleo/protocolo/02_PUERTA_DE_CALIDAD.md`](nucleo/protocolo/02_PUERTA_DE_CALIDAD.md)— y
+no se lo aplicaba a sí mismo.
 
 ---
 
@@ -84,9 +89,15 @@ reglas con el **porqué**, no solo el qué · un checklist de cierre · y su ent
 ## Trampas conocidas
 
 - **`instalar.sh` lee la primera línea `**Se activa si:**` de cada `PACK.md`** para
-  `--packs`. Si cambia ese formato, la lista sale vacía y nadie se entera.
-- **Un pack sin entrada en `prompts_de_pack()`** hace fallar el instalador con «pack
-  desconocido», aunque el directorio exista.
+  `--packs`. Si cambia ese formato, la lista sale vacía y nadie se entera. **Ya pasó:**
+  `packs/seguridad` decía «Se activa siempre que…» y salía sin descripción. Lo vigila
+  `verificar.sh` desde el 2026-08-27, que es como se encontró.
+- ~~**Un pack sin entrada en `prompts_de_pack()`** hace fallar el instalador.~~ **Ya no.**
+  El caso por defecto acepta cualquier pack con `PACK.md`; simplemente no instala prompts.
+  Comprobado instalando `tasas-de-cambio`, que no tiene entrada.
+- **Un pack que traiga un fichero suelto en su raíz se instala entero**, sin lista de
+  extensiones. La había, y dejaba fuera el `canario.yml` del pack de tasas que su propio
+  `PACK.md` manda usar. Si añades un tipo de fichero nuevo, no hay nada que tocar.
 - **El remoto de git lleva el token embebido en la URL.** Ver §Seguridad.
 
 ---

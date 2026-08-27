@@ -233,6 +233,10 @@ entre sí. Un archivo nuevo por corrida; el anterior no se sobrescribe.
 en que se decidieron. Cada una dice el estado medido del repositorio, qué se le pide, cómo
 se verifica allí y qué no debe hacer.
 
+**[`encargos/README.md`](encargos/README.md) es el índice y el estado.** Los seis que había
+están **cerrados al 2026-08-27**, con las cinco puertas en verde medidas ese día. Lo que
+sigue abierto está ahí, separado de los encargos a propósito: es trabajo nuevo, no deuda.
+
 - [`encargos/2026-08-25/`](encargos/2026-08-25/) — los cinco proyectos en juego
 - [`encargos/2026-08-26/`](encargos/2026-08-26/) — facturación fiscal en hipismo
 

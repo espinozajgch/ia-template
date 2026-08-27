@@ -1,7 +1,7 @@
 # Pack · seguridad
 
-**Se activa siempre que el sistema tenga usuarios, datos de terceros o esté expuesto a
-internet.** Es decir: casi siempre.
+**Se activa si:** el sistema tiene usuarios, maneja datos de terceros o está expuesto a
+internet. Es decir: casi siempre.
 
 **Prompts:** `APPSEC_PROMPT.md` · `SECURITY_PROMPT.md` · `FORENSIC_AUDITOR_PROMPT.md`
 
