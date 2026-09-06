@@ -59,10 +59,21 @@ if (!sh('git rev-parse --is-inside-work-tree').trim()) {
 const hallazgos = [];
 
 // 1 · el remoto (git remote -v lista fetch y push por separado: contar el remoto una vez)
+//
+// Se reutiliza el MISMO patrón `url-cred` que se aplica a los ficheros, y no uno propio.
+// Aquí había uno propio con el dos puntos opcional —`[^\/\s:@]+:?[^\/\s:@]*@`— así que
+// `https://usuario@github.com/…` salía como «credencial embebida». Un nombre de usuario en
+// la URL no es una credencial: es lo que git escribe solo al clonar.
+//
+// El falso positivo no era inocuo. Dejaba la puerta en rojo de forma permanente en
+// cualquier repositorio clonado así, y una puerta que siempre está roja por el mismo motivo
+// es una puerta que se deja de mirar — que es justo lo contrario de para lo que existe.
+// Encontrado el 2026-08-27 en este mismo repositorio.
+const PATRON_URL_CRED = PATRONES.find((p) => p.id === 'url-cred').re;
 const remotosSucios = new Set();
 for (const linea of sh('git remote -v').trim().split('\n').filter(Boolean)) {
   const [nombre, url = ''] = linea.split(/\s+/);
-  if (/:\/\/[^\/\s:@]+:?[^\/\s:@]*@/.test(url)) remotosSucios.add(nombre);
+  if (PATRON_URL_CRED.test(url)) remotosSucios.add(nombre);
 }
 for (const nombre of remotosSucios) {
   hallazgos.push({ donde: '.git/config', linea: 0, tipo: 'url-cred',
