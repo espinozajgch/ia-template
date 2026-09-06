@@ -12,3 +12,23 @@ Antes de crear un componente: leer `knowledge/wiki/product-design.md`.
 - Errores: `role="alert"` en el banner, `aria-describedby` en el campo.
 - Probar a 320 px y en tema oscuro.
 - Tras tocar un componente compartido, un fixture o un banner: re-correr E2E.
+- Toda pantalla que carga datos tiene sus TRES estados escritos: cargando, vacío y error.
+  El vacío dice qué hacer; el de error, qué falló y qué puede hacer el usuario.
+- El primer tabulador de la página es «saltar al contenido», visible al enfocarlo. Sin él,
+  quien navega con teclado recorre el menú entero en cada página.
+- Un modal cierra con Escape, atrapa el foco dentro y al cerrarse devuelve el foco a lo
+  que lo abrió.
+- Cada gesto tiene su acuse: una **microinteracción** que confirma que el sistema recibió
+  el clic, aunque la respuesta tarde.
+- El objetivo táctil son 44×44 px, y separados entre sí. En un móvil `hover` no existe:
+  todo lo que se comunique al pasar por encima necesita otra vía.
+- Respetar `prefers-reduced-motion`. Una animación que no se puede apagar es un problema
+  de accesibilidad, no un detalle de gusto.
+- Una animación de scroll NUNCA condiciona que se vea el contenido: sin JavaScript, el
+  texto está.
+- Lo que tarda más de 400 ms lo dice con una **animación de carga**, y el esqueleto tiene el tamaño de lo que va a
+  llegar — si no, el diseño salta cuando llega.
+- Nada `lazy` por encima del pliegue, y nunca la imagen del LCP.
+- **Regresión visual** antes de dar por buena una tanda de cambios de estilo:
+  `regresion-visual.mjs` captura la huella del estilo computado y compara. Revisar «a ojo»
+  cuarenta pantallas no es revisar: es mirar tres y suponer las otras treinta y siete.

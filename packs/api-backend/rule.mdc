@@ -11,3 +11,14 @@ alwaysApply: false
 - Timeout + reintentos con espera creciente en toda llamada saliente.
 - Idempotencia donde haya reintentos.
 - Validar en el borde contra el esquema; dentro, confiar en el tipo.
+- **Validación de entradas** (inputs) en el borde, **rechazando lo que sobra**, no sólo comprobando lo que se espera:
+  un campo de más que se acepta es la puerta del mass assignment.
+- **Sanitización de salidas**: ninguna respuesta devuelve la tabla. Paginación siempre, y proyección por rol: cada uno
+  recibe lo que su función necesita y ni un campo más.
+- Límite de peticiones por origen, y compartido si hay más de una instancia — si no, el
+  límite se multiplica por el número de réplicas sin que nadie lo decida.
+- Ninguna clave llega al cliente. Comprobarlo en el paquete COMPILADO, no en el código.
+- Los secretos no entran en git, y se revisa el HISTORIAL además del árbol: borrar un
+  fichero no borra el commit que lo trajo.
+- Nada de deserializar en objetos con comportamiento lo que llega de fuera.
+- Toda ruta que reciba una ruta de fichero la normaliza y comprueba que cae dentro.

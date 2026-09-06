@@ -87,6 +87,13 @@ agente/tools/                 8 verificadores ejecutables, probados contra repos
 | `auditar` | diagnosticar sin corregir | `blast-audit` + los prompts forenses |
 | `informe` | el entregable lo lee alguien de fuera | ppsport · futbot · cowork |
 | `estimar` | presupuestar, valorar, dimensionar | `staff-estimate` |
+| `preproduccion` | **antes de sacar algo a producción**, o para saber qué le falta a lo que ya está fuera | el checklist de 13 puertas |
+
+`preproduccion` recorre las trece puertas de
+[`nucleo/knowledge/checklist-preproduccion.md`](nucleo/knowledge/checklist-preproduccion.md)
+—159 requisitos— y deja cada uno en uno de cuatro estados: **PASS · PARTIAL · FAIL · N/A**.
+No corrige: entrega el estado con evidencia y un plan ordenado por daño × esfuerzo. Es la
+lista que antes vivía repartida entre la cabeza de cada uno y cinco prompts distintos.
 
 `tarea`, `avanzar` y `verificar` vienen tal cual de hipismo: son las mejores del conjunto
 porque no traen listas de comandos, traen **cómo encontrarlos** — y así no caducan el día

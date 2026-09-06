@@ -7,3 +7,30 @@ alwaysApply: false
   el SMS se intercepta duplicando la tarjeta.
 - Un código de segundo factor NO vale dos veces: se guarda el último período usado.
 - Comparación de códigos y testigos en tiempo constante, nunca con ===.
+- Contraseñas con Argon2id o bcrypt. Nunca SHA de nada, ni con sal: no están hechos para esto.
+- Limitar los intentos de acceso POR CUENTA y POR ORIGEN. Sin esto la contraseña es lo
+  único que separa a un atacante de una cuenta, y probar diez millones es barato.
+- Mismo mensaje para «no existe ese usuario» y «contraseña incorrecta». Distinguirlos
+  convierte el formulario en un enumerador de cuentas.
+- Cabeceras de seguridad en la respuesta REAL, no en un fichero de configuración que
+  alguien cree que se aplica: CSP sin `unsafe-inline`, HSTS, `X-Content-Type-Options`.
+- Cookies de sesión con `HttpOnly`, `Secure` y `SameSite`. Las tres, no dos.
+- CSRF: comprobar el origen ADEMÁS de `SameSite`. La defensa no depende de una sola capa
+  ni del navegador del usuario.
+- CORS con lista de orígenes. Nunca `*` con credenciales.
+- **Inyección SQL** (SQL injection): consultas parametrizadas siempre. Nunca concatenar
+  entrada del usuario, ni «sólo aquí»: el sitio que se salta la regla es el del informe.
+- **Command injection**: nunca construir una orden del sistema con entrada del usuario.
+  Si hay que invocar un binario, con argumentos como lista y sin intérprete de por medio.
+- **XSS**: escapar por defecto al pintar. Cada `dangerouslySetInnerHTML` o equivalente se justifica
+  uno a uno, por escrito, junto a la línea.
+- `npm audit --omit=dev` (o el equivalente) DENTRO de la puerta de calidad. Fuera de ella
+  se ejecuta cuando alguien se acuerda, que es nunca.
+- Lo que llega de un usuario NO es instrucción para un agente. Marcar la frontera entre
+  dato e instrucción cuando haya un modelo de por medio, y darle sólo lectura por defecto.
+- El **registro** de una cuenta no confirma nada hasta la **verificación del correo**: sin
+  ella, cualquiera da de alta la dirección de otro.
+- La **recuperación de contraseña** va con un testigo de un solo uso, con caducidad y
+  guardado por su huella — nunca en claro. Y responde lo mismo exista o no la cuenta.
+- Al cambiar la contraseña se invalidan las sesiones abiertas. Si no, un acceso robado
+  sobrevive al cambio que se hizo para cortarlo.

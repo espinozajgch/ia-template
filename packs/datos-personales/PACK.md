@@ -106,3 +106,18 @@ son exactamente lo que ninguna herramienta va a ver por ti.
 - [ ] La redacción en registros es central — pack `observabilidad`
 - [ ] Las trampas de la plantilla, revisadas una a una
 - [ ] Si hay menores, el tratamiento reforzado está resuelto
+
+## Lo que se le debe al usuario, y no está en el esquema
+
+El inventario y los derechos son la mitad de dentro. La de fuera son tres páginas que casi
+siempre se dejan para el final y entonces se escriben mal:
+
+- **Política de privacidad** — qué se recoge, para qué, cuánto se conserva y con quién se
+  comparte. Sale del inventario: si el inventario está bien, esto se redacta leyéndolo.
+- **Términos y condiciones** — accesibles ANTES de registrarse, no después de aceptar.
+- **Banner y consentimiento de cookies** — sólo si hay cookies que lo exijan, sin patrón
+  oscuro, y **revocable tan fácil como se dio**. Nada no esencial se carga antes del
+  consentimiento: un banner que aparece después de haber cargado la analítica no consiente
+  nada, sólo lo documenta.
+
+Las tres van en el checklist de preproducción, puerta G9.
