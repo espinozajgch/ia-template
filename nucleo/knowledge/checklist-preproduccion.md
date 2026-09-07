@@ -40,6 +40,26 @@ y aquí vale igual.
   alguien invoca ese prompt; no gobierna el trabajo diario.
 - `—` — **el kit no dice nada**. El requisito sigue siendo válido; lo que falta es la regla.
 
+### Las rutas están vistas DESDE EL KIT, no desde tu proyecto
+
+Este fichero se escribió para medir el kit y se **instala** en los proyectos, así que sus
+rutas son las del repositorio `ia-template`. En un proyecto instalado, el instalador las
+reparte por otros sitios. La traducción, una vez:
+
+| En esta tabla pone | En tu proyecto está en |
+|---|---|
+| `nucleo/protocolo/…` | `agente/protocolo/…` |
+| `nucleo/skills/<n>/SKILL.md` | `.claude/skills/<n>/SKILL.md` (y `.agents/skills/…`) |
+| `nucleo/knowledge/…` | `knowledge/wiki/…` |
+| `packs/<p>/…` | `agente/packs/<p>/…` |
+| `packs/<p>/rule.mdc` | `.cursor/rules/<p>.mdc` |
+| `prompts/…` | `agente/prompts/…` |
+
+**Y si un pack no está instalado, su regla no está.** La columna dice dónde *existe* la
+regla en el kit, no dónde la vas a encontrar. Un requisito cuya única fuente es un pack que
+no instalaste se comporta como un `—`: el requisito sigue siendo válido y no hay nada que lo
+sostenga. Comprobar qué packs tienes es `ls agente/packs/`.
+
 ---
 
 ## G1 · Funcionalidad y formularios
