@@ -68,7 +68,7 @@ const hallazgos = [];
 // El falso positivo no era inocuo. Dejaba la puerta en rojo de forma permanente en
 // cualquier repositorio clonado así, y una puerta que siempre está roja por el mismo motivo
 // es una puerta que se deja de mirar — que es justo lo contrario de para lo que existe.
-// Encontrado el 2026-08-27 en este mismo repositorio.
+// Encontrado el 2026-09-06 en este mismo repositorio.
 const PATRON_URL_CRED = PATRONES.find((p) => p.id === 'url-cred').re;
 const remotosSucios = new Set();
 for (const linea of sh('git remote -v').trim().split('\n').filter(Boolean)) {

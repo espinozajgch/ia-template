@@ -9,7 +9,7 @@
 > Este fichero es el catálogo; el informe con los estados lo produce ella, por proyecto.
 >
 > **De dónde salió.** De recorrer lo que ya se había hecho a mano en `pulso`, `hipismo` y
-> `ppsportmanagementarg`, y de una revisión del 2026-08-27 que midió qué decía el kit de
+> `ppsportmanagementarg`, y de una revisión del 2026-09-06 que midió qué decía el kit de
 > cada punto. El resultado de aquella medición está en §4 y es incómodo a propósito.
 
 ---
@@ -301,7 +301,7 @@ y aquí vale igual.
 
 ---
 
-## 4 · Qué decía el kit el 2026-08-27, medido
+## 4 · Qué decía el kit el 2026-09-06, medido
 
 Antes de escribir esta lista se recorrieron los 176 ficheros que el kit **instala** —núcleo,
 packs y prompts— buscando cada uno de los 159 requisitos. El resultado:
