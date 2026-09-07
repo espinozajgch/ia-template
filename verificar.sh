@@ -55,6 +55,28 @@ for f in nucleo/skills/*/SKILL.md; do
 done
 echo "  ✓ $(ls -d nucleo/skills/*/ | wc -l | tr -d ' ') skills"
 
+# Una skill vive en `nucleo/skills/X/` aquí y en `.claude/skills/X/` una vez instalada. Un
+# enlace relativo que SALGA de la carpeta de skills no puede ser correcto en las dos
+# disposiciones: `../../knowledge/...` apunta a `nucleo/knowledge/...` en el kit y a
+# `.claude/knowledge/...` en el proyecto, y ninguno de los dos existe.
+#
+# Enlazar skills hermanas —`../auditar/SKILL.md`— sí funciona, porque esa estructura sí se
+# conserva al instalar. Así que la regla es: hacia arriba, sólo un nivel.
+#
+# Encontrado el 2026-09-07 con un enlace al checklist que estaba roto en el kit Y en los dos
+# proyectos donde ya se había instalado. Nada avisaba: un enlace roto en Markdown no falla,
+# simplemente no lleva a ninguna parte.
+paso "estructura · las skills no enlazan fuera de su carpeta"
+for f in nucleo/skills/*/SKILL.md; do
+  fuera=$(grep -oE '\]\(\.\./\.\./[^)]+\)' "$f" || true)
+  [ -z "$fuera" ] || mal "$f enlaza fuera de skills/ y se romperá al instalar: $fuera"
+  # Y los que suben un solo nivel tienen que existir de verdad.
+  for enlace in $(grep -oE '\]\(\.\./[^)]+\)' "$f" | sed 's/^](//; s/)$//'); do
+    [ -e "$(dirname "$f")/$enlace" ] || mal "$f enlaza a $enlace, que no existe"
+  done
+done
+echo "  ✓ enlaces de skills"
+
 paso "estructura · el JSON que se instala es JSON"
 python3 -c "
 import json,sys

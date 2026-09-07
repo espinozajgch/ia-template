@@ -121,6 +121,26 @@ tabla `X` desde el frontend · no llamar a la API `Y` más de N veces por minuto
 - **Sin preámbulos ni halagos.** Al trabajo.
 - Un detector textual vacío **no prueba ausencia**.
 
+### Las skills, y cómo las encuentra cada agente
+
+Ocho procedimientos escritos: `blueprint` · `tarea` · `avanzar` · `verificar` · `auditar` ·
+`preproduccion` · `informe` · `estimar`. Ante una petición nueva → `tarea`. Antes de sacar
+algo a producción → `preproduccion`. Antes de cualquier commit que toque código →
+`verificar`.
+
+**Sólo dos agentes las descubren solos.** Claude Code lee `.claude/skills/` y
+Antigravity/Gemini lee `.agents/skills/`; los dos directorios llevan el mismo contenido.
+
+**Cursor, Copilot, Windsurf y Codex no las ven.** No es que no funcionen: son ficheros
+Markdown sin nada específico de ningún agente, así que sirven igual — pero **hay que
+señalarlas a mano**:
+
+> Lee `.claude/skills/preproduccion/SKILL.md` y sigue ese procedimiento.
+
+Si trabajas con uno de esos cuatro y la tarea encaja con una skill, ábrela y síguela en vez
+de improvisar el procedimiento. Están escritas precisamente para no volver a decidir cómo se
+hace cada vez.
+
 ---
 
 ## 7 · Trampas conocidas de este repositorio

@@ -5,9 +5,14 @@ description: Revisa un producto contra el checklist de las 13 puertas de preprod
 
 # Preproducción
 
-Recorre las trece puertas de
-[`knowledge/wiki/checklist-preproduccion.md`](../../knowledge/wiki/checklist-preproduccion.md)
-y dice **en qué estado está cada requisito en ESTE proyecto**.
+Recorre las trece puertas de `knowledge/wiki/checklist-preproduccion.md` —la ruta es desde
+la raíz del proyecto— y dice **en qué estado está cada requisito en ESTE proyecto**.
+
+<!-- La ruta va como texto y NO como enlace relativo a propósito: una skill vive en
+     `nucleo/skills/X/` dentro del kit y en `.claude/skills/X/` una vez instalada, así que
+     ningún `../..` puede ser correcto en las dos. Enlazar skills hermanas sí funciona
+     —`../auditar/SKILL.md`— porque esa estructura se conserva al instalar. Lo vigila
+     `verificar.sh`. -->
 
 **No modifica nada.** Es la misma separación que en [`auditar`](../auditar/SKILL.md) y por
 el mismo motivo: una revisión que corrige a la vez deja de ser una revisión, y al terminar
