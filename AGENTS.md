@@ -98,6 +98,17 @@ reglas con el **porqué**, no solo el qué · un checklist de cierre · y su ent
 - **Un pack que traiga un fichero suelto en su raíz se instala entero**, sin lista de
   extensiones. La había, y dejaba fuera el `canario.yml` del pack de tasas que su propio
   `PACK.md` manda usar. Si añades un tipo de fichero nuevo, no hay nada que tocar.
+- **Nada compila el TypeScript de `packs/`.** `verificar.sh` mira sintaxis de scripts,
+  estructura, JSON, plantillas y secretos — no tipos, porque este repositorio no tiene
+  `node_modules`. El código de los packs se instala en proyectos reales tal cual, y hasta el
+  2026-09-07 nunca había pasado por un compilador. **Cuando por fin lo hizo, en el primer
+  proyecto que lo instaló, salió un fallo real:** en `design-system/react/selector.tsx` el
+  cursor de teclado apuntaba fuera de la lista de opciones por tres caminos —lista vacía,
+  Inicio sobre lista vacía, y la lista encogiendo con el desplegable abierto— y los tres
+  reventaban con `Cannot read properties of undefined`. Un combobox con lista vacía o
+  filtrable no es un caso raro: es para lo que existe un combobox.
+  Mientras no haya toolchain aquí, **el barrido hay que hacerlo desde un proyecto que sí la
+  tenga**, y está escrito en el `tsconfig.json` de `logrono-united`.
 - **El remoto de git lleva el token embebido en la URL.** Ver §Seguridad.
 
 ---

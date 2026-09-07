@@ -148,7 +148,9 @@ describe('consenso entre fuentes', () => {
 
 describe('reconciliación de un registro completo', () => {
   it('resuelve campo a campo y dice cuáles quedaron en disputa', () => {
-    const r = reconciliar(
+    // El tipo va explícito: cada fuente trae campos distintos y la inferencia se queda con
+    // la forma de una sola. Ver la nota en `reconciliar`.
+    const r = reconciliar<{ nombre: string; telefono: string; ciudad: string }>(
       [
         { fuente: 'a', datos: { nombre: 'ACME', telefono: '600', ciudad: 'Madrid' } },
         { fuente: 'b', datos: { nombre: 'ACME', telefono: '601' } },

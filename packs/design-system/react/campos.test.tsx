@@ -174,4 +174,60 @@ describe('Selector · el patrón de combobox, entero', () => {
     expect(c).toHaveAttribute('aria-invalid', 'true');
     expect(c).toHaveAttribute('aria-describedby');
   });
+
+  /*
+   * El cursor de teclado apuntando fuera de la lista.
+   *
+   * Los tres reventaban con «Cannot read properties of undefined (reading 'valor')». No es
+   * un caso de laboratorio: una lista vacía es lo normal mientras carga o cuando depende de
+   * otro campo, y encoger al filtrar es para lo que existe un combobox.
+   *
+   * Lo encontró el compilador —`noUncheckedIndexedAccess` sobre `opciones[activa]`— y estuvo
+   * a punto de perderse entre veinte avisos de «falta el módulo vitest» de otros packs.
+   */
+  describe('el cursor nunca apunta fuera de la lista', () => {
+    it('con la lista vacía, abrir y pulsar Enter no rompe', async () => {
+      const u = userEvent.setup();
+      const alCambiar = vi.fn();
+      render(<Selector aria-label="Vacío" onChange={alCambiar}>{[]}</Selector>);
+      const c = screen.getByRole('combobox');
+      c.focus();
+      await u.keyboard('{ArrowDown}');       // abre
+      await u.keyboard('{Enter}');           // aquí estallaba
+      expect(alCambiar).not.toHaveBeenCalled();
+      // Y no se queda anunciando una opción que no existe.
+      expect(c.getAttribute('aria-activedescendant')).toBeNull();
+    });
+
+    it('con la lista vacía, Inicio y Enter tampoco', async () => {
+      const u = userEvent.setup();
+      const alCambiar = vi.fn();
+      render(<Selector aria-label="Vacío" onChange={alCambiar}>{[]}</Selector>);
+      screen.getByRole('combobox').focus();
+      await u.keyboard('{ArrowDown}{Home}{Enter}');
+      expect(alCambiar).not.toHaveBeenCalled();
+    });
+
+    it('si la lista encoge con el desplegable abierto, el cursor no se queda fuera', async () => {
+      const u = userEvent.setup();
+      const alCambiar = vi.fn();
+      const { rerender } = render(
+        <Selector aria-label="Letra" onChange={alCambiar}>{opciones}</Selector>);
+      screen.getByRole('combobox').focus();
+      await u.keyboard('{ArrowDown}{End}');           // abierto, cursor en la última
+      rerender(<Selector aria-label="Letra" onChange={alCambiar}><option value="a">Alfa</option></Selector>);
+      await u.keyboard('{Enter}');                    // el cursor apuntaba a la tercera de una
+      expect(alCambiar).not.toHaveBeenCalled();
+    });
+
+    it('y el camino normal sigue eligiendo', async () => {
+      const u = userEvent.setup();
+      const alCambiar = vi.fn();
+      render(<Selector aria-label="Letra" onChange={alCambiar}>{opciones}</Selector>);
+      screen.getByRole('combobox').focus();
+      await u.keyboard('{ArrowDown}{ArrowDown}{Enter}');
+      expect(alCambiar).toHaveBeenCalledWith(
+        expect.objectContaining({ target: expect.objectContaining({ value: 'b' }) }));
+    });
+  });
 });

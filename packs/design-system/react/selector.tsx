@@ -72,7 +72,7 @@ export function Selector({
   marcador = 'Selecciona…', className = '', ...aria
 }: SelectorProps) {
   const [abierto, setAbierto] = useState(false);
-  const [activa, setActiva] = useState(-1);
+  const [activaCruda, setActiva] = useState(-1);
   const contenedor = useRef<HTMLDivElement>(null);
   const disparador = useRef<HTMLButtonElement>(null);
   const lista = useRef<HTMLDivElement>(null);
@@ -82,6 +82,27 @@ export function Selector({
   const opciones = recogerOpciones(children);
 
   const seleccionada = opciones.findIndex(o => o.valor === String(value ?? ''));
+
+  /*
+   * El cursor de teclado, SIEMPRE dentro de la lista.
+   *
+   * `activaCruda` es estado y sobrevive a los renderizados; `opciones` se recalcula de
+   * `children` en CADA uno. En cuanto las dos dejan de coincidir, el índice guardado apunta
+   * fuera y `opciones[activa]` es `undefined`. Pasa por tres caminos, y ninguno es raro:
+   *
+   *   1. La lista llega vacía —«elige provincia» antes de elegir país, o una lista que viene
+   *      de una API que devolvió cero—. El efecto de apertura pone el cursor en 0 aunque no
+   *      haya ninguna opción, y el primer Enter estalla.
+   *   2. Igual, pulsando Inicio: pone el cursor en 0 sin mirar si hay algo.
+   *   3. La lista ENCOGE mientras está abierta, porque depende de otro campo. El cursor se
+   *      queda donde estaba, ahora fuera.
+   *
+   * Se corrige en la derivación y no en el sitio donde estalla, porque hay SEIS lecturas de
+   * `activa` —el Enter, el `aria-activedescendant`, el resaltado, el desplazamiento…— y
+   * parchear solo la que rompe deja las otras cinco apuntando fuera igual.
+   */
+  const activa = activaCruda < opciones.length ? activaCruda : -1;
+  const opcionActiva = activa >= 0 ? opciones[activa] : undefined;
 
   useEffect(() => {
     if (!abierto) return;
@@ -127,18 +148,18 @@ export function Selector({
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
-        abierto ? setActiva(i => Math.min(opciones.length - 1, i + 1)) : setAbierto(true);
+        abierto ? setActiva(Math.min(opciones.length - 1, activa + 1)) : setAbierto(true);
         break;
       case 'ArrowUp':
         e.preventDefault();
-        abierto ? setActiva(i => Math.max(0, (i < 0 ? opciones.length : i) - 1)) : setAbierto(true);
+        abierto ? setActiva(Math.max(0, (activa < 0 ? opciones.length : activa) - 1)) : setAbierto(true);
         break;
       case 'Home': if (abierto) { e.preventDefault(); setActiva(0); } break;
       case 'End':  if (abierto) { e.preventDefault(); setActiva(opciones.length - 1); } break;
       case 'Enter':
       case ' ':
         e.preventDefault();
-        if (abierto && activa >= 0) elegir(opciones[activa].valor); else setAbierto(true);
+        if (abierto && opcionActiva) elegir(opcionActiva.valor); else setAbierto(true);
         break;
       case 'Escape':
         // Escape cierra sin elegir. Es lo que espera quien lo pulsa, y lo que hace el nativo.

@@ -91,12 +91,18 @@ export function codigoDe(secreto: string, paso: number): string {
   const contador = Buffer.alloc(8);
   contador.writeBigUInt64BE(BigInt(paso));
   const mac = createHmac("sha1", deBase32(secreto)).update(contador).digest();
-  const desplazamiento = mac[mac.length - 1] & 0x0f;
-  const truncado =
-    ((mac[desplazamiento] & 0x7f) << 24) |
-    ((mac[desplazamiento + 1] & 0xff) << 16) |
-    ((mac[desplazamiento + 2] & 0xff) << 8) |
-    (mac[desplazamiento + 3] & 0xff);
+  // El truncado dinámico de la RFC 4226: el último nibble dice por dónde cortar cuatro
+  // bytes, y el bit más alto se descarta para que no salga un número negativo.
+  //
+  // Se lee con los métodos del Buffer y no indexando: con SHA-1 el resumen mide siempre 20
+  // bytes y el desplazamiento cae entre 0 y 15, así que los cuatro bytes existen SIEMPRE
+  // —pero esa garantía estaba solo en la cabeza de quien lo escribió. `readUInt32BE`
+  // comprueba los límites y REVIENTA si algún día deja de ser cierta; indexar devolvía
+  // `undefined`, y `undefined & 0xff` es 0: un código de seis dígitos perfectamente
+  // plausible y perfectamente equivocado. Un fallo así en un segundo factor no se ve, se
+  // padece.
+  const desplazamiento = mac.readUInt8(mac.length - 1) & 0x0f;
+  const truncado = mac.readUInt32BE(desplazamiento) & 0x7fff_ffff;
   return String(truncado % 10 ** DIGITOS).padStart(DIGITOS, "0");
 }
 

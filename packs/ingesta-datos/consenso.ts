@@ -73,8 +73,9 @@ export function decidir<T>(observaciones: Observacion<T>[], minimoParaAcuerdo = 
   const lista = [...grupos.values()];
   const discrepancias = lista.map(g => ({ valor: g.valor, fuentes: [...g.fuentes] }));
 
-  if (lista.length === 1) {
-    const g = lista[0];
+  const [unico] = lista;
+  if (unico && lista.length === 1) {
+    const g = unico;
     return {
       valor: g.valor, apoyos: g.fuentes.length, total: obs.length,
       // Una sola fuente no está en conflicto, pero tampoco está confirmada.
@@ -85,8 +86,9 @@ export function decidir<T>(observaciones: Observacion<T>[], minimoParaAcuerdo = 
   }
 
   const oficiales = lista.filter(g => g.oficial);
-  if (oficiales.length === 1) {
-    const g = oficiales[0];
+  const [unicoOficial] = oficiales;
+  if (unicoOficial && oficiales.length === 1) {
+    const g = unicoOficial;
     return { valor: g.valor, apoyos: g.fuentes.length, total: obs.length,
              // Que lo oficial contradiga a lo demás no es un conflicto: es la respuesta.
              enConflicto: false, motivo: 'oficial', discrepancias };
@@ -94,9 +96,20 @@ export function decidir<T>(observaciones: Observacion<T>[], minimoParaAcuerdo = 
 
   const ordenados = [...lista].sort((a, b) =>
     b.peso - a.peso || b.prioridad - a.prioridad || b.fuentes.length - a.fuentes.length);
-  const ganador = ordenados[0], segundo = ordenados[1];
+  const [ganador, segundo] = ordenados;
 
-  const empatado = Math.abs(ganador.peso - segundo.peso) < 1e-9;
+  /*
+   * Aquí hay dos grupos o más: el de uno solo salió por el `return` de arriba, y el de cero
+   * ni siquiera llega —`obs` vacío se responde al principio—. Pero esa garantía vive en OTRO
+   * sitio, y este bloque no se entera si alguien mueve aquellos returns.
+   *
+   * Sin un segundo grupo no hay empate posible, que es justo lo que dice esta comprobación.
+   */
+  if (!ganador) {
+    return { valor: null, apoyos: 0, total: obs.length, enConflicto: false,
+             motivo: 'sin-acuerdo', discrepancias };
+  }
+  const empatado = segundo !== undefined && Math.abs(ganador.peso - segundo.peso) < 1e-9;
   const suficiente = ganador.fuentes.length >= minimoParaAcuerdo;
 
   return {
@@ -113,6 +126,16 @@ export function decidir<T>(observaciones: Observacion<T>[], minimoParaAcuerdo = 
  * Reconcilia un registro completo campo a campo.
  * Devuelve el registro y **la lista de campos en conflicto**, que es lo que se le enseña a
  * quien revisa: no «este registro tiene un problema», sino cuál y entre qué valores.
+ *
+ * ── Dile el tipo. No lo dejes inferir. ──────────────────────────────────────
+ *
+ *     reconciliar<{ nombre: string; telefono: string; ciudad: string }>(fuentes, campos)
+ *
+ * `T` se infiere de `Partial<T>` recorriendo el array de fuentes, y cada fuente trae un
+ * subconjunto DISTINTO de campos — que es justo para lo que existe esta función. TypeScript
+ * se queda con la forma de una de ellas y rechaza las demás: si la segunda fuente no trae
+ * `ciudad`, `ciudad` deja de existir para todas, y el error sale en la fuente que sí la
+ * traía. Confunde bastante, porque señala el sitio correcto por el motivo equivocado.
  */
 export function reconciliar<T extends Record<string, unknown>>(
   porFuente: { fuente: string; datos: Partial<T>; confianza?: number; prioridad?: number; esOficial?: boolean }[],

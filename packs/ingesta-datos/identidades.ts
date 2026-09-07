@@ -121,19 +121,32 @@ export function nombresDePersonaCoinciden(a: string, b: string): boolean {
  */
 export function distanciaEdicion(a: string, b: string, limite: number): number {
   if (Math.abs(a.length - b.length) > limite) return limite + 1;
+  /*
+   * Los `!` de este bucle son los únicos del fichero, y se justifican aquí una vez.
+   *
+   * `previa` y `fila` miden `b.length + 1`, y `j` recorre 1…`b.length`: los tres índices que
+   * se leen —`j`, `j-1` en ambas filas— caen dentro SIEMPRE, y la garantía está en la
+   * condición del bucle que se ve tres líneas más arriba.
+   *
+   * Esa cercanía es la condición para escribir `!`. Cuando el índice viene de otro sitio
+   * —de un estado, de una prop— la garantía deja de ser visible y el `!` pasa de documentar
+   * un invariante a tapar un fallo: en `design-system/react/selector.tsx` un índice así
+   * apuntaba fuera de la lista por tres caminos distintos, y todos reventaban.
+   */
   let previa = Array.from({ length: b.length + 1 }, (_, i) => i);
   for (let i = 1; i <= a.length; i++) {
     const fila = [i];
     let minimo = i;
     for (let j = 1; j <= b.length; j++) {
       const coste = a[i - 1] === b[j - 1] ? 0 : 1;
-      fila[j] = Math.min(previa[j] + 1, fila[j - 1] + 1, previa[j - 1] + coste);
-      if (fila[j] < minimo) minimo = fila[j];
+      const v = Math.min(previa[j]! + 1, fila[j - 1]! + 1, previa[j - 1]! + coste);
+      fila[j] = v;
+      if (v < minimo) minimo = v;
     }
     if (minimo > limite) return limite + 1;   // toda la fila supera el límite: imposible bajar
     previa = fila;
   }
-  return previa[b.length];
+  return previa[b.length]!;
 }
 
 /**
@@ -188,6 +201,7 @@ export function planificarFusiones(candidatos: Candidato[]): Fusion[] {
 
     for (let i = pendientes.length - 1; i >= 0; i--) {
       const otro = pendientes[i];
+      if (!otro) continue;
       let coincide = false;
       if (normalizar(cabeza.nombre) === normalizar(otro.nombre)) { coincide = true; motivo = 'nombre-identico'; }
       else if (nombresConCalificadorCoinciden(cabeza.nombre, otro.nombre)) { coincide = true; motivo = 'calificador-compatible'; }
@@ -196,9 +210,12 @@ export function planificarFusiones(candidatos: Candidato[]): Fusion[] {
     }
     if (!grupo.length) continue;
 
-    const todos = [cabeza, ...grupo].sort((a, b) =>
-      b.registros - a.registros || b.nombre.length - a.nombre.length);
-    fusiones.push({ conservar: todos[0], absorber: todos.slice(1), motivo });
+    // Tupla y no array: así el tipo dice lo que el código ya sabía —que `cabeza` está
+    // siempre— y `conservar` no necesita ni comprobación ni `!`.
+    const todos: [Candidato, ...Candidato[]] = [cabeza, ...grupo];
+    todos.sort((a, b) => b.registros - a.registros || b.nombre.length - a.nombre.length);
+    const [conservar, ...absorber] = todos;
+    fusiones.push({ conservar, absorber, motivo });
   }
   return fusiones;
 }
