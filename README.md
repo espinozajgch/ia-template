@@ -46,12 +46,79 @@ los leía, pero el agente sí — y cobraban su contexto.
 
 Es idempotente y no sobrescribe nada sin `--force`. Lo que ya existía se reporta al final.
 
-Después, en una sesión de agente dentro del proyecto:
+---
+
+## Cómo se usa · qué escribes tú
+
+Esta sección faltaba, y sin ella el resto del README explica **qué hay dentro del kit** pero
+no **qué haces con él**. Son tres momentos, y sólo en dos escribes algo.
+
+### 1 · Una vez por proyecto — instalar
+
+```bash
+./instalar.sh --packs                    # ver qué packs hay y cuándo aplica cada uno
+./instalar.sh ~/mi-proyecto frontend-web api-backend base-de-datos seguridad
+```
+
+Idempotente: no sobrescribe nada sin `--force`, y al final lista lo que ya existía y respetó.
+Elegir mal los packs no es grave — se vuelve a ejecutar con los que falten.
+
+### 2 · Una vez, justo después — llenarlo
+
+Abre una sesión de agente **dentro del proyecto** y escribe:
 
 ```
-skill blueprint      → lee el código, rellena AGENTS.md y knowledge/wiki/,
-                       y solo pregunta lo que no puede deducir
+/blueprint
 ```
+
+Lee tu código y rellena `AGENTS.md` y `knowledge/wiki/`. Sólo pregunta lo que no puede
+deducir. Sin este paso el kit está instalado y vacío: son plantillas con marcadores `[…]`, y
+un agente que las lea aprende el formato pero no tu proyecto.
+
+### 3 · El día a día — **no escribes nada**
+
+Y ésta es la parte que más cuesta creer. `AGENTS.md` lo lee el agente **solo**, en cada
+sesión, porque `CLAUDE.md`, `GEMINI.md`, `.cursor/rules/` y los demás punteros apuntan ahí.
+Tú pides lo que querías pedir.
+
+Lo único que escribes son las skills, cuando la ocasión encaja:
+
+| Escribes | Cuándo | Qué te ahorra |
+|---|---|---|
+| `/tarea` | llega algo nuevo | que se empiece a picar código antes de saber cuándo estará hecho |
+| `/avanzar` | hay un plan y quieres que lo ejecute entero | que pare a preguntar en cada paso |
+| `/verificar` | antes de cualquier commit que toque código | dar por bueno algo que no pasa la puerta |
+| `/auditar` | «revisa esto» | una auditoría que se convierte en refactorización a medio camino |
+| `/preproduccion` | antes de sacar algo fuera | los 159 requisitos que nadie recuerda de memoria |
+| `/informe` | el entregable lo abre alguien que no programa | un README donde hacía falta un documento |
+| `/estimar` | presupuestar o dimensionar | una cifra dicha a ojo |
+| `/blueprint` | al empezar, o si el proyecto cambia de rumbo | — |
+
+**Sólo Claude Code y Antigravity las encuentran solas.** En Cursor, Copilot, Windsurf y Codex
+son ficheros de texto normales y funcionan igual, pero hay que señalarlas:
+*«Lee `.claude/skills/preproduccion/SKILL.md` y sigue ese procedimiento.»*
+
+### Y lo que trabaja sin que lo pidas
+
+- **`knowledge/wiki/lessons.md`** — cada vez que corriges al agente, la corrección se escribe
+  ahí, y en la sesión siguiente la lee antes de trabajar. Es lo que hace que no repita el
+  mismo error tres semanas después.
+- **`knowledge/wiki/decisiones-pendientes.md`** — cuando aparece una decisión que no es suya
+  —qué pasarela, qué proveedor—, la anota y **sigue con lo que no depende de ella**, en vez de
+  detenerse a esperarte.
+- **`agente/tools/*.mjs`** — los ratchets. Se fijan una vez y a partir de ahí la deuda puede
+  bajar pero no subir.
+
+### Cómo saber si está funcionando
+
+```bash
+cat knowledge/wiki/lessons.md              # ¿hay lecciones de verdad, o sigue la plantilla?
+cat knowledge/wiki/decisiones-pendientes.md
+ls agente/packs/                           # ¿están los packs que aplican a este proyecto?
+```
+
+Si `lessons.md` sigue siendo la plantilla de ejemplo después de un mes, el kit está instalado
+y no se está usando.
 
 ---
 
@@ -64,7 +131,7 @@ AGENTS.md                     fuente ÚNICA de contexto. Menos de 250 líneas, o
 CLAUDE.md · GEMINI.md · .windsurfrules · .cursor/ · .github/ · .agents/
                               punteros de 10 líneas. NO se editan
 .claude/skills/ · .agents/skills/
-                              las 7 skills, mismo contenido para las dos herramientas
+                              las 8 skills, mismo contenido para las dos herramientas
 .claude/settings.json         hooks: el checklist de pre-commit y pre-push lo inyecta el
                               harness — el agente no puede olvidarse de un hook
 .mcp.json                     grafo de código para descubrimiento
@@ -76,7 +143,7 @@ agente/tools/                 8 verificadores ejecutables, probados contra repos
                               esquema · cobertura · cosechar
 ```
 
-### Las 7 skills
+### Las 8 skills
 
 | Skill | Cuándo | De dónde salió |
 |---|---|---|
