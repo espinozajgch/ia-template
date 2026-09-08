@@ -14,7 +14,7 @@ BLUEPRINT ──▶ ENLACE ──▶ ARQUITECTURA ──▶ EJECUCIÓN ──▶
 
 ## B · Blueprint — antes de una línea de código
 
-Skill: [`blueprint`](../skills/blueprint/SKILL.md)
+Skill: `blueprint`
 
 Las cinco preguntas (North Star · integraciones · fuente de datos · entrega ·
 restricciones) y, si hay interfaz, marca, diseño y funcionalidad.
@@ -67,7 +67,7 @@ la fuerza concreta que la obliga a existir.
 
 ## E · Ejecución — construir
 
-Skills: [`tarea`](../skills/tarea/SKILL.md) para acotar · [`avanzar`](../skills/avanzar/SKILL.md)
+Skills: `tarea` para acotar · `avanzar`
 para ejecutar sin parar a cada paso.
 
 Una tarea = un commit coherente. Estructura y conducta, separados. Lo nuevo nace con sus
@@ -78,7 +78,7 @@ trabajo**.
 
 ## P · Puerta — nada está hecho hasta que pasa
 
-Skill: [`verificar`](../skills/verificar/SKILL.md) · detalle en
+Skill: `verificar` · detalle en
 [`02_PUERTA_DE_CALIDAD.md`](02_PUERTA_DE_CALIDAD.md)
 
 La puerta entera, no los pasos que parezcan relacionados. Después, recorrer a mano el flujo
@@ -95,3 +95,17 @@ Cada corrección del usuario, cada decisión, cada trampa descubierta vuelve a
 `knowledge/wiki/`. Ver [`03_MEMORIA.md`](03_MEMORIA.md).
 
 Sin este paso el ciclo es una metodología. Con él, es un sistema que aprende.
+
+---
+
+<!--
+  Las skills se nombran, no se enlazan.
+
+  Este fichero vive en `nucleo/protocolo/` dentro del kit y en `agente/protocolo/` una vez
+  instalado; las skills viven en `nucleo/skills/` aquí y en `.claude/skills/` allí. Ningún
+  enlace relativo puede ser correcto en las dos posiciones: `../skills/…` resolvía bien en el
+  kit y apuntaba a `agente/skills/`, que no existe, en TODOS los proyectos instalados.
+
+  Además, un agente las invoca por nombre —`/tarea`— y no abriendo un fichero, así que el
+  nombre es más útil que la ruta. Lo vigila `verificar.sh`.
+-->

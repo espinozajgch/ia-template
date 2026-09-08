@@ -103,6 +103,26 @@ node tools/plantillas.mjs . || mal "hay ejemplos rellenados sin advertir"
 # verificador aprobando para siempre sin leer una línea.
 #
 # `cobertura.mjs` y `esquema.mjs` ya lo hacían bien. El kit era inconsistente consigo mismo.
+# ── Instalación de verdad, y sus enlaces ──────────────────────────────────────
+#
+# Se instala el kit en un directorio temporal y se comprueban los enlaces ALLÍ. Es la única
+# forma de cazar la clase de fallo que más veces se ha repetido: un fichero de `nucleo/` o
+# `packs/` cuyo enlace relativo resuelve bien AQUÍ y apunta a la nada una vez instalado.
+#
+# Tres veces en dos días: el enlace de `preproduccion` al checklist, las cuatro referencias a
+# skills de `00_CICLO.md`, y las rutas del checklist a `packs/`. Ninguna se veía desde el kit.
+#
+# De paso, esto ejercita el instalador entero: si `instalar.sh` se rompe, la puerta se entera.
+paso "instalación · el kit instalado no tiene enlaces rotos"
+tmp_inst=$(mktemp -d)
+(cd "$tmp_inst" && git init -q)
+if ./instalar.sh "$tmp_inst" frontend-web api-backend seguridad >/dev/null 2>&1; then
+  node tools/enlaces.mjs "$tmp_inst" || mal "enlaces rotos en el proyecto instalado"
+else
+  mal "instalar.sh falló sobre un proyecto limpio"
+fi
+rm -rf "$tmp_inst"
+
 paso "herramientas · ninguna aprueba lo que no ha leído"
 tmp_vacio=$(mktemp -d)
 (cd "$tmp_vacio" && git init -q && mkdir -p vacia)

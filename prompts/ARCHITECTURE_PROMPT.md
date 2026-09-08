@@ -40,7 +40,7 @@ Cada pase debe barrer estas **11 dimensiones**. En el Protocolo 1 vas a declarar
 6. **Frontend — estados de query y composición** — `useQuery` sin distinguir loading/error/partial/vacío legítimo (AP-14); páginas con tabs que no propagan `isError` al hijo; **child component que recibe `data: T[]` sin `isError`/`loadError` desde un padre que sí los tiene (AP-46)**; ausencia de `QueryStateBoundary` o banner de datos parciales; mutaciones sin `onError`/toast. **Sub-detector AP-63 (pase 18):** `useQuery` no-lista (sidebar widget / command palette / form catalog en EditForm modal) con `data: X = []` o `q.data ?? []` sin `isError` destructurado — counter en badge muestra "0" silente, dropdown vacío induce a guardar como "ninguno seleccionado". Distinto de AP-14/46 D1..D3 porque NO hay `EmptyState` renderizado; el detector textual los pasa por alto.
 7. **Schema drift** — columnas en `SELECT` no presentes en migraciones aplicadas; helpers que asumen tablas no listadas en `CRITICAL_TABLES`; tipos Drizzle desfasados de la DB. AP-15.
 8. **Fail-open silencioso** — `try/catch` que swallow con flag de dev (`SESSION_FAIL_OPEN`, etc.); `.catch(() => {})` ad-hoc; side-effects que no van por `runOptionalSideEffect` con logging estructurado. AP-42 (Detector 1: provider externo; Detector 2: writes críticos a `sessions`/`users`/seguridad gated por flag dev — fix una vez, fix simétricamente en TODOS los handlers que tocan la misma tabla; precedente pase 5 vs pase 11). **Sub-detector AP-44 D6:** `await db.X(...)` post-commit sin `runOptionalSideEffect` también es fail-open silencioso desde la perspectiva del cliente (la tx principal commitea, pero el side-effect falla y 500a la respuesta).
-9. **Asimetría de guards entre verbos del mismo recurso (AP-45) y side-effects que mutan otros recursos por fuzzy-match (AP-62)** — (a) un módulo scope-restringido por jugador donde GET/PATCH/DELETE validan acceso (`canManagePlayerScopedResource`, `esResponsableDeJugador`, `checkXAccess`) pero **POST no**. Resultado: write-IDOR. Cualquier usuario logueado puede crear recursos para jugadores ajenos. Detectar revisando handler-por-handler en un mismo router que el guard usado en PATCH también esté en POST antes del primer `db.insert`. (b) Variante **AP-62 (pase 17)**: un endpoint POST valida correctamente sobre su recurso principal pero dispara un `runOptionalSideEffect` que UPDATEa filas de OTRA tabla matcheando por `nombre`/`equipo`/heurística textual del body. El guard del verb-level no aplica al side-effect — cada UPDATE necesita per-row check, gate por admin literal, o decisión documentada (excepción intencional: `feedPipelineFromMatchReport` en scouting.ts). Detectar `runOptionalSideEffect(...)` que contenga `db.update(...)` de tabla distinta a la del endpoint. Variante adyacente: resolución de `users.nombre` → `userId` sin `status=1` ni unicidad (S-MERC-004 simétrico — **AP-51 pase 17**); usar `resolveActiveUserByName` de [lib/userResolver.ts](../../server/src/lib/userResolver.ts).
+9. **Asimetría de guards entre verbos del mismo recurso (AP-45) y side-effects que mutan otros recursos por fuzzy-match (AP-62)** — (a) un módulo scope-restringido por jugador donde GET/PATCH/DELETE validan acceso (`canManagePlayerScopedResource`, `esResponsableDeJugador`, `checkXAccess`) pero **POST no**. Resultado: write-IDOR. Cualquier usuario logueado puede crear recursos para jugadores ajenos. Detectar revisando handler-por-handler en un mismo router que el guard usado en PATCH también esté en POST antes del primer `db.insert`. (b) Variante **AP-62 (pase 17)**: un endpoint POST valida correctamente sobre su recurso principal pero dispara un `runOptionalSideEffect` que UPDATEa filas de OTRA tabla matcheando por `nombre`/`equipo`/heurística textual del body. El guard del verb-level no aplica al side-effect — cada UPDATE necesita per-row check, gate por admin literal, o decisión documentada (excepción intencional: `feedPipelineFromMatchReport` en scouting.ts). Detectar `runOptionalSideEffect(...)` que contenga `db.update(...)` de tabla distinta a la del endpoint. Variante adyacente: resolución de `users.nombre` → `userId` sin `status=1` ni unicidad (S-MERC-004 simétrico — **AP-51 pase 17**); usar `resolveActiveUserByName` de `lib/userResolver.ts`.
 10. **Falla del check de autorización: degradar vs 503 (AP-47)** — handler que llama `await getActiveCrossPermissions(...)` (o cualquier `checkXAccess`) directamente sin envolverlo. Si la DB de permisos falla: **listado** → degradar con `safeGetActiveCrossPermissions` + `setPartialDataHeaders`; **mutación / item-individual** → `getActiveCrossPermissionsOrThrow` (lanza 503 reintentable, NO degrada a Set vacío que produciría 403 falsos).
 11. **Composición de predicados de autorización (AP-48)** — auditar la **cadena** de helpers, no solo la hoja. Un módulo `lib/*Access.ts` puede exportar `canManageX` que internamente llama a `getLevelAY` que a su vez llama a `getActiveCrossPermissionIds` — y el grep de Dim 10 falla porque solo busca el hoja con nombre exacto. Cada nivel intermedio debe exponer sus dos variantes (`safeX`/`xOrThrow`) y el regex del detector AP-47 debe acumular sus nombres (Detector 2). Sub-checks: (a) ¿el módulo expone safe/OrThrow para cada helper compuesto exportado? (b) ¿los handlers eligen explícitamente safe o OrThrow según el verbo? (c) ¿el detector AP-47 incluye todos los nombres acumulativos del módulo?
 
@@ -97,22 +97,29 @@ Analiza el uso de React Query y los componentes que muestran listas:
 
 Estos archivos concentran la mayoría de los hallazgos B.L.A.S.T. históricos. Si el pase debe priorizar por tiempo, empezar aquí:
 
-| Archivo / Carpeta | Por qué | Pase donde apareció |
+> **Estas rutas son del proyecto del que salió este prompt, no del tuyo.** Se conservan
+> porque lo que vale de la tabla es el CRITERIO —qué tipo de fichero concentra los fallos y
+> por qué—, no los nombres. Busca en tu proyecto el equivalente de cada fila: el router que ha
+> crecido de más, los predicados de autorización, el arranque de la base, la página que
+> compone muchas subconsultas. Si tu proyecto no tiene el equivalente de una fila, esa fila no
+> aplica.
+
+| Archivo / Carpeta (del proyecto de origen) | Por qué | Pase donde apareció |
 |---|---|---|
-| [server/src/routes/situaciones.ts](../../server/src/routes/situaciones.ts) | Módulo nuevo (Fase 1-4). POST sin guard → AP-45; PATCH spread → AP-49 | 8, 10 |
-| [server/src/routes/tareas.ts](../../server/src/routes/tareas.ts) | Generador derivadas; race getOrCreate; **PATCH /personas + PATCH /tareas con spread mass-assignment → AP-49** | 6-7, 10 |
-| [server/src/routes/futbolistas.ts](../../server/src/routes/futbolistas.ts) | God router; cross-perm checks, ensure helpers, tx grande | 4-8 |
-| [server/src/routes/finanzas.ts](../../server/src/routes/finanzas.ts) | Ingresos+gastos+cuotas; tx multi-fuente; cross-perm checks | 5-8 |
-| [server/src/routes/scouting.ts](../../server/src/routes/scouting.ts) | Informes-partido + junctions; ensure helpers fuera de tx | 6-7 |
-| [server/src/routes/mercado.ts](../../server/src/routes/mercado.ts) | Búsquedas-club, ofrecimientos, negociaciones-mercado | 5-7 |
-| [server/src/routes/auth.ts](../../server/src/routes/auth.ts) | Login/refresh/change-password; SESSION_FAIL_OPEN | 5-6 |
-| [server/src/middleware/auth.ts](../../server/src/middleware/auth.ts) | Verificación de sesión, fail-open en dev | 6-7 |
-| [server/src/lib/visibility.ts](../../server/src/lib/visibility.ts), [permissions.ts](../../server/src/lib/permissions.ts), [resourceAccess.ts](../../server/src/lib/resourceAccess.ts) | Predicados de autorización — bugs en estos archivos impactan TODAS las rutas | 7-8 |
-| [server/src/db/init.ts](../../server/src/db/init.ts) | Bootstrap + drift detection; cambios en CRITICAL_TABLES | 6-7 |
-| [client/src/pages/FutbolistaDetallePage/](../../client/src/pages/FutbolistaDetallePage) | Composición padre→hijo, tabs múltiples — sede principal de AP-46 | 8 |
-| [client/src/pages/MercadoPage/](../../client/src/pages/MercadoPage), [FinanzasPage/](../../client/src/pages/FinanzasPage), [SituacionesPage/](../../client/src/pages/SituacionesPage) | Páginas con múltiples sub-consultas | 6-8 |
-| [client/src/components/Layout.tsx](../../client/src/components/Layout.tsx), [CommandPalette.tsx](../../client/src/components/CommandPalette.tsx) | Sidebar widgets + autocomplete — sede principal de AP-63 (queries no-lista sin `isError`) | 18 |
-| [client/src/pages/IntermediacionDetallePage.tsx](../../client/src/pages/IntermediacionDetallePage.tsx) | EditForm modal con catálogos (paises/clubs/responsables) — AP-63 D1 forma "form catalog" | 18 |
+| `server/src/routes/situaciones.ts` | Módulo nuevo (Fase 1-4). POST sin guard → AP-45; PATCH spread → AP-49 | 8, 10 |
+| `server/src/routes/tareas.ts` | Generador derivadas; race getOrCreate; **PATCH /personas + PATCH /tareas con spread mass-assignment → AP-49** | 6-7, 10 |
+| `server/src/routes/futbolistas.ts` | God router; cross-perm checks, ensure helpers, tx grande | 4-8 |
+| `server/src/routes/finanzas.ts` | Ingresos+gastos+cuotas; tx multi-fuente; cross-perm checks | 5-8 |
+| `server/src/routes/scouting.ts` | Informes-partido + junctions; ensure helpers fuera de tx | 6-7 |
+| `server/src/routes/mercado.ts` | Búsquedas-club, ofrecimientos, negociaciones-mercado | 5-7 |
+| `server/src/routes/auth.ts` | Login/refresh/change-password; SESSION_FAIL_OPEN | 5-6 |
+| `server/src/middleware/auth.ts` | Verificación de sesión, fail-open en dev | 6-7 |
+| `server/src/lib/visibility.ts`, `permissions.ts`, `resourceAccess.ts` | Predicados de autorización — bugs en estos archivos impactan TODAS las rutas | 7-8 |
+| `server/src/db/init.ts` | Bootstrap + drift detection; cambios en CRITICAL_TABLES | 6-7 |
+| `client/src/pages/FutbolistaDetallePage/` | Composición padre→hijo, tabs múltiples — sede principal de AP-46 | 8 |
+| `client/src/pages/MercadoPage/`, `FinanzasPage/`, `SituacionesPage/` | Páginas con múltiples sub-consultas | 6-8 |
+| `client/src/components/Layout.tsx`, `CommandPalette.tsx` | Sidebar widgets + autocomplete — sede principal de AP-63 (queries no-lista sin `isError`) | 18 |
+| `client/src/pages/IntermediacionDetallePage.tsx` | EditForm modal con catálogos (paises/clubs/responsables) — AP-63 D1 forma "form catalog" | 18 |
 
 ### 0.6 Banco de detectores (greps canónicos de arranque rápido)
 
