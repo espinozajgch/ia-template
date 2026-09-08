@@ -30,7 +30,22 @@ if (!raiz) { console.error('✗ falta la ruta del proyecto instalado'); process.
 try { if (!statSync(raiz).isDirectory()) throw 0; }
 catch { console.error(`✗ no es un directorio: ${raiz}`); process.exit(2); }
 
-const SALTAR = new Set(['node_modules', '.git', '.next', 'dist', 'build', 'coverage']);
+/*
+ * Lo que NO es del proyecto.
+ *
+ * Un README de una biblioteca de terceros con un enlace roto no es un problema de este
+ * proyecto, y contarlo sepulta los que sí lo son: en futbot-v2, `.venv/` aportaba la mitad
+ * del ruido y escondía dos enlaces reales de sus propias skills.
+ *
+ * La lista cubre los ecosistemas que aparecen en los proyectos de la casa —Node, Python,
+ * Rust, PHP— porque una lista corta se queda corta justo en el proyecto que no la tenía.
+ */
+const SALTAR = new Set([
+  'node_modules', '.git', '.next', 'dist', 'build', 'coverage', 'out',
+  '.venv', 'venv', 'env', 'site-packages', '__pycache__',
+  '.mypy_cache', '.pytest_cache', '.ruff_cache', '.tox',
+  'vendor', 'target', '.gradle', '.terraform', '.codebase-memory',
+]);
 const docs = [];
 (function recorrer(dir) {
   for (const n of readdirSync(dir)) {

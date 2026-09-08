@@ -52,6 +52,55 @@ const EXENTOS = /(^|\/)(\.env[.\w-]*\.(example|sample|template|dist)|.*-baseline
 const SOLO_FUERTES = /(\.(test|spec)\.[jt]sx?$|(^|\/)(tests?|__tests__|e2e|fixtures|__fixtures__|locales?|i18n|lang)[\/.]|\.stories\.|\.md$)/;
 
 const sh = c => { try { return execSync(c, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }); } catch { return ''; } };
+
+/**
+ * Exclusiones DEL PROYECTO, en `.secretosignore` de su raíz.
+ *
+ * Antes el consejo para un falso positivo era «añádelo a EXENTOS», que está en este mismo
+ * fichero — es decir: editar una herramienta que la siguiente reinstalación del kit
+ * sobrescribe. La exclusión se pierde sin avisar y la puerta vuelve a rojo, o peor: alguien
+ * la vuelve a añadir sin recordar por qué.
+ *
+ * Formato, una por línea:
+ *
+ *     backend/tests/test_registro.py   # señuelos: la prueba comprueba que se redactan
+ *
+ * **El motivo es obligatorio.** Una exclusión sin un porqué es cómo una fuga real se silencia
+ * para siempre: dentro de un año nadie sabe si aquella línea era un señuelo o una credencial,
+ * y en la duda se deja como está.
+ *
+ * Y se imprimen al final. Una lista de exclusiones que no se ve es una lista que crece.
+ */
+function exclusionesDelProyecto() {
+  const raiz = sh('git rev-parse --show-toplevel').trim();
+  if (!raiz) return { rutas: [], sinMotivo: [] };
+  let texto;
+  try { texto = readFileSync(`${raiz}/.secretosignore`, 'utf8'); } catch { return { rutas: [], sinMotivo: [] }; }
+
+  const rutas = [], sinMotivo = [];
+  for (const [i, linea] of texto.split('\n').entries()) {
+    const limpia = linea.trim();
+    if (!limpia || limpia.startsWith('#')) continue;
+    const almohadilla = limpia.indexOf('#');
+    const ruta = (almohadilla === -1 ? limpia : limpia.slice(0, almohadilla)).trim();
+    const motivo = almohadilla === -1 ? '' : limpia.slice(almohadilla + 1).trim();
+    if (!ruta) continue;
+    if (!motivo) { sinMotivo.push(`${i + 1}: ${ruta}`); continue; }
+    rutas.push({ ruta, motivo });
+  }
+  return { rutas, sinMotivo };
+}
+
+const { rutas: exclusiones, sinMotivo } = exclusionesDelProyecto();
+if (sinMotivo.length) {
+  console.error('✗ .secretosignore tiene exclusiones sin motivo:\n');
+  for (const l of sinMotivo) console.error(`    ${l}`);
+  console.error('\n  Escribe el porqué tras una almohadilla. Sin él, dentro de un año nadie');
+  console.error('  sabrá si aquello era un señuelo o una credencial de verdad.');
+  process.exit(2);
+}
+/* Coincide por prefijo: una línea puede nombrar un fichero o una carpeta entera. */
+const excluido = (f) => exclusiones.find((e) => f === e.ruta || f.startsWith(e.ruta.replace(/\/*$/, '/')));
 if (!sh('git rev-parse --is-inside-work-tree').trim()) {
   console.error('✗ esto no es un repositorio de git'); process.exit(2);
 }
@@ -112,8 +161,11 @@ if (!soloDiff && ficheros.length === 0) {
   process.exit(2);
 }
 
+const excluidos = [];
 for (const f of ficheros) {
   if (BINARIO.test(f) || EXENTOS.test(f)) continue;
+  const razon = excluido(f);
+  if (razon) { excluidos.push(f); continue; }
   let st; try { st = statSync(f); } catch { continue; }
   if (!st.isFile() || st.size > 2_000_000) continue;
   let src; try { src = readFileSync(f, 'utf8'); } catch { continue; }
@@ -134,8 +186,16 @@ for (const f of ficheros) {
 }
 
 if (json) { console.log(JSON.stringify(hallazgos, null, 2)); process.exit(hallazgos.length ? 1 : 0); }
+/* Las exclusiones se imprimen SIEMPRE, con o sin hallazgos. Una lista que no se ve crece. */
+const resumenExclusiones = () => {
+  if (!excluidos.length) return;
+  console.log(`\n  ${excluidos.length} fichero(s) excluido(s) por .secretosignore:`);
+  for (const f of excluidos) console.log(`    ${f}  — ${excluido(f).motivo}`);
+};
+
 if (!hallazgos.length) {
   console.log(`✓ sin secretos${soloDiff ? ' en el diff' : ''}  (${ficheros.length} ficheros, remoto limpio)`);
+  resumenExclusiones();
   process.exit(0);
 }
 console.log(`✗ ${hallazgos.length} posible(s) secreto(s):\n`);
@@ -147,5 +207,8 @@ console.log(`
                2. Sacarla del código y leerla del entorno.
                3. Reescribir el historial NO basta: los clones y forks la conservan.
   Si es un falso positivo: exclúyelo con una constante que el patrón no reconozca,
-  o añádelo a EXENTOS con un comentario que diga por qué.`);
+  o añádelo a \`.secretosignore\` en la raíz del proyecto, CON el motivo tras una
+  almohadilla. Ese fichero es tuyo y sobrevive a reinstalar el kit; editar esta
+  herramienta, no.`);
+  resumenExclusiones();
 process.exit(1);
