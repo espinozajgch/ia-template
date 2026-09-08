@@ -86,6 +86,32 @@ const ficheros = (soloDiff
   : sh('git ls-files')
 ).trim().split('\n').filter(Boolean);
 
+/*
+ * Cero ficheros en un escaneo completo NO es «limpio»: es «no se ha mirado nada».
+ *
+ * `git ls-files` sólo lista lo que está en el índice. En un repositorio recién creado —o tras
+ * un `git init` sin `git add`— devuelve vacío, y esto imprimía «✓ sin secretos (0 ficheros)»
+ * con código 0 teniendo un token dentro del árbol de trabajo.
+ *
+ * Es exactamente lo que el kit le dice a los proyectos que no hagan: un guion que sale en
+ * verde sin comprobar nada es peor que uno que falta, porque nadie vuelve a mirarlo. Y es el
+ * PRIMER comando que el instalador manda ejecutar a quien acaba de instalar el kit.
+ *
+ * Sale con 2 y no con 1 para poder distinguirlo: 1 es «hay secretos», 2 es «no se pudo
+ * comprobar». Un CI que trate los dos igual falla igual, y quien lea el log ve cuál fue.
+ *
+ * En `--diff` no aplica: cero ficheros ahí significa que no ha cambiado nada, que sí es una
+ * respuesta legítima.
+ */
+if (!soloDiff && ficheros.length === 0) {
+  const mensaje = 'no hay ficheros que escanear: `git ls-files` no devuelve nada.\n'
+    + '  Si el repositorio es nuevo, haz `git add` antes — lo que no está en el índice no se mira.\n'
+    + '  Esto NO es un «sin secretos»: es un «no se ha comprobado».';
+  if (json) { console.log(JSON.stringify({ error: 'nada-que-escanear' }, null, 2)); }
+  else { console.error(`✗ ${mensaje}`); }
+  process.exit(2);
+}
+
 for (const f of ficheros) {
   if (BINARIO.test(f) || EXENTOS.test(f)) continue;
   let st; try { st = statSync(f); } catch { continue; }

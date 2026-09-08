@@ -20,6 +20,7 @@
 # Portable a bash 3.2, el de macOS: sin `mapfile`, sin arrays asociativos.
 set -uo pipefail
 cd "$(dirname "$0")"
+KIT=$(pwd)   # ruta absoluta: las comprobaciones que cambian de directorio la necesitan
 
 fallos=0
 paso() { printf '\n─── %s\n' "$1"; }
@@ -87,6 +88,33 @@ for f in ['nucleo/hooks/settings.json','nucleo/mcp/.mcp.json']:
 
 paso "contenido · ningún ejemplo se hace pasar por propio"
 node tools/plantillas.mjs . || mal "hay ejemplos rellenados sin advertir"
+
+# ── Las herramientas no pueden aprobar lo que no han leído ────────────────────
+#
+# La convención del kit es: 0 = comprobado y bien · 1 = comprobado y hay problemas ·
+# 2 = NO se pudo comprobar. Los tres estados importan por separado, y el tercero es el que se
+# olvida: una herramienta que sale con 0 sin haber leído nada aprueba la puerta en silencio.
+#
+# Encontrado el 2026-09-08 instalando el kit en un proyecto nuevo y siguiendo, paso a paso, lo
+# que el propio instalador manda ejecutar. `secretos.mjs` decía «✓ sin secretos (0 ficheros)»
+# con código 0 teniendo un token de GitHub en el árbol, sólo porque nada se había hecho
+# `git add` todavía — y es el PRIMER comando de esa lista. `tamano.mjs` y `ciclos.mjs` hacían
+# lo mismo con una ruta inexistente, que en CI significa que renombrar `src` a `app` deja el
+# verificador aprobando para siempre sin leer una línea.
+#
+# `cobertura.mjs` y `esquema.mjs` ya lo hacían bien. El kit era inconsistente consigo mismo.
+paso "herramientas · ninguna aprueba lo que no ha leído"
+tmp_vacio=$(mktemp -d)
+(cd "$tmp_vacio" && git init -q && mkdir -p vacia)
+for prueba in "secretos.mjs" "tamano.mjs baseline vacia" "ciclos.mjs vacia" \
+              "cobertura.mjs proponer" "esquema.mjs sellar"; do
+  # shellcheck disable=SC2086
+  (cd "$tmp_vacio" && node "$KIT/nucleo/tools/"$prueba >/dev/null 2>&1)
+  codigo=$?
+  [ "$codigo" = 2 ] || mal "$prueba sale con $codigo sin nada que analizar (debe ser 2)"
+done
+rm -rf "$tmp_vacio"
+echo "  ✓ 5 herramientas distinguen «bien» de «no comprobado»"
 
 paso "seguridad · sin secretos"
 node nucleo/tools/secretos.mjs . || mal "posible secreto"

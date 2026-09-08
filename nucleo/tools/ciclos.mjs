@@ -87,9 +87,21 @@ function resolverPY(desde, spec, ficheros) {
 
 const ficheros = raices.flatMap(r => listar(r)).map(f => resolve(f));
 const conjunto = new Set(ficheros);
+/*
+ * Cero ficheros NO es «limpio»: es «no se ha mirado nada».
+ *
+ * Sale con 2 y no con 0. La convención de las herramientas del kit es:
+ *   0 = comprobado y bien · 1 = comprobado y hay problemas · 2 = NO se pudo comprobar
+ *
+ * `cobertura.mjs` y `esquema.mjs` ya la seguían; éstas dos salían con 0, y eso significa que
+ * un `ciclos.mjs src` en CI con el directorio renombrado a `app` pasa la puerta para siempre
+ * sin analizar una línea. Un verificador que aprueba lo que no ha leído es peor que no
+ * tenerlo, porque nadie vuelve a mirarlo.
+ */
 if (!ficheros.length) {
-  console.log(`ciclos: no hay ficheros analizables en ${raices.join(', ')}`);
-  process.exit(0);
+  console.error(`✗ ciclos: no hay ficheros analizables en ${raices.join(', ')}`);
+  console.error('  Comprueba la ruta: esto NO es «sin ciclos», es «no se ha comprobado».');
+  process.exit(2);
 }
 
 // grafo — dos, en realidad: el de carga (peligroso) y el diferido (informativo)

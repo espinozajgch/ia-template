@@ -98,6 +98,13 @@ reglas con el **porqué**, no solo el qué · un checklist de cierre · y su ent
 - **Un pack que traiga un fichero suelto en su raíz se instala entero**, sin lista de
   extensiones. La había, y dejaba fuera el `canario.yml` del pack de tasas que su propio
   `PACK.md` manda usar. Si añades un tipo de fichero nuevo, no hay nada que tocar.
+- **Las herramientas de `nucleo/tools/` tienen TRES estados, no dos.** `0` = comprobado y
+  bien · `1` = comprobado y hay problemas · `2` = **no se pudo comprobar**. El tercero es el
+  que se olvida, y es el que importa: una herramienta que sale con `0` sin haber leído nada
+  aprueba la puerta en silencio. Lo vigila `verificar.sh` metiéndolas en un repositorio vacío.
+  **Ya pasó:** `secretos.mjs` decía «✓ sin secretos (0 ficheros)» con un token de GitHub en el
+  árbol, sólo porque nada se había hecho `git add` — y es el primer comando que el instalador
+  manda ejecutar. `tamano.mjs` y `ciclos.mjs` hacían lo mismo con una ruta que no existe.
 - **Nada compila el TypeScript de `packs/`.** `verificar.sh` mira sintaxis de scripts,
   estructura, JSON, plantillas y secretos — no tipos, porque este repositorio no tiene
   `node_modules`. El código de los packs se instala en proyectos reales tal cual, y hasta el
