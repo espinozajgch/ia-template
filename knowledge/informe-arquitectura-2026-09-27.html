@@ -1,0 +1,289 @@
+<title>Arquitectura y kit · 2026-09-27</title>
+<style>
+:root {
+  --tinta:#1a1d21; --suave:#5b6470; --tenue:#8a929c;
+  --fondo:#f7f7f4; --papel:#ffffff; --linea:#e4e3dd;
+  --acento:#0f5c4a; --alerta:#a13b2a; --aviso:#8a6a1f;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --tinta:#e8e6e1; --suave:#a8afb8; --tenue:#79818b;
+    --fondo:#14161a; --papel:#1b1e23; --linea:#2c3038;
+    --acento:#5fbfa3; --alerta:#e08a76; --aviso:#d9b25f;
+  }
+}
+:root[data-theme="dark"] {
+  --tinta:#e8e6e1; --suave:#a8afb8; --tenue:#79818b;
+  --fondo:#14161a; --papel:#1b1e23; --linea:#2c3038;
+  --acento:#5fbfa3; --alerta:#e08a76; --aviso:#d9b25f;
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--fondo); color:var(--tinta);
+  font:16px/1.6 ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif; }
+.envoltura { max-width:1120px; margin:0 auto; padding:48px 24px 80px; }
+header.portada { border-bottom:3px solid var(--tinta); padding-bottom:24px; margin-bottom:40px; }
+.rotulo { font-size:12px; letter-spacing:.16em; text-transform:uppercase;
+  font-weight:800; color:var(--acento); }
+h1 { font-size:clamp(28px,5vw,44px); line-height:1.1; margin:12px 0 8px; text-wrap:balance;
+  font-family:ui-serif,Georgia,"Times New Roman",serif; font-weight:700; }
+.entradilla { color:var(--suave); max-width:66ch; margin:0; }
+h2 { font-family:ui-serif,Georgia,serif; font-size:24px; margin:44px 0 14px;
+  padding-bottom:8px; border-bottom:1px solid var(--linea); }
+h3 { font-size:16px; margin:0 0 6px; }
+.tabla-envoltura { overflow-x:auto; border:1px solid var(--linea); border-radius:10px;
+  background:var(--papel); }
+table { border-collapse:collapse; width:100%; font-size:14px; min-width:940px; }
+th,td { padding:9px 11px; text-align:left; border-bottom:1px solid var(--linea);
+  vertical-align:top; }
+thead th { font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--tenue); font-weight:700; white-space:nowrap; }
+tbody th { font-weight:700; white-space:nowrap; }
+tbody tr:last-child td, tbody tr:last-child th { border-bottom:none; }
+.n { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.c { text-align:center; }
+.bien { color:var(--acento); font-weight:600; }
+.mal { color:var(--alerta); font-weight:700; }
+.medio { color:var(--aviso); font-weight:600; }
+.no { color:var(--tenue); }
+code { font-size:12.5px; background:color-mix(in srgb,var(--tinta) 7%,transparent);
+  padding:1px 5px; border-radius:4px; }
+.rejilla { display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); }
+.ficha { background:var(--papel); border:1px solid var(--linea); border-left:3px solid var(--acento);
+  border-radius:8px; padding:14px 16px; }
+.ficha.roja { border-left-color:var(--alerta); }
+.ficha.ambar { border-left-color:var(--aviso); }
+.ficha p { margin:0 0 8px; color:var(--suave); font-size:14px; }
+.ficha p:last-child { margin:0; }
+.ficha .que { color:var(--tinta); }
+.aviso { background:var(--papel); border:1px solid var(--linea);
+  border-left:3px solid var(--aviso); border-radius:8px; padding:16px 18px; margin:18px 0; }
+.aviso p { margin:0 0 10px; } .aviso p:last-child { margin:0; }
+ul, ol { padding-left:22px; } li { margin:6px 0; }
+.leyenda { font-size:13px; color:var(--suave); margin:10px 0 0; }
+footer { margin-top:56px; padding-top:18px; border-top:1px solid var(--linea);
+  color:var(--tenue); font-size:13px; }
+</style>
+
+<div class="envoltura">
+<header class="portada">
+  <p class="rotulo">Arquitectura y kit · Uso interno</p>
+  <h1>Diez repositorios, tres sin kit<br>y cinco maneras de guardar una contraseña</h1>
+  <p class="entradilla">Barrido del 27 de septiembre de 2026 sobre los diez repositorios en
+  juego, incluidos los cinco que entraron hoy: <code>logrono-united</code>, <code>analisis</code>,
+  <code>redsalud-web</code>, <code>futbot-fantasy-web-app</code> y
+  <code>futbot-events-web-app</code>. El barrido busca dos cosas: <b>si el kit
+  ia-template está bien instalado y rellenado</b> en cada repositorio, y <b>qué
+  funcionalidades se han construido más de una vez</b>. La comparación con el kit se hizo
+  fichero a fichero contra <code>nucleo/</code>, y las funcionalidades repetidas se buscaron
+  por firma en el código, sin contar wiki, pruebas ni ficheros generados.</p>
+</header>
+
+<h2>1 · El kit, repositorio a repositorio</h2>
+<div class="tabla-envoltura"><table>
+<thead><tr>
+<th>Repositorio</th><th>AGENTS.md</th><th>Punteros</th><th class="c">Skills</th>
+<th>Wiki</th><th class="c">Herram.</th><th>Hooks / MCP</th><th class="c">Packs</th><th>CI</th>
+<th>Trinquetes</th><th>lessons.md</th>
+</tr></thead>
+<tbody>
+<tr><th scope="row">elevenoffice</th>
+ <td class="mal">sistema propio, 37 lín.</td><td class="mal">6 copias propias (CLAUDE.md 704 lín.)</td>
+ <td class="c mal">0/8</td><td class="medio">6 propios, faltan 5</td><td class="c mal">0/9</td>
+ <td class="bien">sí / sí</td><td class="c no">0</td><td class="bien">5 flujos</td><td class="no">—</td><td class="bien">839 lín.</td></tr>
+<tr><th scope="row">futbot-v2</th>
+ <td class="medio">262 lín. (&gt;250)</td><td class="mal">CLAUDE.md 730 · GEMINI.md 96 propios</td>
+ <td class="c bien">8/8 <span class="medio">+3 mejoradas</span></td><td class="medio">3 sin rellenar</td><td class="c bien">9/9</td>
+ <td class="bien">sí / sí</td><td class="c">7</td><td class="medio">solo deploy</td><td class="mal">ninguno</td><td class="mal">plantilla</td></tr>
+<tr><th scope="row">futbot-web-app</th>
+ <td class="medio">304 lín. (&gt;250)</td><td class="mal">CLAUDE.md 338 · GEMINI 134 · windsurf 67</td>
+ <td class="c bien">8/8 <span class="medio">+3 mejoradas</span></td><td class="mal">6 sin rellenar</td><td class="c bien">9/9</td>
+ <td class="bien">sí / sí</td><td class="c">8</td><td class="medio">solo deploy</td><td class="medio">tamaño</td><td class="mal">plantilla</td></tr>
+<tr><th scope="row">futbot-fantasy-web-app</th>
+ <td class="mal">no existe</td><td class="mal">ninguno</td><td class="c mal">0/8</td><td class="mal">no existe</td><td class="c mal">0/9</td>
+ <td class="mal">no / no</td><td class="c no">0</td><td class="medio">solo deploy</td><td class="no">—</td><td class="no">—</td></tr>
+<tr><th scope="row">futbot-events-web-app</th>
+ <td class="mal">no existe</td><td class="mal">ninguno</td><td class="c mal">0/8</td><td class="mal">no existe</td><td class="c mal">0/9</td>
+ <td class="mal">no / no</td><td class="c no">0</td><td class="medio">solo deploy</td><td class="no">—</td><td class="no">—</td></tr>
+<tr><th scope="row">pulso</th>
+ <td class="medio">317 lín. (&gt;250)</td><td class="bien">punteros</td><td class="c medio">7/8</td>
+ <td class="mal">6 sin rellenar (incl. project.md)</td><td class="c medio">9/9, 4 antiguas</td>
+ <td class="bien">sí / sí</td><td class="c">14</td><td class="bien">ci + canario</td><td class="bien">5</td><td class="mal">plantilla</td></tr>
+<tr><th scope="row">redsalud-web</th>
+ <td class="medio">302 lín. (&gt;250)</td><td class="bien">punteros</td><td class="c medio">7/8</td>
+ <td class="bien">1 sin rellenar</td><td class="c medio">9/9, 3 antiguas</td>
+ <td class="bien">sí / sí</td><td class="c mal">0</td><td class="bien">calidad + secretos</td><td class="mal">ninguno</td><td class="mal">plantilla</td></tr>
+<tr><th scope="row">hipismo</th>
+ <td class="mal">no existe</td><td class="mal">ninguno</td><td class="c mal">3/8</td>
+ <td class="mal">faltan 10 de 11</td><td class="c mal">0/9</td>
+ <td class="medio">no / sí</td><td class="c no">0</td><td class="bien">5 flujos</td><td class="medio">aislamiento</td><td class="no">—</td></tr>
+<tr><th scope="row">logrono-united</th>
+ <td class="mal">plantilla sin rellenar</td><td class="bien">punteros</td><td class="c bien">8/8</td>
+ <td class="medio">3 sin rellenar</td><td class="c bien">9/9</td>
+ <td class="bien">sí / sí</td><td class="c medio">15</td><td class="mal">ninguno</td><td class="mal">ninguno</td><td class="bien">91 lín.</td></tr>
+<tr><th scope="row">analisis</th>
+ <td class="bien">96 lín.</td><td class="bien">punteros</td><td class="c bien">8/8</td>
+ <td class="medio">4 sin rellenar</td><td class="c bien">9/9</td>
+ <td class="bien">sí / sí</td><td class="c">2</td><td class="mal">ninguno</td><td class="mal">ninguno</td><td class="mal">plantilla</td></tr>
+</tbody></table></div>
+<p class="leyenda">«Sin rellenar» = el fichero es idéntico byte a byte a la plantilla del
+kit. «Plantilla» en <code>lessons.md</code> = el agente nunca ha escrito una lección. No se
+cuenta <code>checklist-preproduccion.md</code>, que se usa tal cual.</p>
+
+<h2>2 · Fallos del kit, por gravedad</h2>
+<div class="rejilla">
+<div class="ficha roja"><h3>Tres repositorios sin contexto para agentes</h3>
+<p class="que"><b>hipismo</b>, <b>futbot-fantasy-web-app</b> y <b>futbot-events-web-app</b>
+no tienen <code>AGENTS.md</code> ni ningún puntero. Hipismo es un SaaS de 78.000 líneas en
+producción: tiene 3 skills sueltas y el <code>.mcp.json</code>, pero ningún agente sabe qué
+es el proyecto. Toda su documentación está en <code>llm-wiki/</code> y <code>docs/</code>,
+que nadie le indica al agente que lea.</p>
+<p>Solución: <code>instalar.sh</code> y después <code>/blueprint</code>. En hipismo, además,
+enlazar <code>llm-wiki/</code> desde <code>AGENTS.md</code> en vez de duplicarla.</p></div>
+
+<div class="ficha roja"><h3>logrono-united: kit instalado pero vacío</h3>
+<p class="que">Tiene todo lo que instala el kit, con 15 packs, pero <code>AGENTS.md</code>
+sigue diciendo <code>[NOMBRE DEL PROYECTO]</code> y la North Star es un marcador. Es
+justamente el caso que el README del kit avisa: «instalado y vacío». Paradójicamente es el
+repositorio que más usa <code>lessons.md</code> (91 líneas), así que el agente aprende del
+proyecto pero nunca lee qué es.</p>
+<p>Además, 15 packs es demasiado para una web de club: <code>saas-multitenant</code>,
+<code>offline-first</code> e <code>i18n</code> son contexto que no aplica. No tiene CI.</p></div>
+
+<div class="ficha roja"><h3>Contexto duplicado en elevenoffice y en los dos futbot</h3>
+<p class="que">Es el problema n.º 1 que el kit vino a resolver y sigue abierto en sus tres
+repositorios más grandes. <code>elevenoffice</code> tiene seis ficheros de contexto propios
+(<code>CLAUDE.md</code> de 704 líneas) y un <code>AGENTS.md</code> de 37. En futbot-v2,
+<code>CLAUDE.md</code> tiene 730 líneas con cifras «sin reverificar desde el 19 de agosto».
+En futbot-web-app, <code>CLAUDE.md</code>, <code>GEMINI.md</code> y <code>.windsurfrules</code>
+son copias propias.</p>
+<p>Solución: pasar lo que valga a <code>AGENTS.md</code> o a la wiki y dejar los punteros de
+diez líneas. En elevenoffice, que es el origen del kit, conviene hacerlo con calma: primero
+cosechar lo que tenga su <code>CLAUDE.md</code> y después sustituirlo.</p></div>
+
+<div class="ficha ambar"><h3>Versiones divergentes, en las dos direcciones</h3>
+<p class="que">Las skills <code>verificar</code>, <code>tarea</code> y <code>avanzar</code> de
+futbot-v2 y futbot-web-app <b>van por delante</b> del kit (<code>verificar</code> tiene 194
+líneas frente a 113): hay que cosecharlas. En cambio, las herramientas de pulso y
+redsalud-web <b>van por detrás</b>: su <code>secretos.mjs</code> tiene 114 líneas y la del
+kit 214. Allí falta el detector que el kit añadió después.</p>
+<p>logrono-united tiene además cambios sin commitear en <code>secretos.mjs</code>,
+<code>tamano.mjs</code> y <code>ciclos.mjs</code> del kit: o son mejoras para cosechar o
+divergencias que perder.</p>
+<p>Solución: <code>cosechar.mjs</code> en los futbot y en logrono, y reinstalar con
+<code>--force</code> solo las herramientas en pulso y redsalud.</p></div>
+
+<div class="ficha ambar"><h3>El kit funciona sin que nadie lo mire</h3>
+<p class="que">En seis de los siete repositorios que tienen <code>lessons.md</code>, el
+fichero sigue siendo la plantilla. Hay trinquetes fijados en tres de diez repositorios.
+Cuatro <code>AGENTS.md</code> pasan del límite de 250 líneas que marca el propio kit.
+<code>analisis</code> y <code>logrono-united</code> no tienen ningún flujo de CI: la puerta
+existe, pero nadie la ejecuta en cada push.</p></div>
+
+<div class="ficha ambar"><h3>El mapa de packs no refleja lo que hay</h3>
+<p class="que">Pulso e hipismo mantienen cada uno su código de tasas BCV y ninguno instaló
+el pack <code>tasas-de-cambio</code>, que salió precisamente de ellos. Redsalud-web no
+tiene ningún pack, aunque es una web con PWA e imágenes, justo lo que cubren
+<code>frontend-web</code> y <code>pwa-movil</code>.</p></div>
+</div>
+
+<h2>3 · Funcionalidades construidas más de una vez</h2>
+<div class="tabla-envoltura"><table>
+<thead><tr><th>Funcionalidad</th><th>Dónde está</th><th>Qué se repite</th><th>Qué hacer</th></tr></thead>
+<tbody>
+<tr><th scope="row">Contraseñas y sesión</th>
+ <td>elevenoffice, futbot-web-app, pulso, hipismo, logrono-united</td>
+ <td><b>Cinco implementaciones y cuatro algoritmos</b>: bcrypt (elevenoffice, futbot-web-app),
+ PBKDF2-SHA256 con 210.000 iteraciones (pulso), argon2 (hipismo) y scrypt (logrono, con dos
+ sesiones separadas para personal y aficionado).</td>
+ <td>Fijar <b>un</b> estándar en el pack <code>seguridad</code>, con argon2id o scrypt y sus
+ parámetros. En pulso, 210.000 iteraciones está por debajo de las 600.000 que recomienda
+ OWASP para PBKDF2-SHA256: subirlo con rehash al iniciar sesión, igual que ya se hizo al
+ pasar de 100.000.</td></tr>
+<tr><th scope="row">Tasa oficial BCV</th>
+ <td>pulso (<code>app/lib/tasas-*.ts</code>), hipismo (<code>exchange-rates/</code>), kit (<code>packs/tasas-de-cambio</code>)</td>
+ <td>Tres copias del mismo parche TLS de Sectigo (71 líneas cada una, ya divergentes), dos
+ parsers y dos <code>canario-bcv.yml</code> que difieren en 127 líneas.</td>
+ <td>El pack pasa a ser la fuente única. Instalarlo en los dos repositorios y alinear las dos
+ copias con él.</td></tr>
+<tr><th scope="row">Lectura de Opta F9/F24 desde <code>futbot-lake</code></th>
+ <td>futbot-v2 (<code>code/opta/</code>), futbot-web-app (<code>f24_store</code>, <code>feeds</code>, <code>lake_*</code>), fantasy, events, analisis</td>
+ <td><b>Cinco lectores del mismo feed.</b> Fantasy y events tienen cada uno su
+ <code>build_data.py</code> con las mismas funciones auxiliares renombradas
+ (<code>xml</code>/<code>text</code>/<code>number</code> frente a <code>xml</code>/<code>txt</code>/<code>num</code>).
+ futbot-web-app, además, tiene su propio control de seguridad del lago.</td>
+ <td>Una librería pequeña de lectura, versionada, que importen los cinco (paquete Python
+ <code>futbot-lake-reader</code>). Es la duplicación con más riesgo: si Opta cambia un
+ qualifier, hay que tocar cinco sitios.</td></tr>
+<tr><th scope="row">Despliegue por SSM</th>
+ <td>los cuatro repositorios futbot</td>
+ <td><code>dispatch-ssm.sh</code> es idéntico en tres repositorios y ya ha divergido en
+ futbot-v2. <code>deploy-aws.sh</code> son cuatro variantes (35, 60, 60 y 112 líneas).
+ Fantasy y events son, en infraestructura, la misma app: nginx, systemd y flujo casi
+ calcados.</td>
+ <td>Una acción de GitHub compuesta o un flujo reutilizable (<code>workflow_call</code>) en un
+ repositorio de la organización. El kit ya tiene la plantilla en
+ <code>packs/cloud-aws/despliegue/deploy-oidc-ssm.yml</code>.</td></tr>
+<tr><th scope="row">Fantasy y Data Studio</th>
+ <td>futbot-fantasy-web-app, futbot-events-web-app</td>
+ <td>Dos repositorios de ~300 líneas creados la misma semana, con la misma base (Vite, caché
+ de datos, selector masculino/femenino añadido el mismo día con el mismo mensaje de
+ commit).</td>
+ <td>Valorar <b>un solo repositorio con dos vistas</b>. Si se mantienen separados por decisión
+ de producto, al menos compartir el lector (fila anterior) y el despliegue.</td></tr>
+<tr><th scope="row">Notificaciones web push</th>
+ <td>elevenoffice, futbot-web-app, pulso, hipismo</td>
+ <td>Cuatro implementaciones de suscripción y envío. futbot-web-app cifra las suscripciones
+ (<code>push_cipher.py</code>); los demás no consta que lo hagan.</td>
+ <td>Cosechar la de futbot-web-app, cifrado incluido, al pack <code>notificaciones</code>.</td></tr>
+<tr><th scope="row">Límite de intentos</th>
+ <td>elevenoffice (<code>rateLimiter.ts</code>), hipismo (<code>rate-limit-store.ts</code>, <code>login-throttle.ts</code>), futbot-web-app</td>
+ <td>Cuatro limitadores propios: los tres citados y <code>limite-intentos</code> en pulso.
+ <b>logrono-united no tiene ninguno</b>: <code>sesion-personal.ts</code> y
+ <code>sesion-aficionado.ts</code> verifican la contraseña con scrypt, pero no cuentan
+ intentos.</td>
+ <td>Añadir el limitador en logrono antes de abrir el acceso de aficionados (es un hallazgo
+ de seguridad, no solo de duplicación). Después, un patrón común en <code>seguridad</code>.</td></tr>
+<tr><th scope="row">Bitácora de auditoría</th>
+ <td>elevenoffice, pulso, hipismo, futbot-web-app</td>
+ <td>Cuatro modelos de registro de acciones. Pulso tiene además una verificación encadenada
+ (<code>.verificar-encadenado.mjs</code>).</td>
+ <td>El encadenado de pulso es el más maduro: es el candidato a patrón para
+ <code>datos-personales</code>.</td></tr>
+<tr><th scope="row">Migraciones de base de datos</th>
+ <td>elevenoffice (<code>migrate.ts</code>), pulso (<code>migrate.mjs</code>), futbot-web-app (<code>migrate_db.py</code>), hipismo (Prisma), logrono (SQL)</td>
+ <td>Cuatro ejecutores propios y uno con Prisma. elevenoffice comprueba que las migraciones
+ nuevas se aplican (<code>assertNewMigrationsApply.ts</code>).</td>
+ <td>No unificar el ejecutor, porque los stacks son distintos. Sí llevar esa comprobación y
+ <code>esquema.mjs sellar</code> a los que no la tienen.</td></tr>
+<tr><th scope="row">Facturación y PDF</th>
+ <td>elevenoffice, pulso, hipismo, logrono-united</td>
+ <td>Pulso y logrono tienen la plantilla del pack <code>facturacion</code>. Hipismo tiene su
+ propio documento congelado con PDF. Hay cinco generadores de PDF distintos.</td>
+ <td>Hipismo es el más completo (documento congelado con prueba e2e): cosecharlo al
+ pack.</td></tr>
+</tbody></table></div>
+
+<div class="aviso">
+<p><b>Lo que no es duplicación.</b> <code>llm-wiki/</code> y <code>knowledge/wiki/</code> en
+futbot-v2 y futbot-web-app son independientes por decisión. Que dos stacks distintos
+validen con zod y con pydantic tampoco lo es: cada lenguaje tiene su herramienta.</p>
+<p><b>Fuera del alcance.</b> Los tokens de GitHub en los remotos de
+<code>professional-football-hub</code> y <code>Mundial2026</code> no entran porque esos
+repositorios están descartados, pero los tokens siguen activos: revócalos igualmente.</p>
+</div>
+
+<h2>4 · Orden propuesto</h2>
+<ol>
+<li><b>Instalar el kit</b> en hipismo, fantasy y events, y ejecutar <code>/blueprint</code>. En logrono-united, solo <code>/blueprint</code>.</li>
+<li><b>Revisar el login</b>: limitador de intentos en logrono-united y más iteraciones de PBKDF2 en pulso.</li>
+<li><b>Cosechar</b> las skills mejoradas de los futbot y el push cifrado de futbot-web-app; <b>reinstalar las herramientas</b> en pulso y redsalud.</li>
+<li><b>Extraer el lector de <code>futbot-lake</code></b> y el despliegue SSM compartido.</li>
+<li><b>Reducir los punteros</b> de elevenoffice y de los futbot a punteros de verdad.</li>
+<li><b>Añadir CI</b> a analisis y logrono-united (<code>agente/ci/github/calidad.yml</code>) y fijar los trinquetes que faltan.</li>
+</ol>
+
+<footer>Generado el 27-09-2026 comparando cada fichero con <code>ia-template/nucleo/</code>
+y buscando firmas en el código versionado (<code>git ls-files</code>, sin wiki, pruebas,
+datos ni ficheros generados). Las cifras de «ficheros que coinciden» señalan dónde mirar; no
+son una medida de tamaño.</footer>
+</div>
