@@ -11,6 +11,9 @@ hay que rehacer y en la confianza de quien lo lee.
 Esta skill produce **el contexto mínimo suficiente** — no un documento corporativo.
 Si al terminar `AGENTS.md` pasa de 250 líneas, sobra material.
 
+**Antes de nada:** si existe `knowledge/wiki/skills/blueprint.md`, léelo. Es lo propio de este
+proyecto para esta skill y, donde sea más estricto que ella, manda él.
+
 ---
 
 ## Antes de nada: ¿hay código?

@@ -10,6 +10,9 @@ sin jerga innecesaria, con cifras, con supuestos declarados y con el rango hones
 
 **No se modifica ningún archivo.**
 
+**Antes de nada:** si existe `knowledge/wiki/skills/estimar.md`, léelo. Es lo propio de este
+proyecto para esta skill y, donde sea más estricto que ella, manda él.
+
 ---
 
 ## 1 · Leer el proyecto, todo en paralelo

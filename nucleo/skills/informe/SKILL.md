@@ -10,6 +10,9 @@ puede comparar con el anterior, y comparar corridas es la mitad de su valor.
 
 **El contenido cambia. El formato NO se degrada entre versiones.**
 
+**Antes de nada:** si existe `knowledge/wiki/skills/informe.md`, léelo. Es lo propio de este
+proyecto para esta skill y, donde sea más estricto que ella, manda él.
+
 ---
 
 ## 1 · Un archivo, autocontenido

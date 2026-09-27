@@ -8,6 +8,9 @@ description: Audita el proyecto sin modificarlo y entrega hallazgos con evidenci
 Una auditoría que corrige a la vez no es una auditoría: es una refactorización con la
 excusa de un informe. **En modo AUDIT no se modifica nada.**
 
+**Antes de nada:** si existe `knowledge/wiki/skills/auditar.md`, léelo. Es lo propio de este
+proyecto para esta skill y, donde sea más estricto que ella, manda él.
+
 ---
 
 ## 1 · Fijar el eje y el alcance

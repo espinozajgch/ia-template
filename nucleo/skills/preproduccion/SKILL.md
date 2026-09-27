@@ -18,6 +18,9 @@ la raíz del proyecto— y dice **en qué estado está cada requisito en ESTE pr
 el mismo motivo: una revisión que corrige a la vez deja de ser una revisión, y al terminar
 nadie sabe qué estaba mal antes de empezar.
 
+**Antes de nada:** si existe `knowledge/wiki/skills/preproduccion.md`, léelo. Es lo propio de este
+proyecto para esta skill y, donde sea más estricto que ella, manda él.
+
 ---
 
 ## 1 · Antes de mirar nada, acotar
