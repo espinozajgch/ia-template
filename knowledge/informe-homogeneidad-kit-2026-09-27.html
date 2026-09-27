@@ -1,0 +1,174 @@
+<title>Homogeneidad del kit · 2026-09-27</title>
+<style>
+:root {
+  --tinta:#1a1d21; --suave:#5b6470; --tenue:#8a929c;
+  --fondo:#f7f7f4; --papel:#ffffff; --linea:#e4e3dd;
+  --acento:#0f5c4a; --alerta:#a13b2a; --aviso:#8a6a1f;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --tinta:#e8e6e1; --suave:#a8afb8; --tenue:#79818b;
+    --fondo:#14161a; --papel:#1b1e23; --linea:#2c3038;
+    --acento:#5fbfa3; --alerta:#e08a76; --aviso:#d9b25f;
+  }
+}
+:root[data-theme="dark"] {
+  --tinta:#e8e6e1; --suave:#a8afb8; --tenue:#79818b;
+  --fondo:#14161a; --papel:#1b1e23; --linea:#2c3038;
+  --acento:#5fbfa3; --alerta:#e08a76; --aviso:#d9b25f;
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--fondo); color:var(--tinta);
+  font:16px/1.6 ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif; }
+.envoltura { max-width:1120px; margin:0 auto; padding:48px 24px 80px; }
+header.portada { border-bottom:3px solid var(--tinta); padding-bottom:24px; margin-bottom:40px; }
+.rotulo { font-size:12px; letter-spacing:.16em; text-transform:uppercase;
+  font-weight:800; color:var(--acento); }
+h1 { font-size:clamp(28px,5vw,44px); line-height:1.1; margin:12px 0 8px; text-wrap:balance;
+  font-family:ui-serif,Georgia,"Times New Roman",serif; font-weight:700; }
+.entradilla { color:var(--suave); max-width:66ch; margin:0; }
+h2 { font-family:ui-serif,Georgia,serif; font-size:24px; margin:44px 0 14px;
+  padding-bottom:8px; border-bottom:1px solid var(--linea); }
+h3 { font-size:16px; margin:0 0 6px; }
+.tabla-envoltura { overflow-x:auto; border:1px solid var(--linea); border-radius:10px;
+  background:var(--papel); }
+table { border-collapse:collapse; width:100%; font-size:14px; min-width:940px; }
+th,td { padding:9px 11px; text-align:left; border-bottom:1px solid var(--linea);
+  vertical-align:top; }
+thead th { font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--tenue); font-weight:700; white-space:nowrap; }
+tbody th { font-weight:700; white-space:nowrap; }
+tbody tr:last-child td, tbody tr:last-child th { border-bottom:none; }
+.n { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.c { text-align:center; }
+.bien { color:var(--acento); font-weight:600; }
+.mal { color:var(--alerta); font-weight:700; }
+.medio { color:var(--aviso); font-weight:600; }
+.no { color:var(--tenue); }
+code { font-size:12.5px; background:color-mix(in srgb,var(--tinta) 7%,transparent);
+  padding:1px 5px; border-radius:4px; }
+.rejilla { display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); }
+.ficha { background:var(--papel); border:1px solid var(--linea); border-left:3px solid var(--acento);
+  border-radius:8px; padding:14px 16px; }
+.ficha.roja { border-left-color:var(--alerta); }
+.ficha.ambar { border-left-color:var(--aviso); }
+.ficha p { margin:0 0 8px; color:var(--suave); font-size:14px; }
+.ficha p:last-child { margin:0; }
+.ficha .que { color:var(--tinta); }
+.aviso { background:var(--papel); border:1px solid var(--linea);
+  border-left:3px solid var(--aviso); border-radius:8px; padding:16px 18px; margin:18px 0; }
+.aviso p { margin:0 0 10px; } .aviso p:last-child { margin:0; }
+ul, ol { padding-left:22px; } li { margin:6px 0; }
+.leyenda { font-size:13px; color:var(--suave); margin:10px 0 0; }
+footer { margin-top:56px; padding-top:18px; border-top:1px solid var(--linea);
+  color:var(--tenue); font-size:13px; }
+</style>
+<div class="envoltura">
+<header class="portada">
+<div class="rotulo">ia-template · auditoría de instalación</div>
+<h1>¿Tienen los diez proyectos el mismo kit, y al día?</h1>
+<p class="entradilla">Comparación fichero a fichero entre lo instalado en cada proyecto y el
+<code>HEAD</code> del kit (<code>c3fe19b</code>). Cada fichero distinto se buscó en el historial del kit
+para separar lo <b>desactualizado</b> (coincide con una versión anterior) de lo <b>propio</b>
+(no coincide con ninguna). Estado tras las correcciones aplicadas hoy.</p>
+</header>
+
+<h2>Veredicto</h2>
+<div class="rejilla">
+<div class="ficha"><h3>Al día y homogéneos · 6</h3>
+<p class="que">fantasy, events, logrono-united, hipismo, redsalud-web y analisis tienen el núcleo
+idéntico al kit: protocolo, herramientas, CI, las 8 skills y los punteros.</p>
+<p>analisis tiene el núcleo al día, pero su <code>AGENTS.md</code> está a medias (ver abajo).</p></div>
+<div class="ficha ambar"><h3>Desactualizado · 1</h3>
+<p class="que">pulso lleva la versión del kit del 23-08: 5 ficheros atrasados y le falta la skill
+<code>preproduccion</code>.</p>
+<p>No se ha tocado porque otra sesión trabaja en él ahora mismo.</p></div>
+<div class="ficha roja"><h3>Estructura propia · 3</h3>
+<p class="que">elevenoffice, futbot-v2 y futbot-web-app son anteriores al kit: el contexto vive en
+un <code>CLAUDE.md</code> enorme y las skills del núcleo están bifurcadas.</p>
+<p>Homogeneizarlos es una decisión tuya, no un <code>cp</code>.</p></div>
+</div>
+
+<h2>Matriz</h2>
+<div class="tabla-envoltura"><table>
+<thead><tr><th>Proyecto</th><th>Protocolo, herramientas y CI</th><th>Skills del núcleo</th><th>.claude = .agents</th><th>Punteros</th><th>AGENTS.md</th><th>Packs</th></tr></thead>
+<tbody>
+<tr><th>futbot-fantasy-web-app</th><td class="bien">al día</td><td class="bien">8/8</td><td class="bien">sí</td><td class="bien">kit</td><td class="bien">9/9 secciones</td><td class="bien">1 al día</td></tr>
+<tr><th>futbot-events-web-app</th><td class="bien">al día</td><td class="bien">8/8</td><td class="bien">sí</td><td class="bien">kit</td><td class="bien">9/9 secciones</td><td class="bien">1 al día</td></tr>
+<tr><th>logrono-united</th><td class="bien">al día</td><td class="bien">8/8</td><td class="bien">sí</td><td class="bien">kit</td><td class="bien">completo <span class="no">(hoy)</span></td><td class="bien">15 al día</td></tr>
+<tr><th>hipismo</th><td class="bien">al día</td><td class="bien">8/8</td><td class="bien">sí <span class="no">(hoy)</span></td><td class="bien">kit · <code>.mcp.json</code> propio</td><td class="bien">completo</td><td class="bien">10 al día</td></tr>
+<tr><th>medical/redsalud-web</th><td class="bien">al día <span class="no">(hoy)</span></td><td class="bien">8/8 <span class="no">(hoy)</span></td><td class="bien">sí</td><td class="bien">kit</td><td class="medio">faltan §5.5 y «skills»</td><td class="no">ninguno</td></tr>
+<tr><th>analisis</th><td class="bien">al día</td><td class="bien">8/8</td><td class="medio">1 skill sólo en .agents</td><td class="bien">kit</td><td class="mal">96 líneas: faltan §5.1–5.5, §7, §9</td><td class="bien">2 al día</td></tr>
+<tr><th>medical/pulso</th><td class="mal">5 del 23-08</td><td class="medio">7/8 (falta preproduccion)</td><td class="bien">sí</td><td class="medio">CLAUDE +12 líneas · <code>.mcp.json</code> propio</td><td class="medio">faltan §5.4, §5.5, «skills»</td><td class="medio">14 · 6 ficheros difieren</td></tr>
+<tr><th>futbot/futbot-v2</th><td class="bien">al día</td><td class="mal">3 bifurcadas en .claude</td><td class="mal">3 difieren · 6 propias sólo en .claude</td><td class="mal">CLAUDE.md de 730 líneas</td><td class="mal">estructura propia (0/9)</td><td class="bien">7 al día</td></tr>
+<tr><th>futbot/futbot-web-app</th><td class="bien">al día</td><td class="mal">3 bifurcadas en ambos</td><td class="mal">4 difieren · 5 propias sólo en .claude</td><td class="mal">CLAUDE.md de 338 · .windsurfrules propio</td><td class="mal">estructura propia (0/9)</td><td class="bien">8 al día</td></tr>
+<tr><th>elevenoffice</th><td class="bien">al día</td><td class="bien">8/8</td><td class="mal">3 propias sólo en .agents</td><td class="mal">los 6 propios · CLAUDE.md de 704</td><td class="mal">37 líneas en inglés, sólo MCP/AWS</td><td class="medio">9 · 1 difiere (arreglo local)</td></tr>
+</tbody></table></div>
+<p class="leyenda">El pack <code>seguridad</code> no se compara: en el kit tiene cambios sin commitear
+de otra sesión, así que cualquier diferencia de hoy no es concluyente. El puntero del kit mide 16 líneas
+(CLAUDE.md) y 12 (GEMINI.md).</p>
+
+<h2>Hallazgos</h2>
+<div class="rejilla">
+<div class="ficha roja"><h3>elevenoffice: el contexto sólo lo ve Claude</h3>
+<p class="que"><code>AGENTS.md</code> tiene 37 líneas de reglas de MCP y AWS. El proyecto de verdad
+(arquitectura, comandos, puerta y reglas) está en las 704 líneas de <code>CLAUDE.md</code>.</p>
+<p>Gemini, Cursor, Copilot, Windsurf y Codex entran sin saber qué es ElevenOffice. Es el
+proyecto de referencia del kit y el único al revés.</p></div>
+<div class="ficha roja"><h3>futbot: dos fuentes de contexto que se solapan</h3>
+<p class="que">futbot-v2 tiene un <code>AGENTS.md</code> de 262 líneas y un <code>CLAUDE.md</code> de 730;
+web-app, 304 y 338. Los dos cuentan el proyecto a su manera.</p>
+<p>La regla del kit es que el puntero no duplica. Cuando las dos versiones diverjan, cada agente
+creerá una cosa distinta.</p></div>
+<div class="ficha roja"><h3>Skills distintas según el agente</h3>
+<p class="que">En futbot-web-app, <code>tarea</code>, <code>avanzar</code> y <code>verificar</code> tienen
+tres versiones: la del kit, la de <code>.claude/</code> y la de <code>.agents/</code>. Claude y
+Antigravity siguen puertas distintas.</p>
+<p>En futbot-v2 lo mismo con dos versiones. En hipismo pasaba con <code>verificar</code>
+y ya está corregido.</p></div>
+<div class="ficha ambar"><h3>Skills propias que sólo ve un agente</h3>
+<p class="que">futbot (<code>dataset</code>, <code>narracion</code>, <code>visualizacion</code>,
+<code>datos-opta</code>, <code>analisis</code>, <code>metricas</code>) sólo en
+<code>.claude/</code>; <code>ux-ui</code> está en los dos, pero con versiones distintas. elevenoffice (<code>blast-new</code>, <code>blast-audit</code>,
+<code>staff-estimate</code>) y analisis (<code>sports-provider-adapters</code>) sólo en <code>.agents/</code>.</p>
+<p>Son la materia prima de la próxima sesión: skills que no están en el kit.</p></div>
+<div class="ficha ambar"><h3>pulso, con la versión del 23-08</h3>
+<p class="que">Sus <code>ciclos.mjs</code> y <code>secretos.mjs</code> todavía aprueban con cero ficheros
+analizados, el fallo que el kit corrigió en <code>2e57cf5</code>. Le faltan
+<code>preproduccion</code> y <code>checklist-preproduccion.md</code>.</p>
+<p>Actualizarlo es mecánico, cuando termine la otra sesión.</p></div>
+<div class="ficha ambar"><h3>El instalador no avisa de las bifurcaciones</h3>
+<p class="que">Como no sobrescribe, un proyecto con una skill anterior se queda con ella en
+<code>.claude/</code> y recibe la nueva en <code>.agents/</code>. Así nació la divergencia de hipismo.</p>
+<p>Propuesta: <code>instalar.sh --comprobar</code>, que liste lo desactualizado y lo propio, como este
+informe.</p></div>
+</div>
+
+<h2>Corregido hoy</h2>
+<ul>
+<li><b>redsalud-web</b> (<code>7dab001</code>): protocolo y tres herramientas al día, más
+<code>preproduccion</code> y su checklist. <code>puerta:secretos</code> en verde (211 ficheros).</li>
+<li><b>hipismo</b> (<code>988650d</code>): <code>.claude/skills/verificar</code> alineada con el kit y con
+<code>.agents/</code>.</li>
+<li><b>logrono-united</b> (<code>81f2d9f</code>): subsección «Las skills, y cómo las encuentra cada agente»
+en el AGENTS.md.</li>
+<li>Antes, en esta misma sesión: kit instalado en hipismo, elevenoffice, fantasy y events, y
+AGENTS.md rellenado en los cuatro proyectos que tenían plantilla.</li>
+</ul>
+
+<h2>Decisiones pendientes</h2>
+<ol>
+<li><b>elevenoffice:</b> ¿se pasa el contexto de <code>CLAUDE.md</code> a <code>AGENTS.md</code>, con la
+estructura del kit, y <code>CLAUDE.md</code> se queda en puntero?</li>
+<li><b>futbot-v2 y web-app:</b> ¿se fusionan <code>CLAUDE.md</code> y <code>AGENTS.md</code> en uno? Esto no
+toca <code>llm-wiki/</code> ni <code>knowledge/wiki/</code>, que siguen siendo independientes por proyecto.</li>
+<li><b>Skills bifurcadas del núcleo:</b> ¿se cosechan las mejoras de futbot al kit o se vuelve a la
+versión del kit?</li>
+<li><b>Skills propias:</b> ¿cuáles suben al kit y cuáles se copian al otro directorio para que las vean
+los dos agentes?</li>
+<li><b>analisis y redsalud:</b> completar las secciones del AGENTS.md que faltan.</li>
+</ol>
+
+<footer>Generado el 2026-09-27 comparando hashes contra <code>~/ia-template</code> @ <code>c3fe19b</code>.
+El pack seguridad del kit tiene trabajo sin commitear y no se ha usado como referencia.</footer>
+</div>
