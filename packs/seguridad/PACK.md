@@ -91,6 +91,49 @@ Y la comparación es de **tiempo constante**: comparar con `===` filtra por el t
 respuesta cuántos dígitos iniciales se acertaron, y seis dígitos no dan margen para
 regalarlo.
 
+## Contraseñas
+
+`contrasenas.ts` y su gemelo `contrasenas.py` — **argon2id, formato PHC, un solo estándar
+para todos los proyectos**: 64 MiB, 3 pasadas, 4 carriles. 11 pruebas en TypeScript y 6 en
+Python, y la que importa es la cruzada: cada lado verifica un hash fijo escrito por el otro.
+
+Hasta el 2026-09-27 el kit decía «Argon2id **o** bcrypt», y cinco proyectos acabaron con
+cinco maneras de guardar una contraseña —bcrypt, bcrypt, PBKDF2, scrypt y argon2—, dos por
+debajo del mínimo de OWASP. Una regla con dos respuestas no es una regla.
+
+### Cuatro decisiones, con su porqué
+
+**Argon2id y ningún otro.** Es la primera recomendación de OWASP y de la RFC 9106: cuesta
+memoria además de CPU, y la memoria es lo que no se abarata en una GPU. bcrypt corta en
+silencio a los 72 bytes; PBKDF2 y scrypt son aceptables sólo con parámetros que nadie
+recuerda y que ninguno de los dos guardaba en el hash.
+
+**Los parámetros por defecto de las bibliotecas, pero escritos.** 64 MiB / t=3 / p=4 es lo
+que producen `argon2` (Node) y `argon2-cffi` (Python) sin configurar nada, así que lo que
+ya existía no se re-hashea. Se escriben igual: si la biblioteca cambia sus valores, el
+estándar no cambia con ella. Cuestan ~64 MiB por inicio de sesión: **sin limitador de
+intentos, esto es además una forma de tumbar el servidor.**
+
+**Se migra al entrar, no con un correo a todo el mundo.** El formato viejo se declara como
+`Legado`, que sólo sabe verificar. Cuando alguien entra con éxito, `verificarContrasena`
+devuelve `necesitaRehash` y el proyecto guarda en ese momento el hash nuevo. Cuando ya no
+queda ningún hash viejo en la base —se cuenta con una consulta—, se borra el `Legado`.
+
+**Re-hash sólo hacia arriba.** Un argon2 más fuerte que el estándar no se toca.
+`check_needs_rehash` de argon2-cffi compara por igualdad y lo rebajaría.
+
+Y cuando la cuenta no existe, `verificarEnVacio`: si «no existe» contesta en 1 ms y
+«contraseña mala» en 60, el formulario de acceso dice qué correos están registrados.
+
+### Instalación
+
+- Node: `npm i @node-rs/argon2` —binarios precompilados, también para Alpine, sin scripts de
+  instalación—. En Next.js ya está en `serverExternalPackages` por defecto. Si el proyecto
+  ya usa `argon2`, puede quedarse: el formato es el mismo y se verifican entre sí.
+- Python: `argon2-cffi`.
+- El trinquete: `detectores/contrasenas.sh instalar`. Cuenta las llamadas a bcrypt, scrypt y
+  PBKDF2, y sólo deja que bajen.
+
 ---
 
 ## Checklist
@@ -102,5 +145,7 @@ regalarlo.
 - [ ] Recursos sensibles: comprobación de propiedad, no solo identificador opaco
 - [ ] Cabeceras de seguridad y CORS revisados si cambió la exposición
 - [ ] Auditoría de dependencias en verde, o su excepción documentada como `AD-*`
+- [ ] Contraseñas con `contrasenas.ts`/`.py`: argon2id, y el trinquete `hash-legado` en la puerta
+- [ ] El login verifica en vacío cuando la cuenta no existe, y va detrás de un limitador de intentos
 - [ ] Segundo factor disponible donde hay datos personales o dinero
 - [ ] Un código de segundo factor **no vale dos veces** — se guarda el último período usado

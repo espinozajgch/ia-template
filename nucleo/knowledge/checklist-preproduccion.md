@@ -160,7 +160,7 @@ sostenga. Comprobar qué packs tienes es `ls agente/packs/`.
 | Login | Mismo mensaje para usuario inexistente y contraseña mala: distinguirlos es enumerar cuentas | `prompts/CLOUD_ARCHITECTURE_REMEDIATION_PROMPT.md` ·p |
 | Verificación de email | Antes de conceder nada que importe | — |
 | Recuperación de contraseña | Testigo de un solo uso, con caducidad, y guardado por su huella | — |
-| Hash seguro de contraseñas | Argon2id o bcrypt. Nunca SHA de nada | `prompts/SECURITY_PROMPT.md` ·p |
+| Hash seguro de contraseñas | Argon2id y sólo argon2id (64 MiB, t=3, p=4). Nunca SHA de nada | `packs/seguridad/contrasenas.ts` ·p |
 | Limitar intentos de login | Por cuenta Y por origen. Sin esto, la contraseña es lo único que protege | — |
 | Reforzar autenticación / MFA | Al menos para los roles que gobiernan | `packs/seguridad/rule.mdc` |
 | Protección de sesiones | Caducan, se renuevan, y se invalidan al cambiar la contraseña | `nucleo/protocolo/03_MEMORIA.md` |

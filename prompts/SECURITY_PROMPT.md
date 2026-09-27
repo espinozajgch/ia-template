@@ -15,7 +15,7 @@ Tu misión es realizar una auditoría de seguridad completa de este proyecto, us
 - **Frontend:** React 19 + Vite + TypeScript (SPA)
 - **Backend:** Node.js 22 + Express 5 + TypeScript + Drizzle ORM
 - **Base de datos:** PostgreSQL (schema `app`)
-- **Auth:** JWT + bcrypt
+- **Auth:** JWT + argon2id (`packs/seguridad/contrasenas.ts`)
 - **Infraestructura:** Nginx como reverse proxy + systemd en EC2
 - **Deploy:** GitHub Actions → SSH → EC2
 
@@ -78,7 +78,9 @@ Preguntas clave para este stack:
 - ¿El `JWT_SECRET` tiene entropía suficiente y no está hardcodeado?
 - ¿Los tokens JWT usan algoritmo fuerte (`HS256` mínimo, preferible `RS256`)?
 - ¿El `JWT_EXPIRES_IN` tiene un valor razonable (no `9999d`)?
-- ¿bcrypt usa un factor de cost ≥ 12?
+- ¿Las contraseñas usan argon2id con el estándar del kit (64 MiB, t=3, p=4)? Cualquier hash nuevo con
+  bcrypt, scrypt o PBKDF2 es un hallazgo; un formato viejo sólo es aceptable como `Legado` que se
+  re-hashea al entrar. Pasar `detectores/contrasenas.sh validar`.
 - ¿Hay datos sensibles (contraseñas, tokens) logueados en consola o en error responses?
 - ¿La conexión a PostgreSQL usa SSL/TLS en producción?
 
@@ -112,7 +114,7 @@ Preguntas clave para este stack:
 Preguntas clave para este stack:
 - ¿Las dependencias en `package.json` tienen versiones con CVEs conocidos? (ejecutar `npm audit`)
 - ¿Se usa Express 5 correctamente, aprovechando sus mejoras de seguridad vs Express 4?
-- ¿Las dependencias de autenticación (jsonwebtoken, bcrypt) están actualizadas?
+- ¿Las dependencias de autenticación (jsonwebtoken, @node-rs/argon2) están actualizadas?
 - ¿Node.js 22 es la versión LTS activa?
 
 ### A07 — Identification and Authentication Failures

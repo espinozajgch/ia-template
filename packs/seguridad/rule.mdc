@@ -7,7 +7,9 @@ alwaysApply: false
   el SMS se intercepta duplicando la tarjeta.
 - Un código de segundo factor NO vale dos veces: se guarda el último período usado.
 - Comparación de códigos y testigos en tiempo constante, nunca con ===.
-- Contraseñas con Argon2id o bcrypt. Nunca SHA de nada, ni con sal: no están hechos para esto.
+- Contraseñas: SÓLO argon2id, con `agente/packs/seguridad/contrasenas.ts` (o `.py`). Ni bcrypt, ni
+  scrypt, ni PBKDF2 para hashes nuevos, y nunca SHA de nada. Un formato anterior se declara
+  como `Legado` —sólo verifica— y se re-hashea cuando la cuenta entra con éxito.
 - Limitar los intentos de acceso POR CUENTA y POR ORIGEN. Sin esto la contraseña es lo
   único que separa a un atacante de una cuenta, y probar diez millones es barato.
 - Mismo mensaje para «no existe ese usuario» y «contraseña incorrecta». Distinguirlos
