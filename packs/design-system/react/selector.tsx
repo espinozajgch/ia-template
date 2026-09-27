@@ -118,7 +118,7 @@ export function Selector({
     // ya movió el cursor durante la apertura, se respeta lo que ella eligió.
     if (abierto) setActiva(p => (p >= 0 ? p : seleccionada >= 0 ? seleccionada : 0));
     else setActiva(-1);
-     
+
   }, [abierto]);
 
   useEffect(() => {

@@ -8,7 +8,12 @@ description: Convierte una petición en una tarea ejecutable, con alcance, crite
 Media hora de trabajo mal acotado cuesta más que cinco minutos acotándolo. Esta skill
 produce **una ficha corta** — no un documento — antes de tocar nada.
 
-El listón de qué cuenta como hecho está en [`avanzar`](../avanzar/SKILL.md).
+El listón de qué cuenta como hecho está en `knowledge/wiki/definicion-de-hecho.md`, y si el
+proyecto no lo tiene, en [`avanzar`](../avanzar/SKILL.md).
+
+**Antes de nada:** si existe `knowledge/wiki/skills/tarea.md`, léelo. Es lo propio de este
+proyecto —su frontera, sus ejemplos, dónde lleva el plan— y, donde sea más estricto que
+esta skill, manda él.
 
 ---
 
@@ -34,16 +39,24 @@ flujo que depende del entorno real— se dice, y se dice **con qué se cubre en 
 
 **Riesgo.** Qué es lo peor que puede salir de aquí, y qué lo detendría.
 
-**Decisiones que no son mías.** Lo que se anota y se deja pendiente en vez de detener el
-trabajo.
+**Decisiones que no son mías.** Lo que no debe inferirse —una autoridad, una elección de
+producto—. Va a `knowledge/wiki/decisiones-pendientes.md` en vez de detener el trabajo, y
+se dice **qué trabajo independiente puede seguir** mientras tanto.
 ```
 
 ---
 
 ## Cómo se acota bien
 
-**Una tarea = un commit coherente.** Si la ficha necesita dos «hecho cuando», son dos
-tareas. Partir es barato; un commit que hace tres cosas no se puede revertir.
+**Una tarea = un resultado verificable, y un commit coherente** si el proyecto permite
+commits locales (`AGENTS.md` §5). Si la ficha necesita dos «hecho cuando», son dos tareas.
+Partir es barato; un commit que hace tres cosas no se puede revertir. Parejas que casi
+siempre son dos tareas:
+
+- el contrato o la API, y quien lo consume;
+- la migración de datos, y habilitar la escritura sobre ellos;
+- el refactor estructural, y el cambio de conducta;
+- el diseño visual, y conectarlo a datos reales.
 
 **Estructura y conducta, separadas.** Mover código y cambiar lo que hace **nunca** van en
 la misma tarea. Si al mover aparece un fallo, se anota y se conserva; corregirlo es otra
@@ -60,12 +73,18 @@ producción» sí.
 
 **El criterio se escribe antes.** Escrito después, es una descripción de lo que salió.
 
+**Si toca interfaz, el criterio nombra los estados:** reposo, pendiente, éxito, error,
+vacío y deshabilitado. Y que se reutilizan los componentes del sistema en vez de estilos
+locales equivalentes. Si el proyecto tiene una skill de UX, se aplica aquí.
+
 ---
 
 ## Preguntas que sí valen la pena
 
-Preguntar **solo** si la respuesta cambia lo que se construye, y preguntarlo **una vez, con
-opciones**. Si hay una opción razonable por defecto, se toma, se dice cuál y se sigue.
+Preguntar **solo** si la respuesta cambia lo que se construye —datos, permisos, un contrato
+externo, producción, la identidad visual— y no hay un valor seguro por defecto. Y
+preguntarlo **una vez, con opciones**. Si hay una opción razonable por defecto, se toma, se
+dice cuál y se sigue.
 
 No preguntar: si se puede empezar · si el plan parece bien · si commitear · qué nombre
 poner · si conviene añadir tests.

@@ -128,6 +128,11 @@ Ocho procedimientos escritos: `blueprint` · `tarea` · `avanzar` · `verificar`
 algo a producción → `preproduccion`. Antes de cualquier commit que toque código →
 `verificar`.
 
+**Son las mismas en todos los proyectos.** Lo propio de cada uno —sus partidos de
+referencia, sus perfiles de puerta, su frontera— no se escribe dentro de la skill: va a
+`knowledge/wiki/skills/<skill>.md`, que la skill lee al empezar. Así una mejora del kit llega
+a todos sin pisar nada, y una skill no se bifurca en silencio.
+
 **Sólo dos agentes las descubren solos.** Claude Code lee `.claude/skills/` y
 Antigravity/Gemini lee `.agents/skills/`; los dos directorios llevan el mismo contenido.
 
