@@ -7,6 +7,7 @@
  *
  *   --motor      postgres | mysql
  *   --servidor   URL del servidor SIN base: postgresql://usuario@host:puerto · mysql://root@127.0.0.1:3306
+ *                La clave, si hace falta, mejor en PGPASSWORD o MYSQL_PWD que en la URL.
  *   --preparar   orden (sh) que deja la base efímera con TODAS las migraciones, con el
  *                ejecutor del propio proyecto. Recibe en el entorno:
  *                  DOBLE_PASADA_URL · DOBLE_PASADA_BASE · DOBLE_PASADA_HOST · DOBLE_PASADA_PUERTO
@@ -86,8 +87,13 @@ const nombre = `doble_pasada_${process.pid}_${Date.now().toString(36)}`;
 const host = servidor.hostname || 'localhost';
 const puerto = servidor.port || (motor === 'postgres' ? '5432' : '3306');
 const usuario = decodeURIComponent(servidor.username || (motor === 'postgres' ? process.env.USER ?? 'postgres' : 'root'));
-const clave = decodeURIComponent(servidor.password || '');
-const url = `${servidor.protocol}//${servidor.username ? `${servidor.username}${servidor.password ? `:${servidor.password}` : ''}@` : ''}${host}:${puerto}/${nombre}`;
+// La clave, mejor por PGPASSWORD / MYSQL_PWD que en la URL: un argumento se ve en la
+// lista de procesos de la máquina.
+const clave = decodeURIComponent(servidor.password || '') || process.env.PGPASSWORD || process.env.MYSQL_PWD || '';
+// El usuario va SIEMPRE en la URL: psql toma el de la sesión si falta, pero Prisma y
+// otros clientes no, y la primera pasada fallaría por un motivo que no es la migración.
+const credenciales = `${encodeURIComponent(usuario)}${clave ? `:${encodeURIComponent(clave)}` : ''}@`;
+const url = `${servidor.protocol}//${credenciales}${host}:${puerto}/${nombre}`;
 
 const pg = ['-h', host, '-p', puerto, '-U', usuario];
 const my = ['-h', host, '-P', puerto, '-u', usuario, ...(clave ? [`-p${clave}`] : [])];
