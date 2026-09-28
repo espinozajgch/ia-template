@@ -118,6 +118,22 @@ lo mejor de cada una:
 Purgar por retención se hace como propietario y en tres órdenes deliberadas; están al pie
 de `bitacora.sql`.
 
+**Si la bitácora ya existe y la aplicación la modifica.** Al adoptarla sobre una tabla
+viva aparecen casos legítimos que el disparador rechazaría. El disparador no se relaja: se
+nombra cada caso con su forma exacta, y lo demás se sigue rechazando. Estos son los que
+aparecieron al adoptarla en futbot-web-app y ElevenOffice (2026-09-28):
+
+- **FK `ON DELETE SET NULL`** hacia usuarios: borrar la cuenta hace que Postgres anule la
+  columna con un `UPDATE`. Se admite ese `UPDATE` y sólo ese: las columnas de la FK pasan a
+  `NULL` y nada más cambia. Salió en los dos proyectos. Búscalo antes de instalar.
+- **Anonimización RGPD** del actor: se admite el `UPDATE` que deja la PII con sus valores
+  anónimos exactos, sin tocar qué pasó, sobre qué ni cuándo. A medias, se rechaza.
+- **Purgas que declara la propia transacción** (`set_config(..., true)`): la de una empresa
+  (qué empresa) y la de retención (qué ventana, con un suelo en el disparador). Una purga
+  sin declarar, o de otra empresa, se rechaza.
+
+Cada caso lleva su prueba contra una base real, porque un mock no ejercita un disparador.
+
 ---
 
 ## Checklist
