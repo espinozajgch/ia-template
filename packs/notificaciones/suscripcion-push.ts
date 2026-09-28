@@ -70,10 +70,10 @@ export function validarSuscripcion(valor: unknown, extra: readonly string[] = []
   if (typeof p256dh !== "string" || typeof auth !== "string" || p256dh.length > 200 || auth.length > 200) {
     throw new SuscripcionInvalida("Las claves del dispositivo no son válidas.");
   }
-  const punto = base64url(p256dh);
   try {
-    if (punto.length !== 65 || punto[0] !== 0x04) throw new Error("forma");
-    createPublicKey({ key: Buffer.concat([SPKI_P256, punto]), format: "der", type: "spki" });
+    // La cabecera DER declara un punto sin comprimir de 65 bytes: cualquier otra forma
+    // —comprimido, corto, sin el 0x04— o un punto fuera de la curva no se deja leer.
+    createPublicKey({ key: Buffer.concat([SPKI_P256, base64url(p256dh)]), format: "der", type: "spki" });
   } catch {
     throw new SuscripcionInvalida("Las claves del dispositivo no son válidas.");
   }

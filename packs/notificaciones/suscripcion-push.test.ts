@@ -42,6 +42,24 @@ describe("validarSuscripcion — lo que abriría un SSRF", () => {
     });
   }
 
+  it("el máximo exacto de longitud vale; uno más, no", () => {
+    const base = "https://fcm.googleapis.com/";
+    expect(validarSuscripcion(suscripcion(base + "a".repeat(4096 - base.length))).endpoint).toHaveLength(4096);
+    expect(() => validarSuscripcion(suscripcion(base + "a".repeat(4097 - base.length)))).toThrow(/dirección de notificaciones/);
+  });
+
+  it("un endpoint que no es texto no se convierte en uno", () => {
+    // `new URL(["https://…"])` lo aceptaría: el array se vuelve cadena.
+    expect(() => validarSuscripcion({ endpoint: ["https://fcm.googleapis.com/fcm/send/x"], keys: clavesReales() }))
+      .toThrow(/dirección de notificaciones/);
+  });
+
+  it("cada rechazo dice por qué, en palabras que se pueden enseñar", () => {
+    expect(() => validarSuscripcion(suscripcion("https://10.0.0.5/x"))).toThrow(/servicio de notificaciones admitido/);
+    expect(() => validarSuscripcion(suscripcion("no-url"))).toThrow(/dirección de notificaciones válida/);
+    expect(() => validarSuscripcion({ endpoint: "https://fcm.googleapis.com/fcm/send/x", keys: {} })).toThrow(/claves del dispositivo/);
+  });
+
   it("un anfitrión extra sólo si el proyecto lo declara", () => {
     const endpoint = "https://push.otro-navegador.example/x";
     expect(() => validarSuscripcion(suscripcion(endpoint))).toThrow(SuscripcionInvalida);
@@ -59,11 +77,17 @@ describe("validarSuscripcion — claves del navegador", () => {
     expect(() => validarSuscripcion(suscripcion(endpoint, { ...clavesReales(), p256dh: randomBytes(33).toString("base64url") }))).toThrow(SuscripcionInvalida);
   });
   it("rechaza un auth que no mide 16 bytes", () => {
-    expect(() => validarSuscripcion(suscripcion(endpoint, { ...clavesReales(), auth: randomBytes(12).toString("base64url") }))).toThrow(SuscripcionInvalida);
+    expect(() => validarSuscripcion(suscripcion(endpoint, { ...clavesReales(), auth: randomBytes(12).toString("base64url") }))).toThrow(/claves del dispositivo/);
+  });
+  it("rechaza un punto sin el prefijo de sin comprimir", () => {
+    const punto = Buffer.from(clavesReales().p256dh, "base64url"); punto[0] = 0x05;
+    expect(() => validarSuscripcion(suscripcion(endpoint, { ...clavesReales(), p256dh: punto.toString("base64url") }))).toThrow(/claves del dispositivo/);
   });
   it("rechaza claves ausentes, de otro tipo o enormes", () => {
-    for (const keys of [undefined, {}, { p256dh: 1, auth: 2 }, { ...clavesReales(), auth: "a".repeat(201) }]) {
-      expect(() => validarSuscripcion({ endpoint, keys })).toThrow(SuscripcionInvalida);
+    const buenas = clavesReales();
+    for (const keys of [undefined, {}, { p256dh: 1, auth: 2 }, { p256dh: buenas.p256dh, auth: 5 },
+      { p256dh: 5, auth: buenas.auth }, { ...buenas, auth: "a".repeat(201) }, { ...buenas, p256dh: "a".repeat(201) }]) {
+      expect(() => validarSuscripcion({ endpoint, keys })).toThrow(/claves del dispositivo/);
     }
     expect(() => validarSuscripcion(null)).toThrow(SuscripcionInvalida);
   });
