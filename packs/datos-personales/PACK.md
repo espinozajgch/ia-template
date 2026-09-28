@@ -14,6 +14,7 @@ tres, dos tienen **cero** — y uno de ellos es una aplicación clínica.
 |---|---|
 | `knowledge/wiki/inventario-datos-personales.md` | el documento a rellenar; lo instala el pack |
 | `clasificacion.mjs` | comprueba que el inventario no se queda atrás |
+| `bitacora.sql` | la tabla de auditoría sólo-añadir (ver § Bitácora) |
 
 ---
 
@@ -96,6 +97,29 @@ son exactamente lo que ninguna herramienta va a ver por ti.
 
 ---
 
+## Bitácora: quién hizo qué, y que nadie pueda reescribirlo
+
+`bitacora.sql` — la tabla de auditoría en PostgreSQL, idempotente y probada contra una base
+real (acepta `INSERT`; rechaza `UPDATE`, `DELETE` y `TRUNCATE`).
+
+A 2026-09-28 había cuatro bitácoras en cuatro proyectos y ninguna tenía todo. Esta reúne
+lo mejor de cada una:
+
+| Regla | De dónde | Por qué |
+|---|---|---|
+| **Misma transacción** que el cambio | Pulso, futbot-web-app | Si el cambio se deshace, su evento también: no queda constancia de algo que no ocurrió. Un registro que «si falla, se anota en el log y se sigue» pierde justo los eventos de los días malos. |
+| **Sólo se añade**: `REVOKE` y disparador | hipismo | El `REVOKE` ata a la aplicación; el disparador sobrevive a la migración futura que conceda de nuevo `UPDATE/DELETE` a todas las tablas de una pasada. Un registro que el registrado puede editar no registra nada. |
+| `TRUNCATE` con **su propio disparador** | — | Los disparadores de fila no lo detienen. Ninguna de las cuatro lo cubría. |
+| **Actor copiado** en la fila | Pulso | Si la cuenta se renombra o cambia de rol, el evento sigue diciendo quién era. Un `JOIN` reescribiría la historia con el presente. |
+| **Antes y después**, ya tachados | Pulso · hipismo | Sin el antes no se sabe qué cambió. Contraseñas, testigos y claves se tachan en la aplicación antes de escribir. |
+| **Catálogo cerrado de acciones** | hipismo | Un mapa `{nombre: {objeto, accion}}` en el código: una acción mal escrita no compila, en vez de crear una categoría nueva en silencio. |
+| Petición y **huella** de la sesión | Pulso | Enlaza el evento con el log de la petición sin guardar el testigo. |
+
+Purgar por retención se hace como propietario y en tres órdenes deliberadas; están al pie
+de `bitacora.sql`.
+
+---
+
 ## Checklist
 
 - [ ] Existe el inventario, y `clasificacion.mjs` pasa
@@ -106,6 +130,7 @@ son exactamente lo que ninguna herramienta va a ver por ti.
 - [ ] La redacción en registros es central — pack `observabilidad`
 - [ ] Las trampas de la plantilla, revisadas una a una
 - [ ] Si hay menores, el tratamiento reforzado está resuelto
+- [ ] Bitácora: en la transacción del cambio, sólo-añadir con disparador (también `TRUNCATE`), actor copiado
 
 ## Lo que se le debe al usuario, y no está en el esquema
 
