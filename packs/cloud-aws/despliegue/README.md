@@ -1,6 +1,8 @@
 # Despliegue sin credenciales de larga vida
 
 > El patrón de `deploy-oidc-ssm.yml`, y lo que hay que crear en AWS para que funcione.
+> `dispatch-ssm.sh` es el paso que manda el artefacto a la instancia: firma las URL de S3,
+> verifica el SHA-256 en destino y ejecuta el despliegue desde el propio artefacto.
 
 ---
 
