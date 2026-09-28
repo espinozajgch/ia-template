@@ -164,13 +164,14 @@ todo; cada regla de abajo la tenía bien al menos una.
 
 | Regla | ElevenOffice | futbot-web-app | Pulso | hipismo | Logroño |
 |---|---|---|---|---|---|
-| 1-2 · testigo y huella | JWT + `jti` con huella | JWT firmado + `sid` | **UUID en claro** | ✅ | ✅ |
-| 4 · `__Host-` | no | no | no | ✅ | no |
-| 5 · doble caducidad | acceso 15 min + refresco 24 h | 8 h fija | 8 h fija | **sólo deslizante** | fija (12 h / 30 días) |
+| 1-2 · testigo y huella | JWT + `jti` con huella | JWT firmado + `sid` | ✅¹ (antes, UUID en claro) | ✅ | ✅ |
+| 4 · `__Host-` | no | ✅¹ | ✅¹ | ✅ | ✅¹ |
+| 5 · doble caducidad | acceso 15 min + refresco 24 h | 8 h fija | 8 h fija | ✅¹ (antes, sólo deslizante) | fija (12 h / 30 días) |
 | 7 · revoca al cambiar la clave | ✅ | ✅ | ✅ | ✅ | no hay cambio de clave |
 | 8 · origen | ✅ (`requireSameOrigin`) | — | ✅ | — | — |
 
-«—» es que no se revisó, no que falte.
+«—» es que no se revisó, no que falte. ¹ Adoptado el 2026-09-28 en una rama sin fusionar
+(`seguridad/sesiones-criterio-kit`; en futbot-web-app, `seguridad/cookie-host`).
 
 ---
 
@@ -206,9 +207,11 @@ estaban en otros proyectos.
 | Regla | ElevenOffice | futbot-web-app | Pulso | hipismo | Logroño |
 |---|---|---|---|---|---|
 | 3 · en la base | memoria, Redis opcional (AD-31) | ✅ | ✅ | ✅ (memoria sólo si la base cae) | ✅ |
-| 4 · clave como huella | — | — | **correo en claro** | — | ✅ |
-| 7 · desbloqueo por la administración | — | — | ✅ | — | no |
-| 9 · cupo con espera máxima | — | — | ✅ | — | sin espera máxima |
+| 4 · clave como huella | — | ✅ (con secreto) | ✅¹ (antes, correo en claro) | ✅¹ (antes, en claro) | ✅ |
+| 7 · desbloqueo por la administración | — | — | ✅ | — | ✅¹ |
+| 9 · cupo con espera máxima | — | — | ✅ | — | ✅¹ (antes, sin espera máxima) |
+
+¹ Adoptado el 2026-09-28 en `seguridad/sesiones-criterio-kit`, sin fusionar.
 
 ---
 
