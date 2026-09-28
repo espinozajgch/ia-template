@@ -66,12 +66,23 @@ node agente/tools/esquema.mjs orden          # huecos, duplicados, coherencia co
 node agente/tools/esquema.mjs sellar         # tras aplicar en producción
 node agente/tools/esquema.mjs sellos         # ¿cambió alguna ya sellada?
 node agente/tools/esquema.mjs idempotencia   # DDL que no aguanta un reintento
+node agente/tools/doble-pasada.mjs --motor postgres --servidor postgresql://localhost:5432 \
+     --preparar 'DATABASE_URL="$DOBLE_PASADA_URL" npm run db:migrate'   # la aplica DE VERDAD dos veces
 node agente/tools/esquema.mjs instantanea    # guarda el esquema vivo (pg_dump)
 node agente/tools/esquema.mjs deriva         # compara vivo vs instantánea
 ```
 
 Reconoce las tres convenciones sin configurar nada: `001_nombre.sql`, drizzle con
 `_journal.json`, y directorios con sello de tiempo estilo prisma.
+
+**`idempotencia` lee el SQL; `doble-pasada` lo ejecuta.** La primera atrapa el `CREATE
+TABLE` sin `IF NOT EXISTS`; la segunda, lo que sólo falla contra el esquema real: el
+`UPDATE` que la segunda vez choca con un `CHECK`, la política que ya existe, el `USING`
+imposible. Crea una base efímera, la prepara con el ejecutor del propio proyecto y vuelve a
+ejecutar tal cual cada migración nueva desde la rama base. Si no encuentra la rama base,
+falla en vez de decir «OK». Viene del gate H-127 de ElevenOffice, el único de los cinco
+proyectos que lo tenía a 2026-09-28. En CI necesita el historial (`fetch-depth: 0`) y, si
+se trabaja directamente en `main`, `--base` con el commit anterior al push.
 
 **Las excepciones se declaran, no se ignoran.** Una migración aplicada a mano en producción
 es una decisión legítima; se escribe en `.ratchets/esquema-excepciones.json` **con su
