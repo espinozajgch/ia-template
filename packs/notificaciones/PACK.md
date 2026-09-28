@@ -26,6 +26,8 @@ proveedor caído retrasa el correo; no rompe el producto.
 `bandeja.sql` — la tabla, la lista de supresión, y las funciones de encolar, reclamar,
 informar y rescatar. **Verificado contra PostgreSQL real**, incluida la concurrencia.
 
+`suscripcion-push.ts` — validación de suscripciones Web Push (ver más abajo), con 22 pruebas.
+
 ---
 
 ## Los cinco mecanismos
@@ -90,6 +92,34 @@ arrastra al panel el token que venía en la respuesta.
 
 ---
 
+## Web push: la suscripción es una URL que el servidor va a llamar
+
+`suscripcion-push.ts` valida la suscripción antes de guardarla, sin dependencias. De los
+cuatro proyectos con push, a 2026-09-28 sólo uno lo hacía (futbot-web-app); los otros
+tres aceptaban cualquier `https://` —o cualquier URL—, y eso es un **SSRF servido desde el
+navegador**: un usuario autenticado registra la dirección de un servicio interno y el
+servidor la llama por él, cada vez que haya algo que notificar.
+
+Lo que hace, y lo que tiene que hacer el resto del flujo:
+
+1. **Lista cerrada de servicios push.** FCM, Mozilla, Apple y `*.notify.windows.com`
+   (Edge). HTTPS, sin credenciales en la URL, sin otro puerto ni fragmento, con ruta y con
+   longitud máxima. Un anfitrión extra se declara en el proyecto, uno a uno.
+2. **Claves reales.** `p256dh` es un punto de la curva P-256 —lo comprueba `node:crypto`—
+   y `auth` mide 16 bytes. Una clave falsa se descubre al guardarla, no al cifrar el primer
+   envío.
+3. **Cifrada en reposo**, y buscada por su huella (SHA-256 del endpoint). El endpoint es una
+   URL de capacidad: quien la tenga puede escribir en esa pantalla. Lo mismo la clave VAPID
+   privada, que además se genera una sola vez y bajo candado.
+4. **Cambiar de cuenta en el mismo navegador** sólo si las claves coinciden con las
+   guardadas; si no, se rechaza. Si coinciden, la suscripción pasa a la cuenta nueva y la
+   anterior deja de recibir.
+5. **Límite de dispositivos** por usuario (diez en futbot-web-app).
+6. **TTL y timeout en cada envío**, y **404/410 borran** la suscripción: es la forma del
+   servicio de decir que ese navegador ya no está. Reintentarla es gastar en nada.
+
+---
+
 ## Lo que hay que decidir
 
 | Decisión | Notas |
@@ -113,3 +143,5 @@ arrastra al panel el token que venía en la respuesta.
 - [ ] El webhook de rebotes alimenta la supresión — y su **firma se verifica**
 - [ ] El panel enmascara destinatarios y sanea errores
 - [ ] Un fallo del proveedor **no** rompe la operación que originó el mensaje
+- [ ] Web push: la suscripción pasa por `validarSuscripcion` (lista cerrada, claves reales)
+- [ ] Web push: suscripción y clave VAPID cifradas en reposo; 404/410 la borran; TTL en el envío

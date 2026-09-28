@@ -1,6 +1,6 @@
 ---
 description: Convenciones de notificaciones y correo
-globs: ["**/email/**","**/mail*/**","**/notificac*/**","**/notification*/**","**/webhook*/**","**/outbox*","**/bandeja*"]
+globs: ["**/*push*","**/email/**","**/mail*/**","**/notificac*/**","**/notification*/**","**/webhook*/**","**/outbox*","**/bandeja*"]
 alwaysApply: false
 ---
 - Nada se envía dentro de la petición del usuario: se ENCOLA y termina. Un proveedor
@@ -14,3 +14,7 @@ alwaysApply: false
 - Lista de supresión GLOBAL alimentada por rebotes, comprobada al encolar y antes de enviar.
 - El panel enmascara destinatarios y sanea errores: un error del proveedor sin sanear
   arrastra el token que venía dentro.
+- Web push: NUNCA se guarda una suscripción sin `validarSuscripcion` (agente/packs/
+  notificaciones/suscripcion-push.ts). Aceptar «cualquier https://» es un SSRF: el
+  servidor llamará a la URL que un usuario le dé.
+- Suscripción push y clave VAPID privada, cifradas en reposo. 404/410 borran la suscripción.
