@@ -35,12 +35,13 @@ export function isValidDate(value: string): boolean {
  * Comprueba una tasa recién obtenida.
  *
  * @param previous Última tasa conocida de esa moneda, si la hay. Sin ella no se
- *   puede juzgar la variación y solo se aplican las reglas absolutas.
+ *   puede juzgar la variación y solo se aplican las reglas absolutas. Su fecha es
+ *   opcional: sólo sirve para el mensaje.
  * @param today Fecha de hoy AAAA-MM-DD, inyectada para poder probar el futuro.
  */
 export function validateQuote(
   quote: ExchangeRateQuote,
-  previous: { rate: number; effectiveDate: string } | null,
+  previous: { rate: number; effectiveDate?: string } | null,
   today: string,
 ): ValidationResult {
   if (!isKnownCurrency(quote.currency)) {
@@ -61,13 +62,24 @@ export function validateQuote(
       return fail("FUTURE_DATE", `Fecha de vigencia demasiado lejana: ${quote.effectiveDate}.`);
     }
   }
-  if (previous) {
+  // Sin fuente no se puede atribuir el dato, y sin huella no se distingue releer de
+  // cambiar. De Pulso, 2026-09-28: el pack no las comprobaba y una lectura a medias
+  // entraba en el histórico sin poder explicarse después.
+  if (!quote.source.trim()) {
+    return fail("EMPTY_SOURCE", "Sin fuente no se puede atribuir el dato.");
+  }
+  if (!quote.rawHash.trim()) {
+    return fail("EMPTY_HASH", "Sin huella no se distingue una relectura de un cambio.");
+  }
+  if (previous && previous.rate > 0) {
     const change = Math.abs(quote.rate - previous.rate) / previous.rate;
     if (change > MAX_DAILY_CHANGE_RATIO) {
       return fail(
         "ANOMALOUS_CHANGE",
-        `Variación de ${(change * 100).toFixed(1)} % frente a ${previous.rate} del ${previous.effectiveDate}: ` +
-          "queda en cuarentena a la espera de revisión.",
+        `Variación de ${(change * 100).toFixed(1)} % frente a ${previous.rate}`
+          + `${previous.effectiveDate ? ` del ${previous.effectiveDate}` : ""}. ` +
+          // Redacción de Pulso: dice la causa probable, no sólo el estado.
+          "Suele ser un decimal mal leído; queda en cuarentena a la espera de revisión.",
       );
     }
   }

@@ -28,6 +28,21 @@ puerto.
 
 ---
 
+## En un proyecto Next.js: quitar la extensión de los imports
+
+Los ficheros importan `./provider.js`, que es lo que exige `NodeNext` (hipismo). El
+empaquetador de Next no traduce `.js` a `.ts`, así que en un proyecto Next se copian con
+los imports internos sin extensión y **esa es la única diferencia permitida**:
+
+```bash
+sed -E 's#(from "\./[a-z-]+)\.js"#\1"#' packs/tasas-de-cambio/provider.ts > <destino>/provider.ts
+```
+
+Así lo tiene Pulso (`app/lib/tasas-de-cambio/`, con un README que lo dice). Los nombres
+del proyecto van en un adaptador aparte; los cuatro ficheros no se editan.
+
+---
+
 ## Lo primero: no hay API
 
 El BCV **no publica una API**. Se lee su HTML. Todo lo demás de este pack sale de aceptar

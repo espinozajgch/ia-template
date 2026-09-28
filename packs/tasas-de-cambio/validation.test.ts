@@ -71,6 +71,25 @@ describe("validateQuote", () => {
     expect(validateQuote(quote({ rate: 37.2 }), previous, hoy).ok).toBe(true);
   });
 
+  it("rechaza una lectura sin fuente o sin huella: no se podría explicar después", () => {
+    expect(validateQuote(quote({ source: " " }), null, hoy)).toMatchObject({ ok: false, failure: { code: "EMPTY_SOURCE" } });
+    expect(validateQuote(quote({ rawHash: "" }), null, hoy)).toMatchObject({ ok: false, failure: { code: "EMPTY_HASH" } });
+  });
+
+  it("la fecha de la tasa previa es opcional y sólo cambia el mensaje", () => {
+    const sin = validateQuote(quote({ rate: 60 }), { rate: 36.59 }, hoy);
+    const con = validateQuote(quote({ rate: 60 }), { rate: 36.59, effectiveDate: "2026-08-03" }, hoy);
+    expect(sin).toMatchObject({ ok: false, failure: { code: "ANOMALOUS_CHANGE" } });
+    expect(con).toMatchObject({ ok: false, failure: { code: "ANOMALOUS_CHANGE" } });
+    expect(JSON.stringify(sin)).not.toContain(" del ");
+    expect(JSON.stringify(con)).toContain(" del 2026-08-03");
+    expect(JSON.stringify(con)).toMatch(/decimal mal leído/);
+  });
+
+  it("una tasa previa de cero no puede servir de referencia", () => {
+    expect(validateQuote(quote(), { rate: 0 }, hoy)).toEqual({ ok: true });
+  });
+
   it("sin tasa previa no puede juzgar la variación y solo aplica lo absoluto", () => {
     expect(validateQuote(quote({ rate: 100000 }), null, hoy).ok).toBe(true);
   });
