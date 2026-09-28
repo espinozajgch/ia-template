@@ -36,3 +36,8 @@ alwaysApply: false
   guardado por su huella — nunca en claro. Y responde lo mismo exista o no la cuenta.
 - Al cambiar la contraseña se invalidan las sesiones abiertas. Si no, un acceso robado
   sobrevive al cambio que se hizo para cortarlo.
+- Sesiones con `agente/packs/seguridad/sesiones.ts`: testigo de 256 bits y en la base SÓLO
+  su huella; cookie `__Host-` + Secure (por configuración) + HttpOnly + SameSite; doble
+  caducidad (inactividad Y máximo absoluto); revalidar cuenta/empresa en cada petición.
+- Intentos de acceso con `limite-intentos.ts` y `.sql`: por cuenta y en la base, clave como
+  huella, espera creciente con techo, sólo el 401 cuenta, por IP sólo si es atribuible.

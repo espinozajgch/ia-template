@@ -136,6 +136,82 @@ Y cuando la cuenta no existe, `verificarEnVacio`: si «no existe» contesta en 1
 
 ---
 
+## Sesiones
+
+`sesiones.ts` — el criterio común en piezas puras (13 pruebas): cada proyecto las conecta
+a su tabla y a su framework. A 2026-09-28 había cinco implementaciones y ninguna cumplía
+todo; cada regla de abajo la tenía bien al menos una.
+
+1. **Testigo opaco de 256 bits** (`nuevoTestigo`). Un UUID son 122.
+2. **En la base sólo su huella** (`huellaDeTestigo`). Un UUID como clave primaria de
+   `sessions` es el testigo en claro: un respaldo filtrado son sesiones válidas.
+3. **Forma comprobada antes de consultar** (`tieneFormaDeTestigo`): una cookie manipulada
+   da 401, no 500.
+4. **Cookie `HttpOnly`, `Path=/`, `SameSite`, y `Secure` por configuración** del despliegue,
+   nunca por cabeceras de la petición. Con `Secure`, **prefijo `__Host-`**, que ata la
+   cookie al origen (`nombreDeCookie`). Nunca el prefijo sin `Secure`: el navegador
+   descarta la cookie y nadie puede entrar, sin ningún error que mirar.
+5. **Doble caducidad**: por inactividad (se renueva con cada petición) **y** un máximo
+   absoluto (`vigencia`). Sólo deslizante, una pestaña abierta no caduca nunca; sólo
+   absoluta, se echa a quien está trabajando. La caducidad nueva se escribe en la base y
+   en la cookie a la vez.
+6. **Cada petición revalida** la cuenta y, si hay empresas, la empresa: desactivar una
+   cuenta corta su sesión en la siguiente petición, no cuando caduque.
+7. **Se revoca**: al cerrar sesión (fila y cookie, esta con los mismos atributos con los
+   que se emitió, `cookieBorrada`); al cambiar la contraseña, todas las demás; al
+   recuperarla, todas; al desactivar la cuenta, todas.
+8. **Las escrituras comprueban el origen** (`mismoOrigen`) además de `SameSite`.
+
+| Regla | ElevenOffice | futbot-web-app | Pulso | hipismo | Logroño |
+|---|---|---|---|---|---|
+| 1-2 · testigo y huella | JWT + `jti` con huella | JWT firmado + `sid` | **UUID en claro** | ✅ | ✅ |
+| 4 · `__Host-` | no | no | no | ✅ | no |
+| 5 · doble caducidad | acceso 15 min + refresco 24 h | 8 h fija | 8 h fija | **sólo deslizante** | fija (12 h / 30 días) |
+| 7 · revoca al cambiar la clave | ✅ | ✅ | ✅ | ✅ | no hay cambio de clave |
+| 8 · origen | ✅ (`requireSameOrigin`) | — | ✅ | — | — |
+
+«—» es que no se revisó, no que falte.
+
+---
+
+## Intentos de acceso
+
+`limite-intentos.ts` (13 pruebas) y `limite-intentos.sql` (probado contra PostgreSQL). A
+2026-09-28 había seis implementaciones; la base es la de Pulso, con tres mejoras que ya
+estaban en otros proyectos.
+
+1. **Por cuenta, siempre**: es el contador que de verdad frena la prueba de contraseñas, y
+   también la contraseña frecuente probada contra muchas cuentas desde muchas IP. Cuenta
+   lo tecleado **exista o no la cuenta**: si sólo contara las reales, el 429 diría «esta
+   cuenta existe» (hipismo).
+2. **Por IP, sólo si es atribuible** (proxy de confianza declarado). Si no, la IP que llega
+   puede ser la del balanceador y el contador, compartido por todo el mundo, niega el
+   acceso a todo el mundo.
+3. **En la base, y el fallo se registra atómicamente** (`registrar_fallo_de_acceso`). En
+   memoria, reiniciar borra los bloqueos y varias réplicas multiplican el límite.
+4. **La clave es una huella**: la tabla no guarda correos en claro (de Logroño).
+5. **Espera creciente con techo**: 1, 2, 4… minutos, hasta una hora, con el exponente
+   acotado antes de elevar. Nunca un bloqueo permanente: quien conoce el correo de otro
+   lo retrasa, no lo echa.
+6. **Sólo el 401 cuenta como fallo** (`cuentaComoFallo`, de hipismo): un 400, un 403 o el
+   propio 429 no gastan intentos del titular.
+7. **Un acierto limpia la cuenta, no la IP.** Y la administración puede **levantar un
+   bloqueo sin tocar la contraseña**, viendo antes quién está bloqueado.
+8. **Se consulta antes de verificar la contraseña**: un intento bloqueado no cuesta una
+   derivación. La respuesta es 429 con `Retry-After`, y el mensaje dice que espere, no
+   que los datos son incorrectos.
+9. **Cupo de derivaciones por proceso** (`crearCupo`), aparte: protege la CPU y la
+   memoria, y cuando se llena rechaza ESA petición, no bloquea a nadie.
+
+| Regla | ElevenOffice | futbot-web-app | Pulso | hipismo | Logroño |
+|---|---|---|---|---|---|
+| 3 · en la base | memoria, Redis opcional (AD-31) | ✅ | ✅ | ✅ (memoria sólo si la base cae) | ✅ |
+| 4 · clave como huella | — | — | **correo en claro** | — | ✅ |
+| 7 · desbloqueo por la administración | — | — | ✅ | — | no |
+| 9 · cupo con espera máxima | — | — | ✅ | — | sin espera máxima |
+
+---
+
 ## Checklist
 
 - [ ] `secretos.mjs` en verde — incluida la URL del remoto
@@ -147,5 +223,8 @@ Y cuando la cuenta no existe, `verificarEnVacio`: si «no existe» contesta en 1
 - [ ] Auditoría de dependencias en verde, o su excepción documentada como `AD-*`
 - [ ] Contraseñas con `contrasenas.ts`/`.py`: argon2id, y el trinquete `hash-legado` en la puerta
 - [ ] El login verifica en vacío cuando la cuenta no existe, y va detrás de un limitador de intentos
+- [ ] Sesión: testigo de 256 bits guardado como huella, cookie `__Host-` con `Secure`, doble caducidad (`sesiones.ts`)
+- [ ] Sesión: se revoca al cerrar, al cambiar o recuperar la contraseña y al desactivar la cuenta
+- [ ] Intentos: por cuenta en la base, clave como huella, espera con techo, sólo el 401 cuenta (`limite-intentos.ts`)
 - [ ] Segundo factor disponible donde hay datos personales o dinero
 - [ ] Un código de segundo factor **no vale dos veces** — se guarda el último período usado
