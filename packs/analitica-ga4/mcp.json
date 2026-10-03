@@ -1,0 +1,13 @@
+{
+  "_comentario": "Servidor MCP oficial de Google Analytics 4, sólo lectura. instalar.sh lo fusiona en el .mcp.json del proyecto. Credenciales por variables de entorno, nunca escritas aquí. Ver PACK.md.",
+  "mcpServers": {
+    "google-analytics": {
+      "command": "pipx",
+      "args": ["run", "--spec", "analytics-mcp==0.7.0", "analytics-mcp"],
+      "env": {
+        "GOOGLE_APPLICATION_CREDENTIALS": "${GOOGLE_APPLICATION_CREDENTIALS}",
+        "GOOGLE_PROJECT_ID": "${GOOGLE_PROJECT_ID}"
+      }
+    }
+  }
+}

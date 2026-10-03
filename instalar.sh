@@ -116,7 +116,7 @@ if [ ${#PACKS[@]} -gt 0 ]; then
     # silencio lo que se añada después, y el día que se añade nadie se acuerda de la lista.
     for x in "$KIT/packs/$p"/*; do
       [ -f "$x" ] || continue
-      case "$(basename "$x")" in PACK.md|rule.mdc) continue ;; esac   # ya colocados arriba
+      case "$(basename "$x")" in PACK.md|rule.mdc|mcp.json) continue ;; esac   # colocados aparte
       poner "$x" "agente/packs/$p/$(basename "$x")"
     done
     chmod +x "$DESTINO/agente/packs/$p"/*.mjs "$DESTINO/agente/packs/$p"/*.sh 2>/dev/null
@@ -138,6 +138,28 @@ if [ ${#PACKS[@]} -gt 0 ]; then
     done
     for pr in $(prompts_de_pack "$p"); do poner "$KIT/prompts/$pr" "agente/prompts/$pr"; done
   done
+  # Packs con servidor MCP propio (`mcp.json` en su raíz): se FUSIONAN en el .mcp.json del
+  # proyecto en vez de copiarse. No van en el del núcleo porque un MCP declarado y no usado
+  # gasta contexto en cada arranque; sólo quien elige el pack lo carga. Un servidor que ya
+  # exista con el mismo nombre no se toca salvo con --force: puede llevar ajustes locales.
+  if $MCP; then
+    for p in "${PACKS[@]}"; do
+      [ -f "$KIT/packs/$p/mcp.json" ] || continue
+      node - "$KIT/packs/$p/mcp.json" "$DESTINO/.mcp.json" "$FORCE" <<'NODE'
+const fs = require('fs');
+const [origen, destino, force] = process.argv.slice(2);
+const pack = JSON.parse(fs.readFileSync(origen, 'utf8'));
+const proyecto = fs.existsSync(destino) ? JSON.parse(fs.readFileSync(destino, 'utf8')) : { mcpServers: {} };
+proyecto.mcpServers ??= {};
+for (const [nombre, servidor] of Object.entries(pack.mcpServers ?? {})) {
+  if (proyecto.mcpServers[nombre] && force !== 'true') { console.log(`  = .mcp.json ya declara «${nombre}»: no se toca`); continue; }
+  proyecto.mcpServers[nombre] = servidor;
+  console.log(`  + .mcp.json ← servidor MCP «${nombre}»`);
+}
+fs.writeFileSync(destino, JSON.stringify(proyecto, null, 2) + '\n');
+NODE
+    done
+  fi
 else
   echo "PACKS: ninguno.  Elige los que apliquen con:  $0 --packs"
 fi

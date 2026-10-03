@@ -170,6 +170,7 @@ que alguien añade un paso a la CI.
 
 | Pack | Se activa si |
 |---|---|
+| `analitica-ga4` | el producto tiene una propiedad de Google Analytics 4 y el agente debe responder con datos reales — trae el MCP oficial, en sólo lectura |
 | `api-backend` | hay una API, servicio HTTP, RPC o worker que atiende peticiones |
 | `app-ia` | el producto **es** una aplicación de IA — el modelo está en el camino |
 | `auditoria-informes` | el proyecto produce informes para alguien que no es el equipo — |

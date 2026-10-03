@@ -1,0 +1,13 @@
+---
+description: Instrumentación y consulta de Google Analytics 4
+globs: ["**/analytics*","**/analitica*","**/gtag*","**/ga4*","**/*tracking*","**/eventos-analitica*"]
+alwaysApply: false
+---
+- Para saber qué pasa en producción, se pregunta a GA4 con el MCP `google-analytics`
+  (sólo lectura), empezando por `get_account_summaries`. No se suponen cifras.
+- Toda cifra va con su propiedad, su rango de fechas y en la zona horaria de la propiedad.
+- Un evento nuevo se nombra en snake_case, con nombres y parámetros documentados en
+  knowledge/wiki/ antes de enviarlo: GA4 no deja renombrar lo ya recogido.
+- Nunca se envían a GA4 datos personales (correo, nombre, documento, teléfono) ni
+  identificadores internos que permitan reidentificar a alguien.
+- Las credenciales de Google no entran en el repositorio; .mcp.json sólo con ${VARIABLES}.

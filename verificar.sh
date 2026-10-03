@@ -86,6 +86,26 @@ for f in ['nucleo/hooks/settings.json','nucleo/mcp/.mcp.json']:
     except Exception as e: print('  ✗ %s: %s' % (f, e)); sys.exit(1)
 " || mal "JSON inválido en nucleo/"
 
+paso "estructura · el MCP de un pack es JSON, va fijado y no lleva credenciales"
+# instalar.sh fusiona `packs/<p>/mcp.json` en el .mcp.json del proyecto: si está mal, rompe
+# el de cada proyecto que elija el pack. Y como ese fichero se versiona, una ruta o un
+# secreto escrito ahí se publica con el repositorio.
+python3 -c "
+import glob,json,re,sys
+mal=False
+for f in glob.glob('packs/*/mcp.json'):
+    try: d=json.load(open(f))
+    except Exception as e: print('  ✗ %s: %s' % (f, e)); mal=True; continue
+    srv=d.get('mcpServers')
+    if not isinstance(srv,dict) or not srv: print('  ✗ %s: sin mcpServers' % f); mal=True; continue
+    for n,c in srv.items():
+        args=' '.join(c.get('args',[]))
+        if not re.search(r'(==|@)\d', args): print('  ✗ %s: «%s» no fija versión' % (f,n)); mal=True
+        for k,v in (c.get('env') or {}).items():
+            if not re.fullmatch(r'\\$\\{[A-Z0-9_]+(:-[^}]*)?\\}', str(v)): print('  ✗ %s: env %s no es \${VARIABLE}' % (f,k)); mal=True
+sys.exit(1 if mal else 0)
+" || mal "MCP de pack inválido"
+
 paso "contenido · ningún ejemplo se hace pasar por propio"
 node tools/plantillas.mjs . || mal "hay ejemplos rellenados sin advertir"
 
