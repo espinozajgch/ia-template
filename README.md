@@ -93,6 +93,7 @@ Lo único que escribes son las skills, cuando la ocasión encaja:
 | `/informe` | el entregable lo abre alguien que no programa | un README donde hacía falta un documento |
 | `/estimar` | presupuestar o dimensionar | una cifra dicha a ojo |
 | `/blueprint` | al empezar, o si el proyecto cambia de rumbo | — |
+| `/flujo-web-api` | al optimizar productores, APIs o webs conectadas | evitar procesamiento raw, payloads y sondeos sin límite |
 
 **Sólo Claude Code y Antigravity las encuentran solas.** En Cursor, Copilot, Windsurf y Codex
 son ficheros de texto normales y funcionan igual, pero hay que señalarlas:
@@ -131,7 +132,7 @@ AGENTS.md                     fuente ÚNICA de contexto. Menos de 250 líneas, o
 CLAUDE.md · GEMINI.md · .windsurfrules · .cursor/ · .github/ · .agents/
                               punteros de 10 líneas. NO se editan
 .claude/skills/ · .agents/skills/
-                              las 8 skills, mismo contenido para las dos herramientas
+                              las 9 skills, mismo contenido para las dos herramientas
 .claude/settings.json         hooks: el checklist de pre-commit y pre-push lo inyecta el
                               harness — el agente no puede olvidarse de un hook
 .mcp.json                     grafo de código para descubrimiento
@@ -143,7 +144,7 @@ agente/tools/                 8 verificadores ejecutables, probados contra repos
                               esquema · cobertura · cosechar
 ```
 
-### Las 8 skills
+### Las 9 skills
 
 | Skill | Cuándo | De dónde salió |
 |---|---|---|
@@ -155,6 +156,7 @@ agente/tools/                 8 verificadores ejecutables, probados contra repos
 | `informe` | el entregable lo lee alguien de fuera | ppsport · futbot · cowork |
 | `estimar` | presupuestar, valorar, dimensionar | `staff-estimate` |
 | `preproduccion` | **antes de sacar algo a producción**, o para saber qué le falta a lo que ya está fuera | el checklist de 13 puertas |
+| `flujo-web-api` | auditar el flujo productor → API → web y medir su rendimiento | Futbot: optimización multirrepositorio 2026-10-05 |
 
 `preproduccion` recorre las trece puertas de
 [`nucleo/knowledge/checklist-preproduccion.md`](nucleo/knowledge/checklist-preproduccion.md)

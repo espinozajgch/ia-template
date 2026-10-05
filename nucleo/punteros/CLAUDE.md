@@ -6,7 +6,7 @@ Este archivo solo añade lo que es específico de Claude Code.
 ## Específico de Claude Code
 
 - **Skills disponibles** (`.claude/skills/`): `blueprint` · `tarea` · `avanzar` ·
-  `verificar` · `auditar` · `preproduccion` · `informe` · `estimar`.
+  `verificar` · `auditar` · `preproduccion` · `informe` · `estimar` · `flujo-web-api`.
   Ante una petición nueva → `tarea`. Para ejecutar sin parar a cada paso → `avanzar`.
   Antes de cualquier commit que toque código → `verificar`. Lo propio de este proyecto
   para cada una, si lo hay, está en `knowledge/wiki/skills/<skill>.md`.

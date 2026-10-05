@@ -123,8 +123,8 @@ tabla `X` desde el frontend · no llamar a la API `Y` más de N veces por minuto
 
 ### Las skills, y cómo las encuentra cada agente
 
-Ocho procedimientos escritos: `blueprint` · `tarea` · `avanzar` · `verificar` · `auditar` ·
-`preproduccion` · `informe` · `estimar`. Ante una petición nueva → `tarea`. Antes de sacar
+Nueve procedimientos escritos: `blueprint` · `tarea` · `avanzar` · `verificar` · `auditar` ·
+`preproduccion` · `informe` · `estimar` · `flujo-web-api`. Ante una petición nueva → `tarea`. Antes de sacar
 algo a producción → `preproduccion`. Antes de cualquier commit que toque código →
 `verificar`.
 
