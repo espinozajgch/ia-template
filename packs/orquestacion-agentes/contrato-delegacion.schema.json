@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ia-template.local/contrato-delegacion.schema.json",
+  "title": "Contrato de una subtarea delegada",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["objective", "allowedPaths", "forbiddenPaths", "contextBundle", "evidenceRequired", "verification", "mayEdit"],
+  "properties": {
+    "objective": { "type": "string", "minLength": 1 },
+    "allowedPaths": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "forbiddenPaths": { "type": "array", "items": { "type": "string" } },
+    "contextBundle": { "type": "string", "minLength": 1 },
+    "evidenceRequired": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "verification": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "outputSchema": { "type": "string" },
+    "mayEdit": { "type": "boolean" }
+  }
+}

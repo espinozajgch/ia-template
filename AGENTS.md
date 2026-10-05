@@ -19,7 +19,7 @@ sí mismo.**
 
 ```text
 nucleo/       lo que se instala SIEMPRE — plantillas, skills, protocolo, hooks, herramientas
-packs/        23 packs por nicho (2026-08-27); se instalan solo los que aplican
+packs/        25 packs por nicho; se instalan solo los que aplican
 tools/        herramientas del kit que NO se instalan en nadie
 prompts/      una versión canónica de cada prompt especializado
 prompts/_dominio/   prompts de un dominio concreto — NUNCA se instalan por defecto

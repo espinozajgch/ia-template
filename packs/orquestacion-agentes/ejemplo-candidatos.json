@@ -1,0 +1,23 @@
+{
+  "request": "Revisa el impacto de cambiar autenticar y consulta la documentación actual del SDK",
+  "tokenBudget": 12000,
+  "candidates": [
+    {
+      "id": "arquitectura-auth",
+      "kind": "structure",
+      "source": "codebase-memory:get_architecture",
+      "text": "HTTP → middleware de autenticación → servicio de sesiones → base de datos",
+      "score": 1,
+      "reason": "sitúa la frontera que cambia"
+    },
+    {
+      "id": "simbolo-auth",
+      "kind": "code",
+      "source": "src/auth.ts:20",
+      "text": "export async function autenticar(token) { /* fragmento */ }",
+      "score": 0.95,
+      "reason": "símbolo objetivo"
+    }
+  ],
+  "coverageGaps": ["falta consultar la versión instalada del SDK antes de pedir documentación"]
+}

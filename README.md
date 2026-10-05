@@ -25,7 +25,7 @@ copias que había que editar a la vez, y nunca se editaban a la vez.
 hípico acabó con el prompt de tácticas de fútbol; una app clínica, con el kit de AWS. Nadie
 los leía, pero el agente sí — y cobraban su contexto.
 
-> **Ahora:** núcleo ligero, siempre. Y **23 packs** que se instalan solo si aplican.
+> **Ahora:** núcleo ligero, siempre. Y **25 packs** que se instalan solo si aplican.
 
 **3 · Las mejoras de cada proyecto no volvían al template.** El mismo archivo tenía 93, 106,
 351, 360, 416 y 552 líneas en seis proyectos: seis linajes divergentes de la misma idea.
@@ -95,8 +95,9 @@ Lo único que escribes son las skills, cuando la ocasión encaja:
 | `/blueprint` | al empezar, o si el proyecto cambia de rumbo | — |
 | `/flujo-web-api` | al optimizar productores, APIs o webs conectadas | evitar procesamiento raw, payloads y sondeos sin límite |
 
-**Sólo Claude Code y Antigravity las encuentran solas.** En Cursor, Copilot, Windsurf y Codex
-son ficheros de texto normales y funcionan igual, pero hay que señalarlas:
+**Claude Code, Antigravity y Codex las encuentran solos.** Codex descubre las del repositorio
+en `.agents/skills/` y carga primero sus metadatos; Cursor, Copilot y Windsurf pueden usarlas
+como ficheros de procedimiento, pero hay que señalarlas:
 *«Lee `.claude/skills/preproduccion/SKILL.md` y sigue ese procedimiento.»*
 
 ### Y lo que trabaja sin que lo pidas
@@ -168,7 +169,7 @@ lista que antes vivía repartida entre la cabeza de cada uno y cinco prompts dis
 porque no traen listas de comandos, traen **cómo encontrarlos** — y así no caducan el día
 que alguien añade un paso a la CI.
 
-### Los 23 packs
+### Los 25 packs
 
 | Pack | Se activa si |
 |---|---|
@@ -192,6 +193,7 @@ que alguien añade un paso a la CI.
 | `notificaciones` | el sistema manda algo hacia fuera — correo, notificaciones push, |
 | `observabilidad` | el sistema corre en algún sitio donde no puedes ponerle un depurador — |
 | `offline-first` | la aplicación se usa donde la red falla — trabajo de campo, sótanos, |
+| `orquestacion-agentes` | agentes de programación necesitan contexto mínimo, routing o delegación controlada |
 | `pwa-movil` | hay aplicación instalable, service worker, o uso móvil real y frecuente |
 | `saas-multitenant` | varios clientes u organizaciones comparten la misma instancia |
 | `seguridad` |  |

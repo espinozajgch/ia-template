@@ -133,16 +133,16 @@ referencia, sus perfiles de puerta, su frontera— no se escribe dentro de la sk
 `knowledge/wiki/skills/<skill>.md`, que la skill lee al empezar. Así una mejora del kit llega
 a todos sin pisar nada, y una skill no se bifurca en silencio.
 
-**Sólo dos agentes las descubren solos.** Claude Code lee `.claude/skills/` y
-Antigravity/Gemini lee `.agents/skills/`; los dos directorios llevan el mismo contenido.
+**Claude Code, Antigravity/Gemini y Codex las descubren solos.** Claude Code lee
+`.claude/skills/`; Antigravity y Codex leen `.agents/skills/`. Los dos directorios llevan
+el mismo contenido.
 
-**Cursor, Copilot, Windsurf y Codex no las ven.** No es que no funcionen: son ficheros
-Markdown sin nada específico de ningún agente, así que sirven igual — pero **hay que
-señalarlas a mano**:
+**Cursor, Copilot y Windsurf no las descubren desde esas rutas.** Son ficheros Markdown sin
+nada específico de ningún agente, así que sirven igual — pero **hay que señalarlas a mano**:
 
 > Lee `.claude/skills/preproduccion/SKILL.md` y sigue ese procedimiento.
 
-Si trabajas con uno de esos cuatro y la tarea encaja con una skill, ábrela y síguela en vez
+Si trabajas con uno de esos tres y la tarea encaja con una skill, ábrela y síguela en vez
 de improvisar el procedimiento. Están escritas precisamente para no volver a decidir cómo se
 hace cada vez.
 

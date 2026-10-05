@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "tokenBudget": 12000,
+  "charsPerToken": 4,
+  "minimumScore": 0.25,
+  "kindShares": {
+    "structure": 0.10,
+    "code": 0.45,
+    "impact": 0.15,
+    "memory": 0.10,
+    "external_docs": 0.10,
+    "infrastructure": 0.05,
+    "reserve": 0.05
+  },
+  "layaConfidenceThreshold": 0.85,
+  "sensitivePatterns": [
+    "-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----",
+    "(?:api[_-]?key|token|password|secret)\\s*[:=]\\s*[^$<{\\s][^\\s]{7,}"
+  ]
+}

@@ -27,7 +27,7 @@ paso() { printf '\n─── %s\n' "$1"; }
 mal()  { echo "  ✗ $1"; fallos=$((fallos + 1)); }
 
 paso "sintaxis · las herramientas del kit compilan"
-for f in tools/*.mjs nucleo/tools/*.mjs packs/*/*.mjs; do
+for f in tools/*.mjs nucleo/tools/*.mjs packs/*/*.mjs packs/*/*/*.mjs; do
   [ -f "$f" ] || continue
   node --check "$f" 2>/dev/null || mal "no compila: $f"
 done
@@ -51,10 +51,13 @@ done
 echo "  ✓ $(ls -d packs/*/ | wc -l | tr -d ' ') packs"
 
 paso "estructura · las skills llevan su frontmatter"
-for f in nucleo/skills/*/SKILL.md; do
+for f in nucleo/skills/*/SKILL.md packs/*/skills/*/SKILL.md; do
+  [ -f "$f" ] || continue
   sed -n '2,4p' "$f" | grep -q '^name:' || mal "sin «name:» en $f"
 done
-echo "  ✓ $(ls -d nucleo/skills/*/ | wc -l | tr -d ' ') skills"
+skills_nucleo=$(ls -d nucleo/skills/*/ | wc -l | tr -d ' ')
+skills_pack=$(find packs -path '*/skills/*/SKILL.md' -type f | wc -l | tr -d ' ')
+echo "  ✓ $skills_nucleo skills de núcleo · $skills_pack de packs"
 
 # Una skill vive en `nucleo/skills/X/` aquí y en `.claude/skills/X/` una vez instalada. Un
 # enlace relativo que SALGA de la carpeta de skills no puede ser correcto en las dos
@@ -68,7 +71,8 @@ echo "  ✓ $(ls -d nucleo/skills/*/ | wc -l | tr -d ' ') skills"
 # proyectos donde ya se había instalado. Nada avisaba: un enlace roto en Markdown no falla,
 # simplemente no lleva a ninguna parte.
 paso "estructura · las skills no enlazan fuera de su carpeta"
-for f in nucleo/skills/*/SKILL.md; do
+for f in nucleo/skills/*/SKILL.md packs/*/skills/*/SKILL.md; do
+  [ -f "$f" ] || continue
   fuera=$(grep -oE '\]\(\.\./\.\./[^)]+\)' "$f" || true)
   [ -z "$fuera" ] || mal "$f enlaza fuera de skills/ y se romperá al instalar: $fuera"
   # Y los que suben un solo nivel tienen que existir de verdad.
@@ -78,10 +82,16 @@ for f in nucleo/skills/*/SKILL.md; do
 done
 echo "  ✓ enlaces de skills"
 
+paso "comportamiento · el pipeline de contexto y routing decide de forma reproducible"
+node --test packs/orquestacion-agentes/tests/*.test.mjs || mal "fallan las pruebas de orquestación"
+node packs/orquestacion-agentes/tools/benchmark.mjs \
+  packs/orquestacion-agentes/evaluacion/casos.ejemplo.jsonl >/dev/null || mal "el benchmark ilustrativo no coincide"
+
 paso "estructura · el JSON que se instala es JSON"
 python3 -c "
-import json,sys
-for f in ['nucleo/hooks/settings.json','nucleo/mcp/.mcp.json']:
+import glob,json,sys
+files=['nucleo/hooks/settings.json','nucleo/mcp/.mcp.json'] + glob.glob('packs/**/*.json', recursive=True)
+for f in files:
     try: json.load(open(f))
     except Exception as e: print('  ✗ %s: %s' % (f, e)); sys.exit(1)
 " || mal "JSON inválido en nucleo/"
@@ -136,8 +146,11 @@ node tools/plantillas.mjs . || mal "hay ejemplos rellenados sin advertir"
 paso "instalación · el kit instalado no tiene enlaces rotos"
 tmp_inst=$(mktemp -d)
 (cd "$tmp_inst" && git init -q)
-if ./instalar.sh "$tmp_inst" frontend-web api-backend seguridad >/dev/null 2>&1; then
+if ./instalar.sh "$tmp_inst" frontend-web api-backend seguridad orquestacion-agentes >/dev/null 2>&1; then
   node tools/enlaces.mjs "$tmp_inst" || mal "enlaces rotos en el proyecto instalado"
+  [ -f "$tmp_inst/.agents/skills/preparar-contexto/SKILL.md" ] || mal "Codex no recibe preparar-contexto"
+  [ -f "$tmp_inst/.claude/skills/preparar-contexto/SKILL.md" ] || mal "Claude no recibe preparar-contexto"
+  grep -q '"context7"' "$tmp_inst/.mcp.json" || mal "el MCP Context7 no se fusionó"
 else
   mal "instalar.sh falló sobre un proyecto limpio"
 fi

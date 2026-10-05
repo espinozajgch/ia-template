@@ -122,6 +122,17 @@ if [ ${#PACKS[@]} -gt 0 ]; then
     chmod +x "$DESTINO/agente/packs/$p"/*.mjs "$DESTINO/agente/packs/$p"/*.sh 2>/dev/null
     [ -d "$KIT/packs/$p/activos" ] && for a in "$KIT/packs/$p/activos"/*; do poner "$a" "knowledge/wiki/$(basename "$a")"; done
     [ -d "$KIT/packs/$p/hojas"   ] && for h in "$KIT/packs/$p/hojas"/*;   do poner "$h" "agente/sistema/$(basename "$h")"; done
+    # Un pack puede aportar una skill que solo tiene sentido cuando ese pack está activo.
+    # Se instala en las dos rutas de descubrimiento, igual que las skills del núcleo. Así
+    # `orquestacion-agentes` no engorda el contexto de proyectos que no lo eligieron.
+    if [ -d "$KIT/packs/$p/skills" ]; then
+      for s in "$KIT/packs/$p/skills"/*/; do
+        [ -f "$s/SKILL.md" ] || continue
+        n=$(basename "$s")
+        poner "$s/SKILL.md" ".claude/skills/$n/SKILL.md"
+        poner "$s/SKILL.md" ".agents/skills/$n/SKILL.md"
+      done
+    fi
     [ -d "$KIT/packs/$p/detectores" ] && { for x in "$KIT/packs/$p/detectores"/*; do poner "$x" "agente/packs/$p/detectores/$(basename "$x")"; done; chmod +x "$DESTINO/agente/packs/$p/detectores"/*.sh 2>/dev/null; }
     # plantillas listas para copiar: e2e/, aislamiento/, despliegue/
     # Todas las subcarpetas del pack, descubiertas: una lista explícita deja fuera en
@@ -129,7 +140,7 @@ if [ ${#PACKS[@]} -gt 0 ]; then
     for subdir in "$KIT/packs/$p"/*/; do
       [ -d "$subdir" ] || continue
       sub=$(basename "$subdir")
-      [ "$sub" = "activos" ] || [ "$sub" = "hojas" ] && continue
+      if [ "$sub" = "activos" ] || [ "$sub" = "hojas" ] || [ "$sub" = "skills" ]; then continue; fi
       [ -d "$KIT/packs/$p/$sub" ] || continue
       for x in "$KIT/packs/$p/$sub"/*; do
         if [ -d "$x" ]; then for y in "$x"/*; do poner "$y" "agente/packs/$p/$sub/$(basename "$x")/$(basename "$y")"; done
@@ -167,6 +178,9 @@ fi
 # .gitignore mínimo del kit
 if ! grep -q '^\.ratchets/' "$DESTINO/.gitignore" 2>/dev/null; then
   printf '\n# kit ia-template\n.ratchets/*.lista\n' >> "$DESTINO/.gitignore"; echo "  ~ .gitignore (añadido .ratchets/*.lista)"
+fi
+if ! grep -q '^\.contexto/' "$DESTINO/.gitignore" 2>/dev/null; then
+  printf '.contexto/*.json\n' >> "$DESTINO/.gitignore"; echo "  ~ .gitignore (añadido .contexto/*.json)"
 fi
 
 echo; echo "──────────────────────────────────────────────"

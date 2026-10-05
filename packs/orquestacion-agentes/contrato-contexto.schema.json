@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ia-template.local/contrato-contexto.schema.json",
+  "title": "Bundle de contexto mínimo",
+  "type": "object",
+  "required": ["version", "request", "selectedContext", "excludedContext", "budget", "coverageGaps"],
+  "properties": {
+    "version": { "const": 1 },
+    "request": { "type": "string", "minLength": 1 },
+    "selectedContext": { "type": "array", "items": { "$ref": "#/$defs/contextItem" } },
+    "excludedContext": { "type": "array", "items": { "$ref": "#/$defs/excludedItem" } },
+    "budget": {
+      "type": "object",
+      "required": ["limit", "used", "remaining"],
+      "properties": {
+        "limit": { "type": "integer", "minimum": 1 },
+        "used": { "type": "integer", "minimum": 0 },
+        "remaining": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "coverageGaps": { "type": "array", "items": { "type": "string" } },
+    "routing": { "type": "object" }
+  },
+  "$defs": {
+    "contextItem": {
+      "type": "object",
+      "required": ["id", "kind", "source", "text", "tokens", "reason"],
+      "properties": {
+        "id": { "type": "string" },
+        "kind": { "type": "string" },
+        "source": { "type": "string" },
+        "text": { "type": "string" },
+        "tokens": { "type": "integer" },
+        "reason": { "type": "string" }
+      }
+    },
+    "excludedItem": {
+      "type": "object",
+      "required": ["id", "reason"],
+      "properties": {
+        "id": { "type": "string" },
+        "reason": { "type": "string" }
+      }
+    }
+  }
+}

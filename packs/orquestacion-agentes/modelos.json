@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "profiles": {
+    "fast": { "model": "CONFIGURAR_MODELO_RAPIDO", "reasoning": "low" },
+    "balanced": { "model": "CONFIGURAR_MODELO_EQUILIBRADO", "reasoning": "medium" },
+    "frontier": { "model": "CONFIGURAR_MODELO_FRONTERA", "reasoning": "high" }
+  },
+  "rules": [
+    { "id": "R-CRITICAL", "profile": "frontier", "when": { "risk": "high" } },
+    { "id": "R-DENSE", "profile": "frontier", "when": { "minimumDifficulty": 4 } },
+    { "id": "R-SIMPLE", "profile": "fast", "when": { "maximumDifficulty": 1, "risk": "low" } },
+    { "id": "R-DEFAULT", "profile": "balanced", "when": {} }
+  ]
+}

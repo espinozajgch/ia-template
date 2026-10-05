@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "sources": {
+    "codebaseMemory": {
+      "required": true,
+      "kinds": ["structure", "code", "impact"],
+      "order": ["architecture", "search", "trace", "snippet"]
+    },
+    "projectMemory": {
+      "required": false,
+      "kind": "memory",
+      "authority": "knowledge/wiki",
+      "writes": "proposal-only"
+    },
+    "context7": {
+      "required": false,
+      "kind": "external_docs",
+      "activateWhen": "versioned external library or API documentation is needed"
+    },
+    "contextBuilder": {
+      "required": false,
+      "kind": "infrastructure",
+      "activateWhen": "incident, observability, deployment or production infrastructure"
+    },
+    "laya": {
+      "required": false,
+      "role": "classifier",
+      "fallback": "local-rules"
+    }
+  }
+}

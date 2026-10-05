@@ -1,0 +1,11 @@
+---
+description: Compila contexto mínimo antes de delegar o leer código en tareas no triviales
+globs: "**/*"
+alwaysApply: false
+---
+
+Para tareas que cruzan módulos, requieren documentación externa o justifican delegación,
+usa primero el pipeline de `agente/packs/orquestacion-agentes/`. No entregues al modelo
+archivos completos si símbolos o fragmentos bastan. Toda ampliación del bundle debe declarar
+la incertidumbre que resuelve y el presupuesto adicional.
+
