@@ -80,10 +80,15 @@ poner "$KIT/nucleo/punteros/.github/copilot-instructions.md" ".github/copilot-in
 poner "$KIT/nucleo/punteros/.agents/rules/project.md"    ".agents/rules/project.md"
 
 echo "SKILLS  (mismo contenido para Claude Code y para Antigravity)"
+# La carpeta entera, no solo SKILL.md: una skill con scripts propios (ver el pack
+# instagram-marketing) los necesita en el destino, no solo la descripción.
 for s in "$KIT"/nucleo/skills/*/; do n=$(basename "$s")
-  poner "$s/SKILL.md" ".claude/skills/$n/SKILL.md"
-  poner "$s/SKILL.md" ".agents/skills/$n/SKILL.md"
+  poner "$s" ".claude/skills/$n"
+  poner "$s" ".agents/skills/$n"
 done
+
+echo "SUBAGENTES  (solo Claude Code: Cursor/Copilot/Windsurf no tienen un mecanismo equivalente)"
+for a in "$KIT"/nucleo/agentes/*.md; do poner "$a" ".claude/agents/$(basename "$a")"; done
 
 echo "FUENTE DE VERDAD  (plantillas — rellenar con la skill 'blueprint')"
 for k in "$KIT"/nucleo/knowledge/*.md; do poner "$k" "knowledge/wiki/$(basename "$k")"; done
@@ -129,10 +134,18 @@ if [ ${#PACKS[@]} -gt 0 ]; then
       for s in "$KIT/packs/$p/skills"/*/; do
         [ -f "$s/SKILL.md" ] || continue
         n=$(basename "$s")
-        poner "$s/SKILL.md" ".claude/skills/$n/SKILL.md"
-        poner "$s/SKILL.md" ".agents/skills/$n/SKILL.md"
+        # La carpeta entera: una skill con scripts propios (ver instagram-marketing)
+        # los necesita en el destino, no solo SKILL.md.
+        poner "$s" ".claude/skills/$n"
+        poner "$s" ".agents/skills/$n"
+        chmod +x "$DESTINO/.claude/skills/$n"/*.py "$DESTINO/.agents/skills/$n"/*.py 2>/dev/null
       done
     fi
+    # Subagentes propios del pack (solo Claude Code: ver nucleo/agentes). Un pack de
+    # marketing no debería cargar de roles un proyecto de backend que no lo eligió.
+    [ -d "$KIT/packs/$p/agentes" ] && for a in "$KIT/packs/$p/agentes"/*.md; do
+      poner "$a" ".claude/agents/$(basename "$a")"
+    done
     [ -d "$KIT/packs/$p/detectores" ] && { for x in "$KIT/packs/$p/detectores"/*; do poner "$x" "agente/packs/$p/detectores/$(basename "$x")"; done; chmod +x "$DESTINO/agente/packs/$p/detectores"/*.sh 2>/dev/null; }
     # plantillas listas para copiar: e2e/, aislamiento/, despliegue/
     # Todas las subcarpetas del pack, descubiertas: una lista explícita deja fuera en
@@ -140,7 +153,7 @@ if [ ${#PACKS[@]} -gt 0 ]; then
     for subdir in "$KIT/packs/$p"/*/; do
       [ -d "$subdir" ] || continue
       sub=$(basename "$subdir")
-      if [ "$sub" = "activos" ] || [ "$sub" = "hojas" ] || [ "$sub" = "skills" ]; then continue; fi
+      if [ "$sub" = "activos" ] || [ "$sub" = "hojas" ] || [ "$sub" = "skills" ] || [ "$sub" = "agentes" ]; then continue; fi
       [ -d "$KIT/packs/$p/$sub" ] || continue
       for x in "$KIT/packs/$p/$sub"/*; do
         if [ -d "$x" ]; then for y in "$x"/*; do poner "$y" "agente/packs/$p/$sub/$(basename "$x")/$(basename "$y")"; done

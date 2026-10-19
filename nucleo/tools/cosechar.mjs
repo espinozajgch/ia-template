@@ -19,7 +19,7 @@
  * distintos. Con uno, va a un pack; si es de un dominio concreto, ni eso.
  */
 import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs';
-import { join, relative, basename, extname } from 'node:path';
+import { join, relative, basename, dirname, extname } from 'node:path';
 import { homedir } from 'node:os';
 import { createHash } from 'node:crypto';
 
@@ -50,10 +50,9 @@ const listar = (d, filtro = () => true, acc = []) => {
 // Solo las piezas que el kit sabe versionar. Comparar el código de la aplicación no tiene
 // sentido: es del proyecto.
 const ZONAS = [
-  { nombre: 'skills',        local: '.claude/skills',  kit: 'nucleo/skills',    filtro: p => basename(p) === 'SKILL.md' },
   { nombre: 'protocolo',     local: 'agente/protocolo', kit: 'nucleo/protocolo', filtro: p => extname(p) === '.md' },
   { nombre: 'herramientas',  local: 'agente/tools',    kit: 'nucleo/tools',     filtro: p => /\.(mjs|sh)$/.test(p) },
-  { nombre: 'packs',         local: 'agente/packs',    kit: 'packs',            filtro: p => /\.(md|mdc|sh|mjs|ts|sql|yml)$/.test(p) },
+  { nombre: 'packs',         local: 'agente/packs',    kit: 'packs',            filtro: p => /\.(md|mdc|sh|mjs|ts|sql|yml|py|json)$/.test(p) },
   { nombre: 'prompts',       local: 'agente/prompts',  kit: 'prompts',          filtro: p => extname(p) === '.md' },
   { nombre: 'plantillas CI', local: 'agente/ci',       kit: 'nucleo/ci',        filtro: p => /\.(yml|md)$/.test(p) },
 ];
@@ -76,6 +75,59 @@ for (const z of ZONAS) {
   }
   for (const [rel, p] of enKit) if (!enLocal.has(rel)) bajar.push({ zona: z.nombre, rel, ruta: p });
 }
+
+// ── skills, aparte ────────────────────────────────────────────────────────────
+// No son un directorio-a-directorio simple, por dos motivos que rompían la comparación
+// genérica de arriba:
+//   1. En el proyecto viven en DOS sitios que deberían ser iguales —.claude/skills y
+//      .agents/skills— y pueden haberse desincronizado entre sí sin que nada lo avise.
+//   2. En el kit viven en DOS sitios con significado DISTINTO: nucleo/skills (se instala
+//      siempre) y packs/*/skills (solo si se elige ese pack). Comparar solo contra
+//      nucleo/skills producía un falso «no existe en el kit» para una skill que ya vivía,
+//      correctamente, dentro de un pack — pasó con `preparar-contexto`, que ya está en
+//      `packs/orquestacion-agentes/skills/` y el barrido la marcaba como nueva.
+const skillsDe = (dir) => {
+  const m = new Map();
+  for (const p of listar(dir, x => basename(x) === 'SKILL.md')) {
+    const nombre = basename(dirname(p));
+    if (!m.has(nombre)) m.set(nombre, p);
+  }
+  return m;
+};
+const localClaude = skillsDe('.claude/skills');
+const localAgents = skillsDe('.agents/skills');
+const skillsLocal = new Map([...localAgents, ...localClaude]); // .claude gana si hay las dos
+
+const skillsDesincronizadas = [];
+for (const [nombre, pc] of localClaude) {
+  const pa = localAgents.get(nombre);
+  if (pa && sello(leer(pc)) !== sello(leer(pa))) skillsDesincronizadas.push({ nombre, claude: pc, agents: pa });
+}
+for (const nombre of localAgents.keys()) if (!localClaude.has(nombre))
+  skillsDesincronizadas.push({ nombre, claude: null, agents: localAgents.get(nombre), motivo: 'solo existe en .agents/skills' });
+for (const nombre of localClaude.keys()) if (!localAgents.has(nombre))
+  skillsDesincronizadas.push({ nombre, claude: localClaude.get(nombre), agents: null, motivo: 'solo existe en .claude/skills' });
+
+const skillsKit = new Map();
+for (const p of listar(join(KIT, 'nucleo/skills'), x => basename(x) === 'SKILL.md'))
+  skillsKit.set(basename(dirname(p)), { ruta: p, de: 'nucleo' });
+for (const p of listar(join(KIT, 'packs'), x => basename(x) === 'SKILL.md')) {
+  const nombre = basename(dirname(p));
+  if (!skillsKit.has(nombre)) skillsKit.set(nombre, { ruta: p, de: `pack ${basename(dirname(dirname(dirname(p))))}` });
+}
+
+for (const [nombre, p] of skillsLocal) {
+  const enKit = skillsKit.get(nombre);
+  if (!enKit) { subir.push({ zona: 'skills', rel: `${nombre}/SKILL.md`, ruta: p, motivo: 'no existe en el kit (ni en núcleo ni en ningún pack)' }); continue; }
+  const a = leer(p), b = leer(enKit.ruta);
+  if (a && b && sello(a) !== sello(b)) {
+    const la = a.split('\n').length, lb = b.split('\n').length;
+    divergentes.push({ zona: 'skills', rel: `${nombre}/SKILL.md (${enKit.de})`, ruta: p, lineasProyecto: la, lineasKit: lb,
+                       direccion: la > lb ? 'el proyecto creció' : la < lb ? 'el kit creció' : 'mismo tamaño, distinto contenido' });
+  }
+}
+for (const [nombre, info] of skillsKit) if (!skillsLocal.has(nombre))
+  bajar.push({ zona: 'skills', rel: `${nombre}/SKILL.md (${info.de})`, ruta: info.ruta });
 
 // ── señales propias del proyecto que el kit no tiene ──────────────────────────
 // Lo más valioso a cosechar no son ficheros del kit modificados, sino cosas que el
@@ -108,7 +160,7 @@ const ratchets = existsSync('.ratchets')
   ? readdirSync('.ratchets').filter(f => !f.includes('.') || f.endsWith('.json')).map(f => f.replace(/\.json$/, ''))
   : [];
 
-if (json) { console.log(JSON.stringify({ kit: KIT, subir, bajar, divergentes, inventos, ratchets }, null, 2)); process.exit(0); }
+if (json) { console.log(JSON.stringify({ kit: KIT, subir, bajar, divergentes, inventos, ratchets, skillsDesincronizadas }, null, 2)); process.exit(0); }
 
 const linea = '─'.repeat(64);
 console.log(`Kit: ${KIT}\n`);
@@ -136,7 +188,12 @@ if (accion === 'todo' || accion === 'subir') {
     console.log('');
   }
   if (ratchets.length) console.log(`  Ratchets fijados aquí: ${ratchets.join(', ')}\n`);
-  if (!inventos.length && !divergentes.length && !subir.length) console.log('  Nada que aportar: este proyecto usa el kit sin desviarse.\n');
+  if (skillsDesincronizadas.length) {
+    console.log(`  Skills desincronizadas entre .claude/skills y .agents/skills (${skillsDesincronizadas.length}) — deberían ser iguales:\n`);
+    for (const s of skillsDesincronizadas) console.log(`    ${s.nombre}${s.motivo ? `  (${s.motivo})` : ''}`);
+    console.log('');
+  }
+  if (!inventos.length && !divergentes.length && !subir.length && !skillsDesincronizadas.length) console.log('  Nada que aportar: este proyecto usa el kit sin desviarse.\n');
 
   console.log(`  LA REGLA: una pieza entra en el NÚCLEO cuando ha sido útil en DOS proyectos
   distintos. Con uno solo, va a un pack. Si es de un dominio concreto, a prompts/_dominio

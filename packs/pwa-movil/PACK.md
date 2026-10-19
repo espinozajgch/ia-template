@@ -41,13 +41,20 @@ con un umbral que la puerta comprueba. Sin número, el rendimiento se degrada so
 
 ---
 
-## Las dos herramientas del pack
+## Las herramientas del pack
 
 ```bash
 node agente/packs/pwa-movil/presupuesto.mjs paquete   # peso, sin navegador, instantáneo
 node agente/packs/pwa-movil/presupuesto.mjs fijar     # fija el presupuesto con lo medido
 node agente/packs/pwa-movil/presupuesto.mjs medir     # compara, y rompe la puerta si se pasa
+
+node agente/packs/pwa-movil/audit-lighthouse.mjs             # Lighthouse sobre la build ya comprimida
+node agente/packs/pwa-movil/audit-lighthouse.mjs --ruta /app --desktop
 ```
+
+`audit-lighthouse.mjs` sirve la build ya comprimida (gzip, como cualquier despliegue real)
+y corre Lighthouse contra ella en local — sin eso, un servidor estático sin comprimir
+reporta un sitio varias veces más pesado de lo que es.
 
 Y `e2e/pwa.spec.ts` con `playwright.movil.config.ts`:
 
@@ -81,6 +88,11 @@ anchos. Y mide solo **después** de que la pantalla haya pintado algo suyo: un e
 vacío da cero controles pequeños y un aprobado que no significa nada — y esperar a que la
 red se calme no basta, porque puede estar quieta con la pantalla en blanco.
 
+`robustez-visual.spec.ts`, en el mismo pack, mide lo que ni `mobile-smoke` ni `wcag.spec.ts`
+(axe) alcanzan: texto que se derrama fuera de su caja, hojas de estilo que se descargan y no
+llegan a aplicarse, una acción principal que cae fuera de la pantalla, tablas que exigen
+scroll lateral por debajo de `md`, y CLS por ruta.
+
 ## Checklist
 
 - [ ] Estrategia de caché explícita por tipo de recurso
@@ -90,3 +102,6 @@ red se calme no basta, porque puede estar quieta con la pantalla en blanco.
 - [ ] Áreas táctiles de 44 px, medidas en **todas** las pantallas y anchos, no en una
 - [ ] Formularios probados con el teclado virtual abierto, a 320 px
 - [ ] Presupuesto de rendimiento con número, comprobado en la puerta
+- [ ] Lighthouse corre sobre la build comprimida, no sobre un servidor estático sin gzip
+- [ ] `robustez-visual.spec.ts` cubierto: sin texto derramado, sin hojas de estilo muertas,
+      acción principal dentro de la pantalla, sin tablas con scroll lateral oculto

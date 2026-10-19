@@ -63,6 +63,26 @@ unidad coherente.
 
 ### 3 · Hacer
 
+**No lo haces vos.** Delegas a un subagente de rol fijo —`frontend` si el alcance es
+visual, `backend` para lo demás— con la ficha completa como contrato: objetivo, alcance
+(qué sí y qué explícitamente no), criterio de hecho, y las rutas que puede tocar. Vos
+conservás el plan y el criterio; el subagente ejecuta dentro de su frontera.
+
+Excepción: un cambio de una línea, trivial y de un solo fichero, se hace directamente — la
+delegación existe para no ser vos quien decide cada paso de un cambio real, no para
+burocratizar una errata. Y si la herramienta actual no admite subagentes (Cursor, Copilot,
+Windsurf), se sigue el mismo orden pero en la misma sesión.
+
+El subagente responde con lo que tocó, qué parte de la ficha no cubrió y por qué, y
+cualquier decisión que no era suya. Vos integrás ese informe — no reescribís su trabajo,
+lo revisás contra la ficha original.
+
+Si el proyecto tiene el pack `orquestacion-agentes`, el contrato de delegación se compila
+con `preparar-contexto` (bundle acotado, no el historial completo); si no, basta la ficha
+de `tarea` más la frontera de rutas, dichas en la propia instrucción de delegación.
+
+Reglas que el subagente debe cumplir y que seguís siendo responsable de haber transmitido:
+
 - **Estructura y conducta, en commits distintos.** Mover código y cambiar lo que hace no
   van juntos: si al mover aparece un fallo, se anota y se conserva.
 - Lo nuevo nace con tests que prueban la **decisión**, no la sintaxis.
@@ -79,13 +99,20 @@ unidad coherente.
 
 ### 4 · Verificar
 
-La skill [`verificar`](../verificar/SKILL.md), entera. Si falla: arreglar y **repetir**.
+Delegás a `verificador`, que corre la skill [`verificar`](../verificar/SKILL.md) entera y
+devuelve un veredicto verde o rojo con números. No la corrés vos mismo: `verificador` no
+tiene permiso de editar, así que su veredicto no está sesgado por quien hizo el cambio.
+
+Si el veredicto es rojo: el fallo vuelve al subagente (`frontend`/`backend`) que hizo el
+cambio, con el detalle exacto. Se corrige y se **repite la verificación entera**, no solo
+el paso que falló.
 
 ### 5 · Cerrar
 
-- Documentar donde toque: **qué cambia para quien usa esto**, no adjetivos.
-- Commit local con el porqué en el cuerpo, si el proyecto los permite. Publicar solo si
-  el usuario lo pidió.
+- Delegás a `documentador` la parte de `knowledge/wiki/` y `AGENTS.md`: **qué cambia para
+  quien usa esto**, no adjetivos.
+- El commit lo hacés vos, integrando el resultado de los tres subagentes: local, con el
+  porqué en el cuerpo, si el proyecto los permite. Publicar solo si el usuario lo pidió.
 
 ### 6 · Volver al 1
 

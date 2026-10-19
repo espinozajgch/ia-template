@@ -61,6 +61,18 @@ una obligación legal, no una funcionalidad.
 Logo, colores y textos por organización viven en configuración. Un `if (cliente === 'X')`
 en el código es el principio de una bifurcación que ya no se cierra.
 
+Comprobado, no confiado a la revisión:
+
+```bash
+cp agente/packs/saas-multitenant/neutralidad.prohibidos.ejemplo.json .neutralidad.json
+# rellenar con el nombre, personas y códigos del primer cliente
+node agente/packs/saas-multitenant/neutralidad.mjs src
+```
+
+No trae una lista por defecto: el nombre de tu primer cliente no significa nada para otro
+proyecto. Las migraciones históricas y los snapshots de esquema quedan fuera — ahí el
+nombre es historia, no acoplamiento vivo.
+
 ### El vecino ruidoso
 
 Límites por organización en peticiones, almacenamiento y trabajos en segundo plano. Sin

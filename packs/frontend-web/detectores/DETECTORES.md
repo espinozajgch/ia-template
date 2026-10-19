@@ -51,6 +51,18 @@ grep -rnE '#[0-9a-fA-F]{3,8}\b|rgba?\(|\b(bg|text|border)-(white|black|gray|slat
 
 > Excluye el fichero donde los tokens **se definen** — ahí los valores crudos son lo correcto.
 
+**Cuando el total agregado no basta** — porque hay ficheros con una razón legítima para
+tener más hex que el resto (una rampa de gráfica, un export que se dibuja fuera del
+navegador) y quieres que esa excepción quede declarada por fichero, no mezclada en el
+número global — usa el trinquete por fichero en su lugar:
+
+```bash
+node agente/packs/frontend-web/detectores/colores-por-fichero.mjs baseline src
+node agente/packs/frontend-web/detectores/colores-por-fichero.mjs validate src
+```
+
+Mismo trato que `tamano.mjs`: un techo por archivo que solo puede bajar.
+
 ### 2 · sombras
 
 ```bash
@@ -86,6 +98,31 @@ grep -rn '<table' src/ --include='*.tsx' | grep -v 'TableShell\|DataTable'
 grep -rn 'role="tablist"' src/ --include='*.tsx' | grep -v 'SegmentedTabs'
 ```
 
+**Cuando el `grep` no basta** — porque el rol o el slot que delata la reimplementación vive
+en un atributo JSX, y un `grep` de texto no distingue el atributo de un comentario que lo
+menciona, ni lo ve si el formateador lo partió en varias líneas — usa el contrato leído por
+AST:
+
+```bash
+cp agente/packs/frontend-web/detectores/contrato-componente.reglas.ejemplo.json .contrato-componente.json
+# ajustar rol/slot y componente canónico al sistema de diseño propio
+node agente/packs/frontend-web/detectores/contrato-componente.mjs src
+```
+
+Requiere el paquete `typescript` como dependencia (cualquier app TSX ya lo tiene).
+
+**Cuando lo que delata la reimplementación no es un atributo sino una FIRMA de clases**
+—varias utilidades de Tailwind que, juntas, reconstruyen un componente sin pasar por él—
+usa el trinquete por fichero:
+
+```bash
+cp agente/packs/frontend-web/detectores/reimplementacion-por-fichero.reglas.ejemplo.json .reimplementacion-por-fichero.json
+node agente/packs/frontend-web/detectores/reimplementacion-por-fichero.mjs baseline src
+node agente/packs/frontend-web/detectores/reimplementacion-por-fichero.mjs validate src
+```
+
+Mismo trato que `tamano.mjs`: un techo por archivo y por regla, que solo puede bajar.
+
 ### 6 · loc
 
 ```bash
@@ -110,6 +147,30 @@ grep -rnE '(placeholder|title|aria-label|alt)="[^"{]*[a-záéíóúñ]{4,}[^"]*"
 ```bash
 grep -rnE '@ts-nocheck|@ts-ignore|:\s*any\b|# type: ignore|//\s*nolint|eslint-disable(-next)?-line' \
   src/ server/ --include='*.ts' --include='*.tsx' --include='*.py'
+```
+
+**Cuando el total agregado no basta** — un backend TypeScript sin ESLint no tiene nada
+vigilando sus `any` por otra vía, y el número global no dice en qué archivo se cuela lo
+nuevo — usa el trinquete por fichero:
+
+```bash
+node agente/packs/frontend-web/detectores/supresiones-por-fichero.mjs baseline src server
+node agente/packs/frontend-web/detectores/supresiones-por-fichero.mjs validate src server
+```
+
+Mismo trato que `colores-por-fichero.mjs`: un techo por archivo que solo puede bajar.
+
+### Fuera de los ocho: encabezados de menú
+
+No encaja en ninguno de los ocho —no es una reimplementación, es redundancia entre el menú
+y el contenido— pero sale del mismo sitio: una página alcanzable desde la navegación
+principal no debería repetir, dentro de su contenido, el título que el menú o la barra
+superior ya muestran.
+
+```bash
+cp agente/packs/frontend-web/detectores/encabezados-de-menu.config.ejemplo.json .encabezados-de-menu.json
+# listar las páginas que cuelgan del menú principal y el patrón de encabezado prohibido
+node agente/packs/frontend-web/detectores/encabezados-de-menu.mjs
 ```
 
 ---

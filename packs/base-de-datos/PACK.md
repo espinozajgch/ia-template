@@ -70,10 +70,24 @@ node agente/tools/doble-pasada.mjs --motor postgres --servidor postgresql://loca
      --preparar 'DATABASE_URL="$DOBLE_PASADA_URL" npm run db:migrate'   # la aplica DE VERDAD dos veces
 node agente/tools/esquema.mjs instantanea    # guarda el esquema vivo (pg_dump)
 node agente/tools/esquema.mjs deriva         # compara vivo vs instantánea
+node agente/tools/esquema.mjs manifiesto fijar     # instantánea + migraciones, SIN base de datos
+node agente/tools/esquema.mjs manifiesto validar   # ¿siguen siendo lo mismo?
 ```
 
 Reconoce las tres convenciones sin configurar nada: `001_nombre.sql`, drizzle con
 `_journal.json`, y directorios con sello de tiempo estilo prisma.
+
+**`manifiesto` es `deriva` sin Postgres.** Compara la instantánea contra un fichero propio
+—su sha256, cuántas migraciones hay y cuál es la última— en vez de contra la base viva.
+Corre en cualquier CI, incluso uno sin base de datos disponible; atrapa «alguien
+regeneró la instantánea a mano y no volvió a fijar el manifiesto», que es justo el caso
+que `deriva` no puede ver sin conexión. Viene de ElevenOffice, igual que el resto de
+`esquema.mjs` (ver más abajo).
+
+**`idempotencia` también gatea `CREATE POLICY`.** No admite `IF NOT EXISTS` ni
+`OR REPLACE`: el único patrón idempotente es un `DROP POLICY IF EXISTS` del mismo nombre
+y tabla, antes, en el mismo archivo. Nació de un incidente real: una política sin su DROP
+previo rompió la segunda pasada del gate de idempotencia con «policy already exists».
 
 **`idempotencia` lee el SQL; `doble-pasada` lo ejecuta.** La primera atrapa el `CREATE
 TABLE` sin `IF NOT EXISTS`; la segunda, lo que sólo falla contra el esquema real: el

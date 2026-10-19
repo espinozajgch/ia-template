@@ -146,6 +146,19 @@ Si trabajas con uno de esos tres y la tarea encaja con una skill, ábrela y síg
 de improvisar el procedimiento. Están escritas precisamente para no volver a decidir cómo se
 hace cada vez.
 
+### Subagentes de `avanzar`
+
+Cuatro roles fijos en `.claude/agents/`: `frontend` · `backend` · `verificador` ·
+`documentador`. `avanzar` delega en ellos en vez de hacer el trabajo en la misma sesión —
+el usuario deja de ser quien reparte cada paso entre "ahora el frontend", "ahora verificá".
+Cada uno recibe la ficha de `tarea` como contrato: objetivo, alcance, criterio de hecho y
+rutas permitidas. `verificador` nunca edita código — su veredicto no puede estar sesgado por
+quien hizo el cambio.
+
+**Solo Claude Code los descubre así.** Antigravity, Codex, Cursor, Copilot y Windsurf no
+tienen hoy un mecanismo equivalente de subagentes en este kit: con esas herramientas,
+`avanzar` sigue el mismo orden de roles dentro de la misma sesión.
+
 ---
 
 ## 7 · Trampas conocidas de este repositorio

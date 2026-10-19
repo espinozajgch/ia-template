@@ -8,6 +8,7 @@
  *   esquema.mjs idempotencia   [dir]   DDL que no aguanta una segunda pasada
  *   esquema.mjs instantanea            vuelca el esquema vivo a un fichero VERSIONADO
  *   esquema.mjs deriva                 compara el esquema vivo con esa instantánea
+ *   esquema.mjs manifiesto fijar/validar [dir]   la instantánea sigue siendo la misma, SIN base de datos
  *
  * Reconoce las tres convenciones habituales sin configurar nada:
  *   001_nombre.sql · 0000_nombre.sql + _journal.json · 20260727134939_nombre/migration.sql
@@ -27,6 +28,11 @@
  *
  * DERIVA. Un índice creado a mano en producción, o una columna que el ORM cree que existe
  * y no está. El fallo se reproduce solo allí, y por eso cuesta días.
+ *
+ * MANIFIESTO. La misma pregunta que DERIVA —¿la instantánea sigue describiendo lo que
+ * hay?— pero sin Postgres: compara la instantánea contra un fichero propio, no contra la
+ * base viva. Corre en cualquier CI, incluso uno sin base de datos disponible. Atrapa
+ * «alguien regeneró la instantánea a mano y no volvió a fijar el manifiesto» o al revés.
  */
 import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync } from 'node:fs';
 import { join, basename, relative, dirname } from 'node:path';
@@ -38,7 +44,10 @@ const json = resto.includes('--json');
 const DIR = process.env.RATCHET_DIR || '.ratchets';
 
 function localizarDir() {
-  const dado = resto.find(a => !a.startsWith('--'));
+  // `manifiesto` lleva un sub-verbo (fijar | validar) antes de la ruta, a diferencia
+  // del resto de acciones — no cuenta como la ruta.
+  const SUBVERBOS = accion === 'manifiesto' ? ['fijar', 'validar'] : [];
+  const dado = resto.find(a => !a.startsWith('--') && !SUBVERBOS.includes(a));
   if (dado) return dado;
   for (const c of ['db/migrations', 'migrations', 'server/src/db/migrations', 'src/db/migrations',
                    'prisma/migrations', 'apps/api/prisma/migrations', 'alembic/versions', 'db/migrate']) {
@@ -251,6 +260,24 @@ if (accion === 'idempotencia') {
       if (/^\s*(--|\/\*)/.test(l)) return;
       for (const r of REGLAS) if (r.re.test(l)) { hallazgos.push({ mig: m.nombre, linea: i + 1, que: r.di, texto: l.trim().slice(0, 90) }); break; }
     });
+    // CREATE POLICY no admite IF NOT EXISTS ni OR REPLACE: el único patrón idempotente
+    // es un DROP POLICY IF EXISTS del MISMO nombre y tabla, ANTES, en el mismo archivo.
+    // No cabe en el array de arriba porque hace falta mirar hacia atrás en el fichero,
+    // no solo la línea — las REGLAS de arriba son todas de una línea sola.
+    // (Nació de un incidente real: una CREATE POLICY sin su DROP previo rompió la
+    // segunda pasada del gate de idempotencia con «policy already exists».)
+    const createPolicyRe = /\bCREATE\s+POLICY\s+("?\w+"?)\s+ON\s+([\w.]+)/gi;
+    let cp;
+    while ((cp = createPolicyRe.exec(m.sql)) !== null) {
+      const nombre = cp[1].replace(/"/g, '');
+      const tabla = cp[2];
+      const dropRe = new RegExp(`DROP\\s+POLICY\\s+IF\\s+EXISTS\\s+"?${nombre}"?\\s+ON\\s+${tabla.replace(/\./g, '\\.')}`, 'i');
+      if (!dropRe.test(m.sql.slice(0, cp.index))) {
+        hallazgos.push({ mig: m.nombre, linea: m.sql.slice(0, cp.index).split('\n').length,
+          que: `CREATE POLICY ${nombre} ON ${tabla} sin DROP POLICY IF EXISTS previo en el mismo archivo`,
+          texto: cp[0] });
+      }
+    }
   }
   if (json) { console.log(JSON.stringify(hallazgos, null, 2)); process.exit(hallazgos.length ? 1 : 0); }
   const conTransaccion = ejecutorTransaccional();
@@ -339,6 +366,38 @@ if (accion === 'deriva') {
   Un "+" suele ser un cambio hecho a mano en la base que no está en ninguna migración:
   desaparecerá en el próximo entorno que se cree de cero.
   Un "-" suele ser una migración que no se aplicó.`);
+  process.exit(1);
+}
+
+// ── manifiesto ──────────────────────────────────────────────────────────────────
+const MANIFIESTO = `${INSTANTANEA}.manifiesto.json`;
+if (accion === 'manifiesto') {
+  const sub = resto.find(a => !a.startsWith('--')) ?? 'validar';
+  if (!existsSync(INSTANTANEA)) { console.error(`✗ sin instantánea. Corre primero:  esquema.mjs instantanea`); process.exit(2); }
+  const sha256 = createHash('sha256').update(readFileSync(INSTANTANEA)).digest('hex');
+  const ultima = migs.length ? migs[migs.length - 1].nombre : null;
+
+  if (sub === 'fijar') {
+    writeFileSync(MANIFIESTO, JSON.stringify({ sha256, migraciones: migs.length, ultima }, null, 2) + '\n');
+    console.log(`manifiesto fijado: ${migs.length} migración(es), última ${ultima}`);
+    console.log('COMMITÉALO junto a la instantánea. Vuelve a fijarlo solo tras `instantanea` o tras aplicar migraciones nuevas.');
+    process.exit(0);
+  }
+  if (sub !== 'validar') { console.error(`✗ manifiesto: subcomando desconocido «${sub}» (fijar | validar)`); process.exit(2); }
+  if (!existsSync(MANIFIESTO)) { console.error(`✗ sin manifiesto. Corre primero:  esquema.mjs manifiesto fijar ${dir}`); process.exit(1); }
+  const guardado = JSON.parse(readFileSync(MANIFIESTO, 'utf8'));
+  const errores = [];
+  if (guardado.sha256 !== sha256) errores.push(`la instantánea cambió: sha256 ${sha256.slice(0, 12)}… ≠ manifiesto ${String(guardado.sha256).slice(0, 12)}…`);
+  if (guardado.migraciones !== migs.length) errores.push(`número de migraciones: ${migs.length} ≠ manifiesto ${guardado.migraciones}`);
+  if (guardado.ultima !== ultima) errores.push(`última migración: ${ultima} ≠ manifiesto ${guardado.ultima}`);
+
+  if (json) { console.log(JSON.stringify({ errores }, null, 2)); process.exit(errores.length ? 1 : 0); }
+  if (!errores.length) { console.log(`✓ manifiesto: instantánea y migraciones coinciden con lo fijado (${migs.length} migración(es), ${ultima})`); process.exit(0); }
+  console.log(`✗ manifiesto desalineado:\n`);
+  for (const e of errores) console.log(`    ${e}`);
+  console.log(`\n  Alguien regeneró la instantánea o aplicó migraciones sin volver a fijar el manifiesto`);
+  console.log(`  (o al revés: el manifiesto quedó apuntando a una versión que ya no es la del árbol).`);
+  console.log(`  Si este es el estado correcto:  esquema.mjs manifiesto fijar ${dir}`);
   process.exit(1);
 }
 

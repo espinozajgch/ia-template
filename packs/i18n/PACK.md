@@ -36,10 +36,10 @@ Ninguna comparación contra un texto traducido. El estado se compara contra su c
 
 ## El validador
 
-Tres comprobaciones en un comando, sobre ficheros `.json`, `.ts` o `.js`:
+Cuatro comprobaciones en un comando, sobre ficheros `.json`, `.ts` o `.js`:
 
 ```bash
-node agente/packs/i18n/validar-i18n.mjs todo        # paridad + variante + formato
+node agente/packs/i18n/validar-i18n.mjs todo --codigo src   # las cuatro
 ```
 
 | Comprobación | Qué atrapa |
@@ -47,6 +47,7 @@ node agente/packs/i18n/validar-i18n.mjs todo        # paridad + variante + forma
 | **paridad** | claves que faltan o sobran, y las idénticas al idioma base que parecen sin traducir |
 | **variante** | la variante regional prohibida (por defecto voseo → tuteo neutro) |
 | **formato** | interpolaciones que no cuadran entre idiomas |
+| **uso** (con `--codigo <carpeta>`) | claves `t('a.b')` usadas en el código y ausentes del idioma base — la paridad no la ve, porque no existe en ningún lado para comparar |
 
 > Un aviso sobre expresiones regulares y acentos: en JavaScript `\w` es `[A-Za-z0-9_]`, así
 > que **las vocales acentuadas no son caracteres de palabra** y `\bimportá\b` casa dentro
