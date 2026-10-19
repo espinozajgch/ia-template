@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cinco canteras, cinco cosechas distintas · 2026-10-17</title>
+<style>
+:root{
+  --ground:#F6F8FA;--surface:#FFFFFF;--surface-2:#EFF2F6;
+  --ink:#121821;--ink-2:#3A4557;--muted:#5D6A80;--faint:#8894A6;
+  --rule:#DFE4EC;--rule-strong:#C6CEDB;
+  --accent:#39479B;--accent-soft:#E8EAF6;
+  --brass:#8A6410;--brass-soft:#F6EEDC;
+  --ok:#1C6E52;--ok-soft:#E3F1EB;
+  --mid:#96690C;--mid-soft:#F8EFDA;
+  --risk:#A8322A;--risk-soft:#FAE9E7;
+  --shadow:0 1px 2px rgba(18,24,33,.05),0 8px 24px -12px rgba(18,24,33,.14);
+  --display:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --body:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#0E1218;--surface:#161C25;--surface-2:#1D242F;
+  --ink:#E6EBF2;--ink-2:#C3CBD8;--muted:#95A1B4;--faint:#6F7C90;
+  --rule:#252D3A;--rule-strong:#37414F;
+  --accent:#96A5EF;--accent-soft:#1E2440;
+  --brass:#D8AC60;--brass-soft:#2A2317;
+  --ok:#5CC79B;--ok-soft:#12291F;
+  --mid:#D7A63F;--mid-soft:#2A2313;
+  --risk:#E8827A;--risk-soft:#2C1917;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -14px rgba(0,0,0,.7);
+}}
+:root[data-theme="dark"]{
+  --ground:#0E1218;--surface:#161C25;--surface-2:#1D242F;
+  --ink:#E6EBF2;--ink-2:#C3CBD8;--muted:#95A1B4;--faint:#6F7C90;
+  --rule:#252D3A;--rule-strong:#37414F;
+  --accent:#96A5EF;--accent-soft:#1E2440;
+  --brass:#D8AC60;--brass-soft:#2A2317;
+  --ok:#5CC79B;--ok-soft:#12291F;
+  --mid:#D7A63F;--mid-soft:#2A2313;
+  --risk:#E8827A;--risk-soft:#2C1917;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -14px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);
+  font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+h1,h2,h3,h4{text-wrap:balance;margin:0}
+a{color:var(--accent);text-underline-offset:2px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+code,.mono{font-family:var(--mono);font-size:.88em}
+
+.head{border-bottom:1px solid var(--rule);background:var(--surface)}
+.head .wrap{padding:60px 24px 38px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);margin:0 0 18px}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(38px,6vw,62px);line-height:1;
+  letter-spacing:-.015em;margin-bottom:18px}
+h1 em{font-style:italic;color:var(--accent)}
+.thesis{font-size:18.5px;color:var(--ink-2);max-width:62ch;line-height:1.55}
+.stats{display:flex;flex-wrap:wrap;margin-top:36px;border-top:1px solid var(--rule)}
+.stat{padding:16px 30px 0 0;margin-right:30px;border-right:1px solid var(--rule)}
+.stat:last-child{border-right:0}
+.stat b{display:block;font-family:var(--mono);font-size:25px;font-weight:600;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.stat span{font-size:12.5px;color:var(--muted)}
+
+section{padding:58px 0;border-bottom:1px solid var(--rule)}
+section:last-of-type{border-bottom:0}
+.shead{display:flex;align-items:baseline;gap:14px;margin-bottom:8px;flex-wrap:wrap}
+h2{font-family:var(--display);font-weight:400;font-size:clamp(27px,3.4vw,38px);letter-spacing:-.01em}
+.tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--accent);background:var(--accent-soft);padding:4px 9px;border-radius:3px}
+.lede{color:var(--muted);font-size:16.5px;margin:0 0 32px;max-width:66ch}
+
+.pieza{background:var(--surface);border:1px solid var(--rule);border-radius:6px;
+  box-shadow:var(--shadow);margin-bottom:18px;overflow:hidden}
+.pieza>header{display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:16px 22px;background:var(--surface-2);border-bottom:1px solid var(--rule);flex-wrap:wrap}
+.pieza h3{font-size:16.5px;font-weight:700}
+.pieza h3 small{display:block;font-family:var(--mono);font-size:10.5px;font-weight:500;
+  color:var(--faint);letter-spacing:.06em;text-transform:uppercase;margin-top:3px}
+.pieza .body{padding:20px 22px;display:flex;flex-direction:column;gap:14px}
+.pieza p{margin:0;font-size:14.5px;color:var(--ink-2);line-height:1.6;max-width:70ch}
+.pieza p b{color:var(--ink)}
+.chip{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;
+  padding:3px 8px;border-radius:3px;white-space:nowrap}
+.c-ok{background:var(--ok-soft);color:var(--ok)}
+.c-new{background:var(--accent-soft);color:var(--accent)}
+.c-risk{background:var(--risk-soft);color:var(--risk)}
+.c-brass{background:var(--brass-soft);color:var(--brass)}
+pre{margin:0;background:var(--surface-2);border:1px solid var(--rule);border-radius:4px;
+  padding:13px 15px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.6;color:var(--ink-2)}
+.files{display:flex;flex-wrap:wrap;gap:6px}
+.file{font-family:var(--mono);font-size:11.5px;background:var(--ground);border:1px solid var(--rule);
+  padding:3px 8px;border-radius:3px;color:var(--muted)}
+.why{border-left:2px solid var(--accent);background:var(--surface-2);padding:12px 15px;
+  border-radius:0 4px 4px 0;font-size:14px;color:var(--ink-2);line-height:1.55}
+.why b{color:var(--ink)}
+
+.scroll{overflow-x:auto;border:1px solid var(--rule);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+thead th{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);background:var(--surface-2);
+  border-bottom:1px solid var(--rule-strong);white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:var(--surface-2)}
+td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+td.mono{font-family:var(--mono);font-size:12px}
+
+.alerta{border-left:3px solid var(--risk);background:var(--risk-soft);padding:18px 22px;
+  border-radius:0 5px 5px 0}
+.alerta h3{font-size:17px;margin-bottom:8px}
+.alerta p{margin:0 0 10px;font-size:14.5px;color:var(--ink-2);line-height:1.6;max-width:70ch}
+.alerta p:last-child{margin-bottom:0}
+
+.ok-box{border-left:3px solid var(--ok);background:var(--ok-soft);padding:18px 22px;border-radius:0 5px 5px 0}
+.ok-box h3{font-size:17px;margin-bottom:8px}
+.ok-box p{margin:0;font-size:14.5px;color:var(--ink-2);line-height:1.6;max-width:70ch}
+
+.next{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+.next .n{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:18px 20px}
+.next h4{font-size:15px;margin-bottom:6px}
+.next p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.55}
+.next .ord{font-family:var(--mono);font-size:11px;color:var(--brass);font-weight:600;
+  display:block;margin-bottom:8px;letter-spacing:.08em}
+
+.foot{padding:36px 0 60px;color:var(--faint);font-size:13px}
+@media (max-width:640px){.head .wrap{padding-top:40px}.stat{padding-right:18px;margin-right:18px}}
+@media print{
+  body{background:#fff;color:#000}
+  section{break-inside:auto;page-break-inside:auto}
+  .pieza,.next .n,.alerta,.ok-box{break-inside:avoid;box-shadow:none}
+  .head{border-bottom:2px solid #000}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="head">
+  <div class="wrap">
+    <p class="eyebrow">ia-template · informe de mejoras · 17 octubre 2026</p>
+    <h1>Cinco canteras,<br><em>cinco cosechas distintas</em></h1>
+    <p class="thesis">Se corrió <span class="mono">agente/tools/cosechar.mjs subir</span>
+      contra los cinco repositorios en foco — hipismo, pulso, analisis, logroño-united y
+      tasas-bcv-api — y se revisó a mano cada hallazgo, porque la herramienta compara rutas y
+      tamaños, no intención. Un «no existe en el kit» resultó ser, en un caso, un fichero
+      idéntico guardado en otro sitio. Este informe es solo el análisis: <b>nada se ha
+      integrado todavía</b>.</p>
+    <div class="stats">
+      <div class="stat"><b>5</b><span>proyectos analizados</span></div>
+      <div class="stat"><b>5</b><span>candidatos reales</span></div>
+      <div class="stat"><b>2</b><span>falsos positivos descartados</span></div>
+      <div class="stat"><b>4</b><span>proyectos con el kit desactualizado</span></div>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>Método</h2></div>
+    <p class="lede">La regla no cambia:
+      <b>una pieza entra al núcleo cuando ha sido útil en dos proyectos distintos</b>; con
+      uno solo va a un pack; si es de un dominio concreto, a <span class="mono">prompts/_dominio/</span>
+      y no se instala por defecto. Ninguno de los cinco candidatos de abajo aparece todavía en
+      un segundo proyecto — se ofrecen como pack o como «a la espera», no como núcleo.</p>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Proyecto</th><th>Subir</th><th>Divergentes</th><th>Inventos</th><th>Lectura</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">hipismo</td><td class="num">0</td><td class="num">6</td><td class="num">17</td><td>sin novedades en «subir»; los 17 inventos de <span class="mono">tools/</span> son lo interesante</td></tr>
+          <tr><td class="mono">pulso</td><td class="num">4</td><td class="num">23</td><td class="num">1</td><td>2 candidatos reales; el resto es el kit ya adelantado a lo instalado</td></tr>
+          <tr><td class="mono">analisis</td><td class="num">2</td><td class="num">0</td><td class="num">0</td><td>una skill genérica, una de dominio futbolístico</td></tr>
+          <tr><td class="mono">logroño-united</td><td class="num">0</td><td class="num">5</td><td class="num">0</td><td>nada que cosechar; desactualizado respecto al kit</td></tr>
+          <tr><td class="mono">tasas-bcv-api</td><td class="num">0</td><td class="num">1</td><td class="num">0</td><td>al día, sin nada que aportar</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>Candidatos fuertes</h2><span class="tag">propuesta: pack, no núcleo</span></div>
+    <p class="lede">Cinco piezas que resuelven un incidente real y documentan el porqué en su
+      propia cabecera — el estilo que ya pide el kit. Ninguna se ha movido todavía.</p>
+
+    <article class="pieza">
+      <header><h3>entorno-pruebas.mjs<small>pulso → agente/tools/</small></h3><span class="chip c-new">candidato</span></header>
+      <div class="body">
+        <p>Caza pruebas que solo pueden pasar en una máquina: variables de entorno locales,
+          datos de siembra que no existen en CI, umbrales de Lighthouse calibrados en un Mac,
+          un <span class="mono">setTimeout</span> de carrera disfrazado de espera.</p>
+        <p class="why"><b>Por qué importa.</b> Nació de 146 commits que nunca pasaron por
+          integración continua: la primera corrida destapó cuatro variantes del mismo fallo —
+          «verde en el portátil, imposible en cualquier otra parte». El proyecto ya tenía
+          trinquetes de tamaño, migraciones y cobertura; ninguno cazaba esto, que es lo que
+          más veces había fallado.</p>
+        <p><b>Encaja</b> como verificador transversal — del mismo tipo que
+          <span class="mono">ciclos.mjs</span> o <span class="mono">secretos.mjs</span> — no
+          atado a ningún pack de nicho. Con un solo proyecto detrás, la propuesta es
+          <b>pack nuevo o adjunto a núcleo/tools en cuarentena</b> hasta verlo útil en un
+          segundo repo, no promoción directa.</p>
+      </div>
+    </article>
+
+    <article class="pieza">
+      <header><h3>suelo-cobertura.mjs<small>pulso → agente/tools/</small></h3><span class="chip c-new">candidato</span></header>
+      <div class="body">
+        <p>Un mínimo de cobertura <b>por fichero</b>, no agregado. El trinquete global de
+          cobertura ya existe en el núcleo y mide el conjunto — y el conjunto miente por
+          construcción: un fichero crítico al 20% de funciones no mueve el número global si
+          ciento treinta ficheros bien probados lo sostienen.</p>
+        <p class="why"><b>Evidencia citada en el propio script.</b> Una auditoría anterior
+          encontró tres defectos reales en el único fichero que entrega avisos a personas,
+          con 742 pruebas en verde alrededor. El suelo arranca en lo medido, nunca en una
+          cifra aspiracional — mismo principio que el resto de trinquetes del kit.</p>
+        <p><b>Encaja</b> junto a <span class="mono">cobertura.mjs</span>, como complemento
+          directo. Mismo caso que el anterior: un proyecto, no dos.</p>
+      </div>
+    </article>
+
+    <article class="pieza">
+      <header><h3>check-tokens.mjs<small>hipismo → tools/</small></h3><span class="chip c-new">candidato</span></header>
+      <div class="body">
+        <p>Compuerta de color: ningún hex crudo nuevo fuera de los tokens del design system.
+          Nace de 99 hex repartidos en catorce archivos — deuda heredada registrada por
+          fichero, con excepción explícita para gráficos y PDFs que sí necesitan colores
+          fuera de la paleta de interfaz.</p>
+        <p><b>Encaja</b> en <span class="mono">packs/design-system</span> o
+          <span class="mono">packs/frontend-web/detectores</span>, que hoy no tiene ningún
+          detector de color. Candidato claro a pack — el umbral de «un proyecto basta» ya se
+          cumple para un pack de nicho.</p>
+      </div>
+    </article>
+
+    <article class="pieza">
+      <header><h3>audit-web.mjs + mobile-audit.mjs<small>hipismo → tools/</small></h3><span class="chip c-new">candidato</span></header>
+      <div class="body">
+        <p><span class="mono">audit-web.mjs</span>: auditoría Lighthouse reproducible sobre
+          la build ya comprimida — sin esto, un servidor estático sin compresión midió 65 en
+          rendimiento cuando el sitio real daba 95. <span class="mono">mobile-audit.mjs</span>
+          (818 líneas): convierte una auditoría manual de 531 sondeos y 281 capturas en
+          comprobaciones medibles y reejecutables sobre el DOM real — desbordamiento
+          horizontal, contraste AA, controles bajo 44px, campos sin nombre accesible.</p>
+        <p class="why"><b>Reserva.</b> <span class="mono">mobile-audit.mjs</span> es grande y
+          asume Chrome real con sesión iniciada; antes de proponerlo como pack haría falta
+          revisar qué es genérico y qué es específico de hipismo (rutas, dominio de sesión).</p>
+        <p><b>Encaja</b> en <span class="mono">packs/pwa-movil</span> o como ampliación de
+          <span class="mono">packs/frontend-web/detectores</span>. Un solo proyecto por
+          ahora: propuesta de pack, con revisión de genericidad antes de mover nada.</p>
+      </div>
+    </article>
+
+    <article class="pieza">
+      <header><h3>preparar-contexto<small>analisis → .claude/skills/</small></h3><span class="chip c-new">candidato</span></header>
+      <div class="body">
+        <p>Skill de gestión de contexto antes de una tarea no trivial:
+          <span class="mono">estructura → relevancia → contexto mínimo → clasificación →
+          modelo → ejecución</span>, con presupuesto de tokens explícito y la regla de grafo
+          de código primero, texto después — la misma prioridad que ya fija
+          <span class="mono">nucleo/AGENTS.md §6</span>.</p>
+        <p class="why"><b>Por qué se parece más al núcleo que a un pack.</b> No depende de
+          ningún dominio ni de ningún stack — es procedimiento puro, como las nueve skills que
+          ya son iguales en los diez proyectos. Es el tipo de pieza que la regla de «dos
+          proyectos» está pensada para esta situación: útil en general, probada en uno.</p>
+        <p><b>Propuesta:</b> no meterla al núcleo todavía — probarla en un segundo proyecto
+          primero (p. ej. pulso o hipismo, que manejan bastante contexto de dominio) y
+          confirmar que sigue encajando sin ajustes antes de que entre a
+          <span class="mono">nucleo/skills/</span>.</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>Descartados tras revisar a mano</h2><span class="tag">el porqué importa más que el qué</span></div>
+
+    <article class="pieza">
+      <header><h3>inventario.plantilla.md<small>pulso → agente/packs/datos-personales/</small></h3><span class="chip c-risk">falso positivo</span></header>
+      <div class="body">
+        <p><span class="mono">cosechar.mjs</span> lo marcó como «no existe en el kit» porque
+          compara por ruta. El contenido es <b>byte a byte idéntico</b> al
+          <span class="mono">packs/datos-personales/activos/inventario-datos-personales.md</span>
+          del kit — pulso simplemente lo tiene copiado en una ruta anterior a la convención de
+          <span class="mono">activos/</span>, que hoy se instala en
+          <span class="mono">knowledge/wiki/</span>. No es una mejora: es pulso desincronizado.</p>
+      </div>
+    </article>
+
+    <article class="pieza">
+      <header><h3>sports-provider-adapters<small>analisis → .claude/skills/</small></h3><span class="chip c-risk">fuera de alcance</span></header>
+      <div class="body">
+        <p>Skill de dominio futbolístico puro — StatsBomb, Wyscout, Opta, SkillCorner,
+          identidades y coordenadas entre proveedores. Útil, pero exactamente lo que la regla
+          manda a <span class="mono">prompts/_dominio/</span> y no al kit general: un dato
+          deportivo no tiene sentido en hipismo, pulso o tasas-bcv-api. Se queda en
+          <span class="mono">analisis</span>.</p>
+      </div>
+    </article>
+
+    <article class="pieza">
+      <header><h3>PULSO_AUDITORIA_FUNCIONAL_ARQUITECTONICA.md<small>pulso → agente/prompts/</small></h3><span class="chip c-risk">fuera de alcance</span></header>
+      <div class="body">
+        <p>El nombre ya lo dice: es el prompt de auditoría propio de pulso, no una versión
+          canónica reutilizable. Mismo trato que el anterior — domicilio en el proyecto, no en
+          el kit.</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>Para revisar con más calma</h2><span class="tag">no descartado, no listo</span></div>
+    <p class="lede">Hipismo tiene diecisiete «inventos» en <span class="mono">tools/</span>
+      que el radar de <span class="mono">cosechar.mjs</span> no sabe clasificar del todo bien
+      porque algunos son anteriores al kit.</p>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Fichero</th><th>Qué es</th><th>Lectura</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">check-import-cycles.mjs<br>check-file-size.mjs</td>
+            <td>reimplementaciones propias de lo que ya hacen <span class="mono">ciclos.mjs</span> y <span class="mono">tamano.mjs</span></td>
+            <td><span class="chip c-brass">deuda de hipismo</span> — migrar a los verificadores del kit, no al revés</td></tr>
+          <tr><td class="mono">check-schema-drift.mjs</td>
+            <td>deriva de esquema vía <span class="mono">prisma migrate diff</span></td>
+            <td>comparar contra <span class="mono">esquema.mjs</span>: puede que enriquezca el soporte de Prisma del kit</td></tr>
+          <tr><td class="mono">informe_auditoria_forense.py (597L)<br>informe_auditoria_movil.py (731L)</td>
+            <td>generadores de informe HTML derivados de JSON, con formato propio citado (R1–R17)</td>
+            <td>maduros, pero atados al formato de auditoría de hipismo; el patrón —«el informe se deriva, no se escribe a mano»— sí podría enriquecer <span class="mono">packs/auditoria-informes</span></td></tr>
+          <tr><td class="mono">verify_*.py (×7, 19–33L)</td>
+            <td>comprobaciones de «¿está configurado Vercel / Supabase / export a Excel…?»</td>
+            <td>específicas del propio checklist de despliegue de hipismo, no generalizables</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>Un hallazgo aparte: cuatro proyectos van por detrás del kit</h2></div>
+    <p class="lede">No es lo que se pidió, pero <span class="mono">cosechar.mjs bajar</span>
+      lo muestra sin ambigüedad: hipismo, pulso, logroño-united y tasas-bcv-api tienen
+      skills, protocolo y prompts <b>más cortos</b> que la versión actual del kit — el kit ya
+      incorporó mejoras de otras sesiones que estos proyectos no han vuelto a instalar.</p>
+    <div class="alerta">
+      <h3>No se toca nada de esto en esta pasada</h3>
+      <p>Traer la versión nueva del kit a un proyecto es una decisión aparte —
+        <span class="mono">instalar.sh &lt;proyecto&gt; --force</span> sobre ficheros que ya
+        existen, y conviene revisar el diff antes, no después. Se deja anotado para cuando se
+        pida explícitamente.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>Qué decidir</h2><span class="tag">nada se integra sin esto</span></div>
+    <div class="next">
+      <div class="n"><span class="ord">Pack nuevo</span><h4>check-tokens.mjs → design-system o frontend-web</h4>
+        <p>Un proyecto basta para un pack. El más barato de integrar de los cinco.</p></div>
+      <div class="n"><span class="ord">Pack nuevo</span><h4>entorno-pruebas.mjs + suelo-cobertura.mjs</h4>
+        <p>Juntos o separados; ninguno depende de un dominio ni de un stack concreto.</p></div>
+      <div class="n"><span class="ord">Revisar antes de mover</span><h4>audit-web.mjs / mobile-audit.mjs</h4>
+        <p>Separar lo genérico (Lighthouse, contraste, overflow) de lo propio de hipismo (rutas, sesión) antes de empaquetar.</p></div>
+      <div class="n"><span class="ord">Esperar un segundo proyecto</span><h4>preparar-contexto</h4>
+        <p>Probarla tal cual en pulso o hipismo antes de subirla a núcleo/skills.</p></div>
+      <div class="n"><span class="ord">No mover</span><h4>sports-provider-adapters, PULSO_AUDITORIA…</h4>
+        <p>De dominio o de proyecto único por diseño. Se quedan donde están.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap">
+    <p class="mono">ia-template · 17 de octubre de 2026</p>
+    <p>Herramienta: <span class="mono">agente/tools/cosechar.mjs subir --json</span>, ejecutada en
+      hipismo, medical/pulso, soccer-analyst/analisis, logrono-united y tasas-bcv-api — los
+      cinco repositorios en foco. Cada hallazgo de la herramienta se revisó a mano antes de
+      entrar en este informe.</p>
+  </div>
+</footer>
+
+</body>
+</html>

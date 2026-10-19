@@ -1,0 +1,15 @@
+---
+description: Fiabilidad de pruebas — nada atado a la máquina de quien escribe, nada que el agregado tape
+globs: ["**/*.test.*","**/tests/**","**/__tests__/**"]
+alwaysApply: false
+---
+- Ninguna prueba se conecta a una base, cola o servicio por un host/puerto escrito a mano:
+  lee la misma variable de entorno que lee la aplicación real.
+- Ningún `setTimeout` se usa para coordinar un solape entre promesas (`Promise.all` +
+  espera fija): coordínalo con promesas, o acótalo con `Promise.race`.
+- Escape explícito cuando el caso es legítimo: `/* trinquete-entorno: permitido — <por qué> */`.
+- Un fichero crítico no se considera cubierto porque el porcentaje agregado del repositorio
+  esté alto: lo que importa es su propio mínimo, vigilado aparte
+  (`agente/packs/fiabilidad-pruebas/suelo-cobertura.mjs`).
+- El suelo de cobertura se calibra con el número de la integración continua, nunca con el
+  de un portátil — no son el mismo número.
