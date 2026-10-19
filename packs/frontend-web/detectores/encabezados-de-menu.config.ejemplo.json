@@ -1,0 +1,7 @@
+{
+  "paginas": [
+    "src/pages/DashboardPage/index.tsx",
+    "src/pages/ContratosPage/index.tsx"
+  ],
+  "prohibido": ["<h1\\b", "\\bPageHeading\\b"]
+}

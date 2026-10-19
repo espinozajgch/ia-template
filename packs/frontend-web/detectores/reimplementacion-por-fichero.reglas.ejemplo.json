@@ -1,0 +1,7 @@
+[
+  {
+    "id": "switcher-segmentado",
+    "canonico": "src/components/ui/Tabs.tsx",
+    "clasesCoOcurrentes": ["\\bbg-surface-elevated\\b", "\\bp-1(?![\\d.])", "\\brounded-(?:xl|2xl)\\b"]
+  }
+]

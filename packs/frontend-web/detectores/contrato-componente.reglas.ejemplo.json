@@ -1,0 +1,20 @@
+[
+  {
+    "id": "dropdown-portal",
+    "canonico": "src/components/ui/AnchoredDropdownPortal.tsx",
+    "detectar": { "rol": "listbox", "clasesCoOcurrentes": ["absolute"] },
+    "mensaje": "Los listbox flotantes deben usar AnchoredDropdownPortal — fuera de él, un overflow de un ancestro los recorta"
+  },
+  {
+    "id": "tooltip-rol",
+    "canonico": "src/components/ui/ActionTooltip.tsx",
+    "detectar": { "rol": "tooltip" },
+    "mensaje": "Usa ActionTooltip; un role=\"tooltip\" local se recorta por overflow y contra los bordes del viewport"
+  },
+  {
+    "id": "tooltip-slot",
+    "canonico": "src/components/ui/ActionTooltip.tsx",
+    "detectar": { "dataSlotContiene": "tooltip" },
+    "mensaje": "Usa ActionTooltip; los slots locales de tooltip están prohibidos"
+  }
+]

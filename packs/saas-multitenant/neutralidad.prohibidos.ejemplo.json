@@ -1,0 +1,6 @@
+[
+  { "id": "tenant-nombre", "patron": "Acme Corp|Acme Sport Management" },
+  { "id": "tenant-persona", "patron": "Nombre Apellido del contacto de Acme" },
+  { "id": "tenant-rol", "patron": "agente_acme|agenteAcme" },
+  { "id": "tenant-codigo-entidad", "patron": "['\"](?:ACM|ACME01)['\"]" }
+]

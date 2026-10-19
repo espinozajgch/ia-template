@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lo que ya se cosechó, sin saberlo</title>
+<style>
+:root{
+  --ground:#F6F8FA;--surface:#FFFFFF;--surface-2:#EFF2F6;
+  --ink:#121821;--ink-2:#3A4557;--muted:#5D6A80;--faint:#8894A6;
+  --rule:#DFE4EC;--rule-strong:#C6CEDB;
+  --accent:#39479B;--accent-soft:#E8EAF6;
+  --brass:#8A6410;--brass-soft:#F6EEDC;
+  --ok:#1C6E52;--ok-soft:#E3F1EB;
+  --mid:#96690C;--mid-soft:#F8EFDA;
+  --risk:#A8322A;--risk-soft:#FAE9E7;
+  --shadow:0 1px 2px rgba(18,24,33,.05),0 8px 24px -12px rgba(18,24,33,.14);
+  --display:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --body:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#0E1218;--surface:#161C25;--surface-2:#1D242F;
+  --ink:#E6EBF2;--ink-2:#C3CBD8;--muted:#95A1B4;--faint:#6F7C90;
+  --rule:#252D3A;--rule-strong:#37414F;
+  --accent:#96A5EF;--accent-soft:#1E2440;
+  --brass:#D8AC60;--brass-soft:#2A2317;
+  --ok:#5CC79B;--ok-soft:#12291F;
+  --mid:#D7A63F;--mid-soft:#2A2313;
+  --risk:#E8827A;--risk-soft:#2C1917;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -14px rgba(0,0,0,.7);
+}}
+:root[data-theme="dark"]{
+  --ground:#0E1218;--surface:#161C25;--surface-2:#1D242F;
+  --ink:#E6EBF2;--ink-2:#C3CBD8;--muted:#95A1B4;--faint:#6F7C90;
+  --rule:#252D3A;--rule-strong:#37414F;
+  --accent:#96A5EF;--accent-soft:#1E2440;
+  --brass:#D8AC60;--brass-soft:#2A2317;
+  --ok:#5CC79B;--ok-soft:#12291F;
+  --mid:#D7A63F;--mid-soft:#2A2313;
+  --risk:#E8827A;--risk-soft:#2C1917;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -14px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);
+  font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+h1,h2,h3,h4{text-wrap:balance;margin:0}
+a{color:var(--accent);text-underline-offset:2px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+code,.mono{font-family:var(--mono);font-size:.88em}
+
+.head{border-bottom:1px solid var(--rule);background:var(--surface)}
+.head .wrap{padding:60px 24px 38px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);margin:0 0 18px}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(38px,6vw,62px);line-height:1;
+  letter-spacing:-.015em;margin-bottom:18px}
+h1 em{font-style:italic;color:var(--accent)}
+.thesis{font-size:18.5px;color:var(--ink-2);max-width:62ch;line-height:1.55}
+.stats{display:flex;flex-wrap:wrap;margin-top:36px;border-top:1px solid var(--rule)}
+.stat{padding:16px 30px 0 0;margin-right:30px;border-right:1px solid var(--rule)}
+.stat:last-child{border-right:0}
+.stat b{display:block;font-family:var(--mono);font-size:25px;font-weight:600;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.stat span{font-size:12.5px;color:var(--muted)}
+
+section{padding:58px 0;border-bottom:1px solid var(--rule)}
+section:last-of-type{border-bottom:0}
+.shead{display:flex;align-items:baseline;gap:14px;margin-bottom:8px;flex-wrap:wrap}
+h2{font-family:var(--display);font-weight:400;font-size:clamp(27px,3.4vw,38px);letter-spacing:-.01em}
+.tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--accent);background:var(--accent-soft);padding:4px 9px;border-radius:3px}
+.lede{color:var(--muted);font-size:16.5px;margin:0 0 32px;max-width:66ch}
+
+.pieza{background:var(--surface);border:1px solid var(--rule);border-radius:6px;
+  box-shadow:var(--shadow);margin-bottom:18px;overflow:hidden}
+.pieza>header{display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:16px 22px;background:var(--surface-2);border-bottom:1px solid var(--rule);flex-wrap:wrap}
+.pieza h3{font-size:16.5px;font-weight:700}
+.pieza h3 small{display:block;font-family:var(--mono);font-size:10.5px;font-weight:500;
+  color:var(--faint);letter-spacing:.06em;text-transform:uppercase;margin-top:3px}
+.pieza .body{padding:20px 22px;display:flex;flex-direction:column;gap:14px}
+.pieza p{margin:0;font-size:14.5px;color:var(--ink-2);line-height:1.6;max-width:70ch}
+.pieza p b{color:var(--ink)}
+.chip{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;
+  padding:3px 8px;border-radius:3px;white-space:nowrap}
+.c-ok{background:var(--ok-soft);color:var(--ok)}
+.c-new{background:var(--accent-soft);color:var(--accent)}
+.c-risk{background:var(--risk-soft);color:var(--risk)}
+.c-brass{background:var(--brass-soft);color:var(--brass)}
+pre{margin:0;background:var(--surface-2);border:1px solid var(--rule);border-radius:4px;
+  padding:13px 15px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.6;color:var(--ink-2)}
+.files{display:flex;flex-wrap:wrap;gap:6px}
+.file{font-family:var(--mono);font-size:11.5px;background:var(--ground);border:1px solid var(--rule);
+  padding:3px 8px;border-radius:3px;color:var(--muted)}
+.why{border-left:2px solid var(--accent);background:var(--surface-2);padding:12px 15px;
+  border-radius:0 4px 4px 0;font-size:14px;color:var(--ink-2);line-height:1.55}
+.why b{color:var(--ink)}
+
+.scroll{overflow-x:auto;border:1px solid var(--rule);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+thead th{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);background:var(--surface-2);
+  border-bottom:1px solid var(--rule-strong);white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:var(--surface-2)}
+td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+td.mono{font-family:var(--mono);font-size:12px}
+
+.alerta{border-left:3px solid var(--risk);background:var(--risk-soft);padding:18px 22px;
+  border-radius:0 5px 5px 0}
+.alerta h3{font-size:17px;margin-bottom:8px}
+.alerta p{margin:0 0 10px;font-size:14.5px;color:var(--ink-2);line-height:1.6;max-width:70ch}
+.alerta p:last-child{margin-bottom:0}
+
+.next{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+.next .n{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:18px 20px}
+.next h4{font-size:15px;margin-bottom:6px}
+.next p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.55}
+.next .ord{font-family:var(--mono);font-size:11px;color:var(--brass);font-weight:600;
+  display:block;margin-bottom:8px;letter-spacing:.08em}
+
+.foot{padding:36px 0 60px;color:var(--faint);font-size:13px}
+@media (max-width:640px){.head .wrap{padding-top:40px}.stat{padding-right:18px;margin-right:18px}}
+@media print{
+  body{background:#fff;color:#000}
+  section{break-inside:auto;page-break-inside:auto}
+  .pieza,.next .n,.alerta{break-inside:avoid;box-shadow:none}
+  .head{border-bottom:2px solid #000}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="head">
+  <div class="wrap">
+    <p class="eyebrow">ia-template · informe de mejoras · 18 octubre 2026</p>
+    <h1>Lo que ya se cosechó,<br><em>sin saberlo</em></h1>
+    <p class="thesis">futbot-web-app y elevenoffice están fuera de foco desde el 29-09, pero
+      el usuario pidió revisarlos puntualmente para esta cosecha. elevenoffice es
+      ppsportmanagementarg — la referencia original del kit en backend y puerta de calidad —
+      y ya había aportado ocho detectores y el núcleo de <span class="mono">esquema.mjs</span>.
+      La pregunta no era «qué tiene» sino «qué tiene que **todavía no** se trajo». La
+      respuesta más útil no fue una pieza nueva: fue confirmar que dos huecos señalados como
+      pendientes desde agosto ya están resueltos ahí, listos para traer.</p>
+    <div class="stats">
+      <div class="stat"><b>2</b><span>proyectos (fuera de foco, revisión puntual)</span></div>
+      <div class="stat"><b>6</b><span>candidatos fuertes</span></div>
+      <div class="stat"><b>2</b><span>ya cubiertos — no duplicar</span></div>
+      <div class="stat"><b>1</b><span>exclusión de seguridad</span></div>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>Candidatos fuertes</h2><span class="tag">listos o casi listos</span></div>
+
+    <article class="pieza">
+      <header><h3>validate-voseo.mjs (cliente + servidor)<small>elevenoffice</small></h3><span class="chip c-new">candidato</span></header>
+      <div class="body">
+        <p>Gate sin baseline —el proyecto está en cero voseo y cualquier forma nueva rompe el
+          build— que detecta conjugaciones voseo rioplatense (<span class="mono">buscá,
+          seleccioná, cargá</span>…) en los locales de la interfaz, con su sugerencia en tuteo
+          neutro. El servidor tiene su propia copia para el texto orientado a usuario/LLM.</p>
+        <p class="why"><b>Esto es, literalmente, la pieza pendiente del informe de agosto.</b>
+          «Validador de variante regional: paridad de claves más el voseo tratado como algo
+          que se gatea, no como estilo» — listado como «Después» el 2026-08-22, sin dueño desde
+          entonces. El pack <span class="mono">i18n</span> hoy no tiene ni un script: son
+          cuatro reglas en prosa.</p>
+        <p><b>Encaja</b> en <span class="mono">packs/i18n</span>, generalizando la lista de
+          idiomas (hoy fija a <span class="mono">es/en/pt/it</span>) y el diccionario
+          voseo→tuteo a un fichero de configuración, para que un proyecto que SÍ quiera voseo
+          invierta la dirección en vez de descartar la herramienta entera.</p>
+      </div>
+    </article>
+
+    <article class="pieza">
+      <header><h3>validate-i18n.mjs (333 líneas)<small>elevenoffice</small></h3><span class="chip c-new">candidato</span></header>
+      <div class="body">
+        <p>Paridad de claves entre locales, detección de literales sin traducir y
+          <span class="mono">--update-literals</span> para marcarlos. Es la pieza que hace
+          cierta la frase que el pack <span class="mono">i18n</span> ya predica: «se comprueba
+          automáticamente, no a ojo» — hoy nadie lo comprueba, porque no hay script.</p>
+        <p><b>Encaja</b> en <span class="mono">packs/i18n</span> junto al anterior.
+          Generalizar la ruta de los locales (hoy fija a <span class="mono">client/src/i18n/locales</span>)
+          por CLI, igual que el resto de herramientas del kit.</p>
+      </div>
+    </article>
+
+    <article class="pieza">
+      <header><h3>Idempotencia de <span class="mono">CREATE POLICY</span><small>de validate-migrations-idempotency.mjs, elevenoffice</small></h3><span class="chip c-new">candidato</span></header>
+      <div class="body">
+        <p><span class="mono">esquema.mjs idempotencia</span> ya tiene nueve reglas —
+          <span class="mono">CREATE TABLE</span>, <span class="mono">CREATE INDEX</span>,
+          <span class="mono">ADD COLUMN</span>… — y ninguna cubre <span class="mono">CREATE
+          POLICY</span>, que no admite <span class="mono">IF NOT EXISTS</span> ni
+          <span class="mono">OR REPLACE</span>: el único patrón idempotente es
+          <span class="mono">DROP POLICY IF EXISTS</span> antes, en el mismo archivo.</p>
+        <p class="why"><b>El incidente que lo motivó</b> (2026-07-22, elevenoffice): una
+          migración con <span class="mono">CREATE POLICY</span> sin su DROP previo rompió la
+          segunda pasada del gate de idempotencia con «policy already exists».</p>
+        <p><b>Encaja</b> como UNA regla nueva dentro del array <span class="mono">REGLAS</span>
+          de <span class="mono">esquema.mjs</span> — cero ficheros nuevos, el gate que ya
+          existe gana una comprobación que hoy no tiene.</p>
+      </div>
+    </article>
+
+    <article class="pieza">
+      <header><h3>Manifiesto de esquema, sin base de datos<small>de validate-schema-baseline.mjs, elevenoffice</small></h3><span class="chip c-new">candidato</span></header>
+      <div class="body">
+        <p>Compara el <span class="mono">sha256</span> de la instantánea de esquema, el número
+          de migraciones del journal y la última migración contra un manifiesto guardado —
+          sin conexión a ninguna base. Atrapa «se regeneró la instantánea a mano y no se
+          actualizó el manifiesto» o al revés.</p>
+        <p class="why"><b>Por qué no lo cubre ya <span class="mono">esquema.mjs</span>.</b>
+          <span class="mono">sellos</span> sella cada migración por su propio contenido;
+          <span class="mono">deriva</span> compara la instantánea contra la base VIVA — las dos
+          valiosas, ninguna hace esta comprobación barata y sin red que se puede correr en
+          cualquier CI, incluso uno sin Postgres disponible.</p>
+        <p><b>Encaja</b> como subcomando nuevo de <span class="mono">esquema.mjs</span>
+          (p. ej. <span class="mono">manifiesto fijar</span> / <span class="mono">manifiesto validar</span>),
+          generalizando las tres rutas fijas con las convenciones que el fichero ya detecta
+          para journal e instantánea.</p>
+      </div>
+    </article>
+
+    <article class="pieza">
+      <header><h3>Trinquete de <span class="mono">any</span> explícito, por fichero<small>de validate-any.mjs, elevenoffice</small></h3><span class="chip c-new">candidato</span></header>
+      <div class="body">
+        <p>Mismo patrón que <span class="mono">tamano.mjs</span> y que
+          <span class="mono">colores-por-fichero.mjs</span> (el que se trajo la semana
+          pasada): presupuesto CERO para archivos nuevos, techo heredado para los que ya
+          tenían <span class="mono">any</span>. Descarta comentarios y literales de cadena
+          antes de contar, para no marcar la palabra «any» dentro de un mensaje de error.</p>
+        <p class="why"><b>El motivo de que exista aparte del detector «supresiones» del kit.</b>
+          Ese detector es un <span class="mono">grep</span> agregado sobre todo el árbol. En
+          elevenoffice el cliente ya lo cubre por otra vía (ESLint, que congela warnings por
+          archivo); el <b>servidor no tiene ESLint</b>, así que sus <span class="mono">any</span>
+          no los vigilaba nada. El gate cubre el hueco, no duplica lo que ya está cubierto.</p>
+        <p><b>Encaja</b> en <span class="mono">packs/frontend-web/detectores/</span>, misma
+          familia que <span class="mono">colores-por-fichero.mjs</span> — útil para backend TS
+          sin ESLint tanto como para frontend.</p>
+      </div>
+    </article>
+
+    <article class="pieza">
+      <header><h3>validate-tenant-neutrality.mjs<small>elevenoffice</small></h3><span class="chip c-new">candidato</span></header>
+      <div class="body">
+        <p>Busca referencias hardcodeadas a un tenant concreto (IDs, nombres) en código que
+          debe ser neutral entre clientes, con raíz configurable por
+          <span class="mono">TENANT_NEUTRALITY_ROOT</span> y exclusiones ya pensadas
+          (migraciones, snapshots, tests, e2e). Ya bastante genérico de fábrica.</p>
+        <p><b>Encaja</b> en <span class="mono">packs/saas-multitenant</span>, que hoy habla de
+          aislamiento a nivel de fila pero no trae ningún detector de fuga en el código.</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>Ya cubierto — no duplicar</h2><span class="tag">el kit ya se adelantó</span></div>
+    <p class="lede">elevenoffice es la fuente original de buena parte del núcleo del kit. Dos
+      de sus piezas ya están dentro, con más alcance que la versión de origen.</p>
+
+    <article class="pieza">
+      <header><h3>validate-journal.mjs<small>elevenoffice</small></h3><span class="chip c-ok">ya cubierto</span></header>
+      <div class="body">
+        <p>Sus cuatro invariantes —<span class="mono">when</span> único, <span class="mono">idx</span>
+          contiguo, tag→archivo, archivo→journal— los cubre hoy
+          <span class="mono">esquema.mjs orden</span>, que de hecho **vino** del gate H-127 de
+          este mismo proyecto (documentado en <span class="mono">packs/base-de-datos/PACK.md</span>)
+          y añade algo que la versión de origen no tiene: excepciones declaradas con motivo en
+          <span class="mono">.ratchets/esquema-excepciones.json</span>.</p>
+      </div>
+    </article>
+
+    <article class="pieza">
+      <header><h3>check-tracked-secrets.mjs (SEC-02)<small>elevenoffice</small></h3><span class="chip c-ok">ya cubierto</span></header>
+      <div class="body">
+        <p>El hueco que motivó esto —un secreto pegado en un <span class="mono">.md</span> de
+          auditoría, invisible para <span class="mono">.gitignore</span>— es exactamente lo
+          que <span class="mono">secretos.mjs</span> ya cubre: escanea el contenido de
+          <b>todo</b> archivo trackeado por su forma, sin mirar la extensión, con 16 patrones
+          frente a los de aquí.</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>Exclusión de seguridad</h2><span class="tag">no se integra, bajo ningún empaquetado</span></div>
+    <div class="alerta">
+      <h3><span class="mono">packs/cloud-aws/PACK.md</span> de elevenoffice no es una mejora genérica</h3>
+      <p><span class="mono">cosechar.mjs</span> lo marcó como «el proyecto creció» (82 líneas
+        contra 71 del kit), que normalmente significa una mejora a revisar. Al leerlo: es una
+        <b>autorización puntual que el usuario dio el 2026-10-07</b> («Sí, cambia esa regla y
+        publica») para que el agente dispare despliegues rutinarios por el pipeline de GitHub
+        ya existente de ESE proyecto, con SHA revisado y puertas aprobadas.</p>
+      <p>Llevar esto al kit convertiría una excepción de un proyecto, en una fecha concreta,
+        en el comportamiento por defecto de los demás — exactamente lo contrario de
+        <span class="mono">nucleo/AGENTS.md §5.1</span> («nunca, sin petición explícita <b>en
+        esta conversación</b>: … desplegar»). No se integra ni se generaliza.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>Patrones, no ficheros</h2><span class="tag">la técnica vale, el script no viaja</span></div>
+    <p class="lede">Tres piezas de elevenoffice son demasiado específicas para copiarse —IDs de
+      cuenta AWS, una instancia EC2 concreta, una ruta de despliegue fija— pero la TÉCNICA que
+      usan sí generaliza, y vale la pena dejarla escrita en el pack correspondiente.</p>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Fichero</th><th>Técnica</th><th>Dónde documentarla</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">verify-aws-invariants.sh</td>
+            <td>invariantes de producción (cuenta, instancia, trail de auditoría) verificadas de solo lectura contra la CLI real</td>
+            <td><span class="mono">packs/cloud-aws</span>, como receta — no como script</td></tr>
+          <tr><td class="mono">verify-infra-config.sh</td>
+            <td>deriva entre la config de infra trackeada en el repo y lo instalado de verdad en el host</td>
+            <td><span class="mono">packs/cloud-aws</span>, misma receta</td></tr>
+          <tr><td class="mono">validate-modal-contract.mjs</td>
+            <td>guardia ESTRUCTURAL con el compilador de TypeScript (AST), no con <span class="mono">grep</span>: lee props y ancestros JSX de verdad</td>
+            <td>mejora metodológica para el detector «componentes-esquivados» (#5) de <span class="mono">DETECTORES.md</span>, hoy basado en texto</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>futbot-web-app</h2></div>
+
+    <article class="pieza">
+      <header><h3>preparar-contexto<small>idéntica, byte a byte, a la de analisis</small></h3><span class="chip c-new">cumple la regla de las dos</span></header>
+      <div class="body">
+        <p>El informe del 2026-10-17 dejó esta skill «a la espera de un segundo proyecto».
+          Hoy aparece — <b>sin diferencia alguna</b> — en futbot-web-app. La regla del kit es
+          exactamente esta: útil en dos proyectos distintos, sin que nadie la copiara a mano
+          entre ellos, entra a <span class="mono">nucleo/skills/</span>.</p>
+      </div>
+    </article>
+
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Pieza</th><th>Veredicto</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">analisis, dataset, datos-opta, metricas, visualizacion (skills)</td>
+            <td>dominio futbolístico/Opta puro — mismo trato que <span class="mono">sports-provider-adapters</span>: se queda en futbot</td></tr>
+          <tr><td class="mono">ux-ui (skill)</td>
+            <td>específica del sistema de componentes propio de futbot-web-app, no generaliza</td></tr>
+          <tr><td class="mono">verify_aws_readonly.sh, verify_postgres.py, verify_discord.py, sync_fargate_cost.py, audit_credential_storage.py…</td>
+            <td>infraestructura propia (bot de Discord, costes de Fargate de ESE proyecto) — mismo trato que los <span class="mono">verify_*.py</span> de hipismo del informe anterior</td></tr>
+          <tr><td class="mono">frontend/scripts/check-bundle-budget.mjs</td>
+            <td>probablemente redundante con <span class="mono">packs/pwa-movil/presupuesto.mjs</span> — no se profundizó</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="shead"><h2>Sin revisar a fondo</h2><span class="tag">quedó para una pasada futura</span></div>
+    <p class="lede">elevenoffice tiene 32 «inventos» en total; esta pasada profundizó en los
+      más prometedores. Quedan cuatro detectores de UI nuevos —posteriores a los ocho que ya
+      están en <span class="mono">DETECTORES.md</span>— sin más que el nombre:
+      <span class="mono">validate-dropdown-portals.mjs</span>,
+      <span class="mono">validate-segmented.mjs</span>,
+      <span class="mono">validate-tooltips.mjs</span>,
+      <span class="mono">validate-menu-headings.mjs</span>, y
+      <span class="mono">validate-lazy-chunks.mjs</span> (específico del manifest de Vite).</p>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap">
+    <p class="mono">ia-template · 18 de octubre de 2026</p>
+    <p>futbot-web-app y elevenoffice están fuera del foco activo (hipismo, pulso, analisis,
+      logroño-united, tasas-bcv-api) desde el 2026-09-29; esta revisión fue puntual, a pedido
+      expreso, solo para cosecha de patrones hacia el kit — no reactiva trabajo en ninguno
+      de los dos. Herramienta: <span class="mono">agente/tools/cosechar.mjs subir --json</span>.</p>
+  </div>
+</footer>
+
+</body>
+</html>
