@@ -37,6 +37,22 @@ son las **herramientas** que estos subagentes siguen para Instagram específicam
 pack, los subagentes trabajan con criterio general de redacción y diseño — menos afinado,
 pero no bloqueado.
 
+## Si también tenés el pack `estudio-marca`
+
+No es una herramienta más entre varias: es la **fuente de verdad** de dos subagentes.
+
+- `marketing` lee `knowledge/estudios-marca/<slug>/01-valores.md` — los valores núcleo con
+  su prueba, no una suposición — y cada pieza del plan nombra qué valor expresa.
+- `disenador` lee `knowledge/estudios-marca/<slug>/paleta.json` (la opción `destacada`) en
+  vez de inventar o aproximar un color: cada hex de ahí ya pasó validación de contraste
+  WCAG, distancia a estados semánticos y separación con daltonismo.
+
+Sin ese pack, los dos siguen funcionando con `knowledge/wiki/product-design.md` o el
+criterio general — pero si existe un estudio de marca hecho, es lo que manda, no una
+paleta improvisada para la ocasión. Si no existe todavía ninguno de los dos ficheros, el
+subagente lo dice y sugiere correr `estudio-marca` antes de seguir, en vez de inventar
+valores o colores por su cuenta.
+
 ## La frontera que no se negocia
 
 **Publicar en una red social es publicar en un servicio externo** — la misma categoría que
@@ -57,3 +73,4 @@ una publicación pública no se puede "revertir" de verdad una vez que alguien l
 - [ ] `disenador` entrega especificación o activo, nunca el texto final
 - [ ] `publicador-rrss` entrega una cola, nunca publica — la aprobación es de una persona, por pieza
 - [ ] Ninguna credencial de ninguna plataforma vive en un prompt, un log o un commit
+- [ ] Si existe `estudio-marca`, `marketing` y `disenador` usan sus entregables como fuente — no inventan valores ni colores en paralelo

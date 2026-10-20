@@ -1,0 +1,82 @@
+{
+  "_ayuda": {
+    "uso": "Copia este fichero a knowledge/estudios-marca/<slug>/paleta.json. Los campos que empiezan por _ se ignoran. Valida con color.py validar y genera la hoja con hoja_paleta.py.",
+    "marca": "Nombre del producto tal como se escribe.",
+    "titulo": "Título de la pestaña: un nombre, no una explicación.",
+    "h1": "Titular de la hoja.",
+    "intro": "Dos o tres frases: de qué valores parten las opciones y qué cambia entre ellas.",
+    "icono": "Ruta al icono (PNG o SVG), relativa a este fichero. Opcional; sin icono se usan las iniciales.",
+    "estados": "Tokens de estado REALES del proyecto, sacados de la auditoría. Sirven para medir si un acento se confunde con un estado.",
+    "ejemplo": "Contenido de la ficha de ejemplo, con vocabulario real del sector. Se marca como ilustrativo en 'nota'.",
+    "criterios": "Filas de la comparativa, en orden. Los valores Bajo/Medio/Alto/Media/Alta se muestran como etiqueta.",
+    "opciones[].id": "Identificador corto y único: a, b, d2…",
+    "opciones[].enlace": "Rol que colorea enlaces y foco: principal o acento1/acento2.",
+    "opciones[].firma": "Rol que firma la marca en rótulos y filetes.",
+    "opciones[].colores.<rol>": "principal, acento1, acento2, oscuro, claro. Cada uno: nombre, hex, valor, descripcion, uso. Opcionales: texto (color del texto encima), variante_oscuro, variante_claro, nota {titulo, texto}.",
+    "opciones[].proporcion": "Porcentaje de uso de cada rol. Debe sumar 100.",
+    "opciones[].bloques": "Listas con titulo, tipo (pro, con, neutro) e items.",
+    "opciones[].resuelve": "Solo en síntesis: punto, donde, solucion, dato.",
+    "opciones[].notas": "Correcciones o aclaraciones que deben verse.",
+    "opciones[].destacada": "true en la opción recomendada: marca su tarjeta y define los colores de la propia hoja."
+  },
+  "marca": "Tu Marca",
+  "titulo": "Paleta de marca Tu Marca",
+  "fecha": "2026-01-01",
+  "eyebrow": "Propuesta de paleta",
+  "h1": "Cinco colores para la misma marca.",
+  "intro": "Cada color expresa un valor de marca. Sustituye este texto por el resumen real.",
+  "icono": "",
+  "estados": {
+    "éxito": "#047857",
+    "aviso": "#c2410c",
+    "error": "#b91c1c",
+    "información": "#0c4a6e"
+  },
+  "ejemplo": {
+    "etiqueta": "Ficha de cliente",
+    "titulo": "Nombre ficticio · Dato clave",
+    "meta": "Contexto realista del sector · una fecha · un estado",
+    "boton": "Acción principal",
+    "enlace": "Ver detalle",
+    "etiqueta_acento2": "Módulo del acento 2",
+    "nota": "Datos ilustrativos."
+  },
+  "criterios": ["Valores protagonistas", "Diferenciación", "Riesgo de diseño", "Coste de cambio", "Encaja si"],
+  "recomendacion": {
+    "titulo": "Recomendación: opción A.",
+    "texto": "Motivo en una frase y para quién sería mejor la alternativa."
+  },
+  "reglas": [
+    {"titulo": "Un solo color de acción", "texto": "Los botones principales tienen un color y solo uno."},
+    {"titulo": "Un acento por pieza", "texto": "Los dos acentos no comparten protagonismo en la misma pantalla."},
+    {"titulo": "Los acentos no son estados", "texto": "Éxito, aviso, error e información usan sus propios tokens."}
+  ],
+  "pie": "Propuesta para revisión.",
+  "opciones": [
+    {
+      "id": "a",
+      "etiqueta": "Opción A",
+      "nombre": "Continuidad",
+      "destacada": true,
+      "titular": "Evolucionar sin romper.",
+      "tesis": "Una frase con la tesis de la ruta.",
+      "lead": "Dos frases: qué conserva y qué cambia.",
+      "enlace": "principal",
+      "firma": "acento1",
+      "proporcion": {"claro": 60, "oscuro": 25, "principal": 10, "acento1": 3, "acento2": 2},
+      "colores": {
+        "principal": {"nombre": "Azul Acción", "hex": "#2169DE", "variante_oscuro": "#65A2FF", "valor": "Control", "descripcion": "Frase que une color y valor.", "uso": "Botones, enlaces, foco y selección."},
+        "acento1": {"nombre": "Oro Firma", "hex": "#D99A00", "texto": "#0B1626", "variante_claro": "#8F6900", "valor": "Ambición", "descripcion": "Frase que une color y valor.", "uso": "Firma de marca. Nunca indica un estado."},
+        "acento2": {"nombre": "Verde Cuidado", "hex": "#237A3B", "variante_oscuro": "#4CB86A", "valor": "Cuidado", "descripcion": "Frase que une color y valor.", "uso": "El módulo o mensaje que representa."},
+        "oscuro": {"nombre": "Navy Base", "hex": "#0B1626", "valor": "Confidencialidad", "descripcion": "Frase que une color y valor.", "uso": "Menú, fondos institucionales, modo oscuro y texto."},
+        "claro": {"nombre": "Blanco Fondo", "hex": "#F4F7FB", "valor": "Honestidad", "descripcion": "Frase que une color y valor.", "uso": "Fondo general; tarjetas en blanco encima."}
+      },
+      "bloques": [
+        {"titulo": "A favor", "tipo": "pro", "items": ["Con cifra cuando la haya."]},
+        {"titulo": "En contra", "tipo": "con", "items": ["Con cifra cuando la haya."]},
+        {"titulo": "Qué cambia", "tipo": "neutro", "items": ["Respecto a la paleta actual."]}
+      ],
+      "comparativa": {"Valores protagonistas": "Control · Cuidado", "Diferenciación": "Media", "Riesgo de diseño": "Bajo", "Coste de cambio": "Bajo", "Encaja si": "Para quién es la mejor opción"}
+    }
+  ]
+}

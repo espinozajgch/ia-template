@@ -205,6 +205,34 @@ como herramientas; si no, trabajan con criterio general.
 
 ---
 
+## 2026-10-20 — el sistema propio de `estudio-marca`, completo
+
+`estudio-marca` no es uno de los once proyectos en juego: es otro espacio de trabajo del
+usuario, con su propia arquitectura (`AGENTS.md` + punteros + `.claude/skills` y
+`.agents/skills` en espejo) ya inspirada en la del kit, pero sin nada instalado de él. A
+diferencia de `instagram-marketing` (de terceros, vendorizado con atribución), este es
+trabajo **propio** del usuario — cosecha en el sentido estricto del término.
+
+Nuevo pack `packs/estudio-marca`, con las siete skills tal cual (`estudio-marca` ·
+`valores-marca` · `auditoria-color` · `paleta-marca` · `rutas-paleta` · `sintesis-paleta` ·
+`hoja-paleta`), su `metodo/` (criterios de experto en valores de marca y color: roles,
+umbrales WCAG, croma CIELAB para detectar neutros, simulación de daltonismo Machado 2009,
+catálogo `AP-M*`), `plantillas/` y `herramientas/` — `color.py`/`colorlib.py`/`paleta.py`
+(cálculo, sin dependencias) y `hoja_paleta.py` (genera el entregable HTML, con un decodificador
+de PNG propio para muestrear el color de un icono sin PIL).
+
+Lo único que cambió al integrarlo: las rutas. El original escribía en `proyectos/<slug>/`
+dentro de su propio repositorio aparte; el pack escribe en
+`knowledge/estudios-marca/<slug>/` del proyecto que lo instala, y cada referencia a
+`herramientas/`, `metodo/` y `plantillas/` se prefijó con `agente/packs/estudio-marca/`. Las
+reglas de la `AGENTS.md` original (solo lectura sobre el proyecto analizado, ninguna cifra
+a mano, honestidad sobre los contras) se consolidaron en el `PACK.md`, en vez de traer una
+segunda `AGENTS.md`. El caso de referencia real (`proyectos/elevenoffice/` del repositorio
+original) es salida, no plantilla, y no se copió — mismo criterio que con los informes HTML
+del propio kit.
+
+---
+
 ## Lo que se dejó fuera, a propósito
 
 - **`09_BLAST_PROTOCOL.md` y `10_AGENT_RULES.md`** — reemplazados por

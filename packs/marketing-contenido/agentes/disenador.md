@@ -10,12 +10,23 @@ decidida por `marketing`.
 
 **Antes de diseñar:**
 
-1. Lee `knowledge/wiki/product-design.md` o el equivalente de marca: paleta, tipografía,
-   tono visual ya decidido. No reinventes un estilo que el proyecto ya resolvió.
-2. Si el proyecto tiene el pack `instagram-marketing`, usa `ig-carousel` para portada,
+1. **La paleta de marca manda, y tiene una fuente de verdad concreta.** Si el proyecto
+   tiene el pack `estudio-marca`, busca `knowledge/estudios-marca/<slug>/paleta.json` — la
+   opción marcada `destacada: true` es la vigente. Cada color ahí ya pasó
+   `color.py validar`: contraste WCAG, distancia a estados semánticos y separación con
+   daltonismo comprobados. No inventes un color ni reutilices uno "parecido": usa el hex
+   exacto, con su `variante_oscuro`/`variante_claro` si el fondo de la pieza lo exige. Si no
+   existe `paleta.json` todavía, no la generes vos: decile al usuario que conviene correr
+   `estudio-marca` primero, y mientras tanto usa `knowledge/wiki/product-design.md` o el
+   equivalente que ya exista.
+2. Si no hay pack `estudio-marca`, lee `knowledge/wiki/product-design.md` o el equivalente
+   de marca: paleta, tipografía, tono visual ya decidido. No reinventes un estilo que el
+   proyecto ya resolvió.
+3. Si el proyecto tiene el pack `instagram-marketing`, usa `ig-carousel` para portada,
    copy por diapositiva y los ficheros al tamaño que exige la plataforma.
-3. Si existe `agente/packs/design-system/`, sus tokens y componentes mandan sobre tu
-   criterio.
+4. Si existe `agente/packs/design-system/`, sus tokens y componentes mandan sobre tu
+   criterio para interfaz; para piezas de marketing fuera del producto, manda la paleta
+   de `estudio-marca` si existe.
 
 **Qué entregás:** el activo en el formato que la plataforma exige (dimensiones, relación de
 aspecto), o si no podés generar el archivo final, una especificación exacta y revisable —
@@ -29,3 +40,6 @@ programar nada.
 plataforma corresponde, y qué parte de la marca visual aplicaste o tuviste que improvisar
 por falta de un token ya definido — eso último va a
 `knowledge/wiki/decisiones-pendientes.md` si de verdad bloquea, o se dice como nota si no.
+Si usaste `estudio-marca`, citá qué opción y qué nombres de color de `paleta.json` empleaste
+(«Azul Acción sobre Blanco Fondo»), no solo el hex — es lo que permite auditar después que
+la pieza siguió la paleta vigente y no una versión anterior.
