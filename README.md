@@ -25,7 +25,7 @@ copias que había que editar a la vez, y nunca se editaban a la vez.
 hípico acabó con el prompt de tácticas de fútbol; una app clínica, con el kit de AWS. Nadie
 los leía, pero el agente sí — y cobraban su contexto.
 
-> **Ahora:** núcleo ligero, siempre. Y **25 packs** que se instalan solo si aplican.
+> **Ahora:** núcleo ligero, runtime reutilizable y packs que se instalan solo si aplican.
 
 **3 · Las mejoras de cada proyecto no volvían al template.** El mismo archivo tenía 93, 106,
 351, 360, 416 y 552 líneas en seis proyectos: seis linajes divergentes de la misma idea.
@@ -143,6 +143,7 @@ agente/ci/                    4 plantillas de workflow, sin activar
 agente/tools/                 8 verificadores ejecutables, probados contra repos reales:
                               ratchet · puerta · ciclos · tamano · secretos
                               esquema · cobertura · cosechar
+runtime/                    contratos de inteligencia operativa independientes del dominio
 ```
 
 ### Las 9 skills
@@ -169,7 +170,7 @@ lista que antes vivía repartida entre la cabeza de cada uno y cinco prompts dis
 porque no traen listas de comandos, traen **cómo encontrarlos** — y así no caducan el día
 que alguien añade un paso a la CI.
 
-### Los 25 packs
+### Los packs
 
 | Pack | Se activa si |
 |---|---|
@@ -194,6 +195,7 @@ que alguien añade un paso a la CI.
 | `observabilidad` | el sistema corre en algún sitio donde no puedes ponerle un depurador — |
 | `offline-first` | la aplicación se usa donde la red falla — trabajo de campo, sótanos, |
 | `orquestacion-agentes` | agentes de programación necesitan contexto mínimo, routing o delegación controlada |
+| `domain-template` | el proyecto necesita describir un dominio para el Intelligence Runtime |
 | `pwa-movil` | hay aplicación instalable, service worker, o uso móvil real y frecuente |
 | `saas-multitenant` | varios clientes u organizaciones comparten la misma instancia |
 | `seguridad` |  |
